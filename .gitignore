@@ -3,3 +3,18 @@ target/
 *.iml
 *.ipr
 *.iws
+
+frontend
+node_modules
+testdb.tmp
+
+lot.txt
+#vaadin generated file
+.npmrc
+package.json
+pnpm-lock.yaml
+pnpmfile.js
+tsconfig.json
+types.d.ts
+webpack.config.js
+webpack.generated.js
