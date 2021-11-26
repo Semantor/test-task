@@ -1,0 +1,28 @@
+<configuration>
+    <appender name="toFile" class="ch.qos.logback.core.FileAppender">
+        <file>log.txt</file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %highlight([%level]) %logger{36} %file:%line - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %highlight([%level]) %logger{36} %file:%line - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="root" level="DEBUG"/>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <root level="info">
+        <appender-ref ref="toFile"/>
+    </root>
+</configuration>
