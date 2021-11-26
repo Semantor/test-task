@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("ALL")
-public interface BankRepository extends JpaRepository<Bank, UUID> {
+public interface BankRepository extends JpaRepository<Bank, UUID>, BankClientsRepository {
     @Override
     List<Bank> findAll();
 
