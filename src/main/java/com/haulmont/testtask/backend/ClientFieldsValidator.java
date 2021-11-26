@@ -2,7 +2,7 @@ package com.haulmont.testtask.backend;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface ClientValidator {
+public interface ClientFieldsValidator {
     /**
      * RFC 5322 support
      */

@@ -17,7 +17,7 @@ public interface ClientSaver {
      * {@link Client#getEmail()}
      * {@link Client#getPhoneNumber()}
      * {@link Client#getPassport()}
-     * for not null and valid with {@link ClientValidator}
+     * for not null and valid with {@link ClientFieldsValidator}
      * Patronymic can be null or Empty.
      * firstname, lastname or patronymic can not contain non-letter symbols
      * @throws com.haulmont.testtask.backend.excs.CreateClientException if isn't valid
@@ -26,8 +26,8 @@ public interface ClientSaver {
 
     /**
      * update only not null fields exclude UUID
-     * use {@link ClientValidator#validatePhone(String)}, {@link ClientValidator#validateEmail(String)},
-     * {@link ClientValidator#validatePassport(String)} to validate
+     * use {@link ClientFieldsValidator#validatePhone(String)}, {@link ClientFieldsValidator#validateEmail(String)},
+     * {@link ClientFieldsValidator#validatePassport(String)} to validate
      * This method can not to change fields to null value.
      */
     void save(String uuid, Client client);
