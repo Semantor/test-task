@@ -18,10 +18,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import static com.haulmont.testtask.view.Constant.creditLimitFormat;
+import static com.haulmont.testtask.view.Constant.creditRateFormat;
+
 public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanBeClosed, HasEvent {
 
-    private final String creditLimitFormat = "$ %(,.2f";
-    private final String creditRateFormat = "%(,.2f";
+
 
     private final Grid<Credit> grid = new Grid<>();
     private final CreditProvider creditProvider;

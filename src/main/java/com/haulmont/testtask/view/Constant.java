@@ -5,6 +5,8 @@ import com.vaadin.flow.component.notification.Notification;
 
 public class Constant {
 
+    public static final String creditLimitFormat = "$ %(,.2f";
+    public static  final String creditRateFormat = "%(,.2f";
     //todo take away to spring properties
     public static final ButtonVariant SAVE_STYLE = ButtonVariant.LUMO_PRIMARY;
     public static final ButtonVariant CLEAR_STYLE = ButtonVariant.LUMO_ERROR;
