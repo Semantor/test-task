@@ -1,0 +1,63 @@
+spring:
+  profiles:
+    default: "prod"
+
+  aop:
+    proxy-target-class: false
+---
+spring.config.activate.on-profile: "prod"
+spring:
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:file:testdb
+    username: SA
+    password:
+spring.jpa.hibernate.ddl-auto: validate
+---
+spring.config.activate.on-profile: "dev"
+spring:
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:file:testdb
+    username: SA
+    password:
+spring.jpa.hibernate.ddl-auto: validate
+---
+#spring.config.activate.on-profile: "dev,prod,test"
+#server.ssl.key-store: classpath:mykeys.jks
+##this is unsafe, just for demonstration
+#server.ssl.key-store-password: root789
+#server:
+#  ssl:
+#    enabled: true
+---
+spring.config.activate.on-profile: "dev,prod,test"
+flyway.enabled: true
+---
+spring.config.activate.on-profile: "dev,prod,test"
+logback.file: ""
+---
+spring.config.activate.on-profile: "test"
+spring:
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:hsql://localhost/testdb
+    username: SA
+    password:
+spring.jpa.hibernate.ddl-auto: validate
+---
+spring.config.activate.on-profile: "dev,test"
+spring.jpa.show-sql: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor:
+            sql:
+              BasicBinder: INFO
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+logging.level.org.springframework.jdbc.core.JdbcTemplate: INFO
+logging.level.org.springframework.jdbc.core.StatementCreatorUtils: INFO
