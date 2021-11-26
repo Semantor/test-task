@@ -24,9 +24,9 @@ public class BankClientsRepositoryImpl implements BankClientsRepository {
 
         Root<Client> client = criteria.from(Client.class);
 
-        Join<Client, CreditOffer> creditOfferJoin = client.join(Client_.creditOffers, JoinType.RIGHT);
-        Join<CreditOffer, Credit> creditJoin = creditOfferJoin.join(CreditOffer_.credit, JoinType.RIGHT);
-        Join<Credit, Bank> bankJoin = creditJoin.join(Credit_.bank, JoinType.RIGHT);
+        Join<Client, CreditOffer> creditOfferJoin = client.join(Client_.creditOffers);
+        Join<CreditOffer, Credit> creditJoin = creditOfferJoin.join(CreditOffer_.credit);
+        Join<Credit, Bank> bankJoin = creditJoin.join(Credit_.bank);
 
         Predicate equal = cb.equal(bankJoin.get(Bank_.bankId), targetBank.getBankId());
 
