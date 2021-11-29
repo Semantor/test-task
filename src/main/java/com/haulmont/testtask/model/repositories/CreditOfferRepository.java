@@ -14,4 +14,6 @@ public interface CreditOfferRepository extends JpaRepository<CreditOffer, UUID> 
     List<CreditOffer> findByClient(@NotNull Client client);
 
     List<CreditOffer> findByCredit(@NotNull Credit credit);
+
+    List<CreditOffer> findByIsCanceledAndClient(boolean isCanceled, @NotNull Client client);
 }
