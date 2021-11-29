@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +21,9 @@ public class Credit implements Removable {
     @Column(name = "credit_id")
     private UUID creditId = UUID.randomUUID();
 
+    @Column(name = "is_unused")
+    private boolean isUnused = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_id", nullable = false)
     private Bank bank;
@@ -29,6 +33,9 @@ public class Credit implements Removable {
 
     @Column(precision = 4, scale = 2, nullable = false)
     private BigDecimal creditRate;
+
+    @OneToMany(mappedBy = "credit",cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY) @Getter(AccessLevel.PROTECTED)@ToString.Exclude
+    private List<CreditOffer> creditOffers;
 
     @Builder
     public Credit(Bank bank, BigDecimal creditLimit, BigDecimal creditRate) {
@@ -54,5 +61,9 @@ public class Credit implements Removable {
 
     public String toField() {
         return "Bank{" + bank.getBankId() + "} $" + creditLimit + "/" + creditRate + "%";
+    }
+
+    public void unused(){
+        isUnused = true;
     }
 }
