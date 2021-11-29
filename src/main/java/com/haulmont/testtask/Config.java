@@ -44,7 +44,7 @@ public class Config {
 
     @Bean
     ClientProvider clientProvider(ClientRepository clientRepository, Validator validator) {
-        return new ClientProviderImpl(clientRepository, validator);
+        return new ClientProviderNonRemovedImpl(clientRepository, validator);
     }
 
     @Bean
@@ -53,8 +53,8 @@ public class Config {
     }
 
     @Bean
-    CreditOfferProviderByClient creditOfferProvider(CreditOfferRepository creditOfferRepository,ClientRepository clientRepository) {
-        return new CreditOfferProviderByClientImpl(creditOfferRepository,clientRepository);
+    CreditOfferProviderByClient creditOfferProvider(CreditOfferRepository creditOfferRepository, ClientRepository clientRepository) {
+        return new CreditOfferProviderNonCanceledByClientImpl(creditOfferRepository, clientRepository);
     }
 
     @Bean
@@ -91,7 +91,7 @@ public class Config {
     @Bean
     CreditProvider creditProvider(CreditRepository creditRepository,
                                   Validator validator) {
-        return new CreditProviderImpl(creditRepository, validator);
+        return new CreditProviderNonUnusedImpl(creditRepository, validator);
     }
 
     @Bean
@@ -103,6 +103,27 @@ public class Config {
     PaymentCalculator paymentCalculator(AnnuityCreditCalculator annuityCreditCalculator,
                                         Validator validator) {
         return new PaymentCalculatorImpl(annuityCreditCalculator, validator);
+    }
+
+    @Bean
+    BankRemover bankRemover(BankRepository bankRepository) {
+        return new BankRemoverImpl(bankRepository);
+    }
+
+    @Bean
+    CreditRemover creditRemover(CreditRepository creditRepository) {
+        return new CreditRemoverImpl(creditRepository);
+    }
+
+    @Bean
+    ClientRemover clientRemover(ClientRepository clientRepository) {
+        return new ClientRemoverImpl(clientRepository);
+    }
+
+    @Bean
+    CreditOfferRemover creditOfferRemover(CreditOfferRepository creditOfferRepository,
+                                          PaymentRepository paymentRepository) {
+        return new CreditOfferRemoverImpl(creditOfferRepository, paymentRepository);
     }
 
 
