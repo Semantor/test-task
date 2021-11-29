@@ -108,4 +108,14 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
             this.credit = credit;
         }
     }
+
+    public static class EditEvent extends ComponentEvent<CreditGridLayout> {
+        @Getter
+        private final Credit credit;
+
+        public EditEvent(CreditGridLayout source, Credit credit) {
+            super(source, false);
+            this.credit = credit;
+        }
+    }
 }
