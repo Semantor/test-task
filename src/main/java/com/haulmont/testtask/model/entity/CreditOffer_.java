@@ -16,4 +16,6 @@ public class CreditOffer_ {
     public static volatile SingularAttribute<CreditOffer, BigDecimal> creditAmount;
     public static volatile SingularAttribute<CreditOffer, Integer> monthCount;
     public static volatile ListAttribute<CreditOffer, Payment> payment;
+    public static volatile SingularAttribute<CreditOffer, Boolean> isCanceled;
+
 }

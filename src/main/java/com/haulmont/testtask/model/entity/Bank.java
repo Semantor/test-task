@@ -20,7 +20,7 @@ public class Bank implements Removable{
     @Setter
     private Set<Client> clients;
 
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Credit> credits;
 
     @Override

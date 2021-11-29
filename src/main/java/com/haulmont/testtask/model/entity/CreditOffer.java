@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ public class CreditOffer implements Removable{
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @Column(name = "is_canceled")
+    private boolean isCanceled = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "credit_id", nullable = false)
     private Credit credit;
@@ -34,17 +38,17 @@ public class CreditOffer implements Removable{
     @Column(name = "month_count", nullable = false)
     private int monthCount;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "creditOffer")
-    private List<Payment> payment = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "creditOffer",cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
 
     @Builder
-    public CreditOffer(Client client, Credit credit, BigDecimal creditAmount, int monthCount, List<Payment> payment) {
+    public CreditOffer(Client client, Credit credit, BigDecimal creditAmount, int monthCount, List<Payment> payments) {
         this.client = client;
         this.credit = credit;
         this.creditAmount = creditAmount;
         this.monthCount = monthCount;
-        if (payment == null) this.payment = new ArrayList<>();
-        else this.payment = payment;
+        if (payments == null) this.payments = new ArrayList<>();
+        else this.payments = payments;
     }
 
     @Override
@@ -64,17 +68,22 @@ public class CreditOffer implements Removable{
 
     @Override
     public String toString() {
-        return "CreditOffer(client=" + this.client.getClientId() + ", credit=" + this.getCredit() + ", creditAmount=" + this.getCreditAmount() + ", monthCount=" + this.getMonthCount() + ", payment=" + this.getPayment() + ")";
+        return "CreditOffer(client=" + this.client.getClientId() + ", credit=" + this.getCredit() + ", creditAmount=" + this.getCreditAmount() + ", monthCount=" + this.getMonthCount() + ", payment=" + this.getPayments() + ")";
     }
 
     public String toSql() {
         return "CreditOffer: ('" + getCreditOfferId()+"','"+ getClient().getClientId() + "','" +
                 getCredit().getCreditId() + "'," + creditAmount + "," + monthCount +
-                ") \n payments: " + payment.stream().reduce("",(s, payment1) -> s+"\n"+payment1.toSql(), String::concat);
+                ") \n payments: " + payments.stream().reduce("",(s, payment1) -> s+"\n"+payment1.toSql(), String::concat);
     }
 
     @Override
     public String toDeleteString() {
         return "CreditOffer(client=" + this.client.getClientId() + ", credit=" + this.getCredit() + ", creditAmount=" + this.getCreditAmount() + ", monthCount=" + this.getMonthCount() + ")";
+    }
+
+    public void cancel(){
+        isCanceled = true;
+        this.payments = Collections.emptyList();
     }
 }

@@ -22,6 +22,9 @@ public class Client implements Removable {
     @Column(name = "client_id")
     private UUID clientId = UUID.randomUUID();
 
+    @Column(name = "is_removed")@Setter(AccessLevel.PROTECTED)
+    private boolean isRemoved = false;
+
     private String firstName;
 
     private String lastName;
@@ -75,5 +78,9 @@ public class Client implements Removable {
 
     public String toField() {
         return lastName + " " + firstName + " " + passport;
+    }
+
+    public void remove() {
+        isRemoved = true;
     }
 }

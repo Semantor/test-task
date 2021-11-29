@@ -17,4 +17,5 @@ public class Client_ {
     public static volatile SingularAttribute<Client, String> email;
     public static volatile SingularAttribute<Client, String> passport;
     public static volatile ListAttribute<Client, CreditOffer> creditOffers;
+    public static volatile SingularAttribute<Client, Boolean> isRemoved;
 }

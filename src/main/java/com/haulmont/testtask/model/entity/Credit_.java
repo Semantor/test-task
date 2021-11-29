@@ -1,6 +1,7 @@
 package com.haulmont.testtask.model.entity;
 
 import javax.annotation.processing.Generated;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import java.math.BigDecimal;
@@ -13,4 +14,6 @@ public class Credit_ {
     public static volatile SingularAttribute<Credit, Bank> bank;
     public static volatile SingularAttribute<Credit, BigDecimal> creditLimit;
     public static volatile SingularAttribute<Credit, BigDecimal> creditRate;
+    public static volatile SingularAttribute<Credit, Boolean> isUnused;
+    public static volatile ListAttribute<Credit, CreditOffer> creditOffers;
 }
