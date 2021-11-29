@@ -77,6 +77,28 @@ public class ViewConfig {
         return new BankClientsGridLayout();
     }
 
+    @Bean
+    @Scope("prototype")
+    DeleteForm deleteForm(BankRemover bankRemover,
+                          CreditRemover creditRemover,
+                          CreditOfferRemover creditOfferRemover,
+                          ClientRemover clientRemover) {
+        return new DeleteForm(bankRemover, creditRemover, creditOfferRemover, clientRemover);
+    }
 
+    @Bean
+    @Scope("prototype")
+    ClientEditorForm clientEditorForm(ClientFieldsValidator clientFieldsValidator,
+                                      ClientSaver clientSaver) {
+        return new ClientEditorForm(clientFieldsValidator, clientSaver);
+    }
+
+    @Bean
+    @Scope("prototype")
+    CreditEditorForm creditEditorForm(BankProvider bankProvider,
+                                      CreditSaver creditSaver,
+                                      Validator validator) {
+        return new CreditEditorForm(bankProvider, creditSaver, validator);
+    }
 
 }
