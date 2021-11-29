@@ -69,5 +69,7 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
 
         if (clientFieldsValidator.validatePassport(client.getPassport()))
             persistClient.setPassport(client.getPassport());
+
+        clientRepository.save(persistClient);
     }
 }
