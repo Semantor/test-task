@@ -19,6 +19,8 @@ import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.function.SerializablePredicate;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -38,10 +40,14 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     private Credit credit;
 
+    @Getter(AccessLevel.PROTECTED)
     private final ComboBox<Bank> bankComboBox = new ComboBox<>();
+    @Getter(AccessLevel.PROTECTED)
     private final BigDecimalField creditLimitField = new BigDecimalField();
+    @Getter(AccessLevel.PROTECTED)
     private final BigDecimalField creditRateField = new BigDecimalField();
 
+    @Getter(AccessLevel.PROTECTED)
     private final Binder<Credit> binder = new Binder<>(Credit.class);
 
     private final Button save = new Button();
