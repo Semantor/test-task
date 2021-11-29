@@ -36,6 +36,9 @@ public class MainScreen extends VerticalLayout {
     private final BankGridLayout bankGridLayout;
     private final CreateBankForm createBankForm;
     private final PaymentGridLayout paymentGridLayout;
+    private final DeleteForm deleteForm;
+    private final ClientEditorForm clientEditorForm;
+    private final CreditEditorForm creditEditorForm;
 
     private final Notification notification = new Notification();
 
@@ -46,6 +49,9 @@ public class MainScreen extends VerticalLayout {
     private final Dialog creditGridLayoutDialog = new Dialog();
     private final Dialog bankGridLayoutDialog = new Dialog();
     private final Dialog paymentGridDialog = new Dialog();
+    private final Dialog deleteFormDialog = new Dialog();
+    private final Dialog clientEditorFormDialog = new Dialog();
+    private final Dialog creditEditorFormDialog = new Dialog();
 
     private final Button createNewClient = new Button("create new client");
     private final Button createNewBank = new Button("create new bank");
@@ -69,7 +75,13 @@ public class MainScreen extends VerticalLayout {
                       ClientGridLayout clientGridLayout,
                       BankGridLayout bankGridLayout,
                       CreditGridLayout creditGridLayout,
-                      PaymentGridLayout paymentGridLayout) {
+                      PaymentGridLayout paymentGridLayout,
+                      DeleteForm deleteForm,
+                      ClientEditorForm clientEditorForm,
+                      CreditEditorForm creditEditorForm) {
+        this.creditEditorForm = creditEditorForm;
+        this.deleteForm = deleteForm;
+        this.clientEditorForm = clientEditorForm;
         this.createBankForm = createBankForm;
         this.creditGridLayout = creditGridLayout;
         this.createClientForm = createClientForm;
@@ -175,6 +187,19 @@ public class MainScreen extends VerticalLayout {
         paymentGridDialog.setWidthFull();
         paymentGridDialog.setCloseOnEsc(true);
         paymentGridDialog.setCloseOnOutsideClick(true);
+
+        deleteFormDialog.add(deleteForm);
+        deleteFormDialog.setWidth("50%");
+        deleteFormDialog.setCloseOnEsc(true);
+        deleteFormDialog.setCloseOnOutsideClick(true);
+
+        clientEditorFormDialog.add(clientEditorForm);
+        clientEditorFormDialog.setCloseOnEsc(true);
+        clientEditorFormDialog.setCloseOnOutsideClick(true);
+
+        creditEditorFormDialog.add(creditEditorForm);
+        creditEditorFormDialog.setCloseOnEsc(true);
+        creditEditorFormDialog.setCloseOnOutsideClick(true);
     }
 
     private void setupEventListener() {
@@ -186,6 +211,63 @@ public class MainScreen extends VerticalLayout {
         bankGridLayout.addEventListener(BankGridLayout.CloseEvent.class, this::closeBankGridLayoutDialog);
         creditGridLayout.addEventListener(CreditGridLayout.CloseEvent.class, this::closeCreditGridLayout);
         creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DetailsEvent.class, this::openCreditOfferPaymentDialog);
+
+        deleteForm.addEventListener(DeleteForm.CloseEvent.class, this::closeDeleteForm);
+        deleteForm.addEventListener(DeleteForm.UpdateEvent.class, this::updateClientGridLayout);
+        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DeleteEvent.class, this::openCreditOfferDeleteDialog);
+        clientGridLayout.addEventListener(ClientGridLayout.DeleteEvent.class, this::openClientDeleteDialog);
+        creditGridLayout.addEventListener(CreditGridLayout.DeleteEvent.class, this::openCreditDeleteDialog);
+        bankGridLayout.addEventListener(BankGridLayout.DeleteEvent.class, this::openBankDeleteDialog);
+
+        clientGridLayout.addEventListener(ClientGridLayout.EditEvent.class, this::openClientEditorForm);
+        clientEditorForm.addEventListener(ClientEditorForm.CloseEvent.class, this::closeClientEditorForm);
+        creditEditorForm.addEventListener(CreditEditorForm.CloseEvent.class, this::closeCreditEditorForm);
+    }
+
+    private void updateClientGridLayout(DeleteForm.UpdateEvent t) {
+        clientGridLayout.update();
+    }
+
+    private void closeCreditEditorForm(CreditEditorForm.CloseEvent event) {
+        creditEditorFormDialog.close();
+    }
+
+    private void closeClientEditorForm(ClientEditorForm.CloseEvent event) {
+        clientEditorFormDialog.close();
+    }
+
+    private void openClientEditorForm(ClientGridLayout.EditEvent event) {
+        clientEditorForm.setUpdatingClient(event.getClient());
+        clientEditorForm.show();
+        clientEditorFormDialog.open();
+    }
+
+    private void openBankDeleteDialog(BankGridLayout.DeleteEvent event) {
+        deleteForm.setBank(event.getBank());
+        deleteForm.show();
+        deleteFormDialog.open();
+    }
+
+    private void openCreditDeleteDialog(CreditGridLayout.DeleteEvent event) {
+        deleteForm.setCredit(event.getCredit());
+        deleteForm.show();
+        deleteFormDialog.open();
+    }
+
+    private void openClientDeleteDialog(ClientGridLayout.DeleteEvent event) {
+        deleteForm.setClient(event.getClient());
+        deleteForm.show();
+        deleteFormDialog.open();
+    }
+
+    private void openCreditOfferDeleteDialog(CreditOfferGridLayout.DeleteEvent event) {
+        deleteForm.setCreditOffer(event.getCreditOffer());
+        deleteForm.show();
+        deleteFormDialog.open();
+    }
+
+    private void closeDeleteForm(DeleteForm.CloseEvent t) {
+        deleteFormDialog.close();
     }
 
 
