@@ -111,7 +111,7 @@ Interest Rate(IR) - месячная процентная ставка (расс
 
 Interest Period(IP) - процентные периоды до окончания срока кредита (в месяцах); 
 
-### Core Possibilities
+## Core Possibilities
 #### Creating
 * Client by clicking "Create new client" button on main page
 * Bank by clicking "Create new bank" button on main page
