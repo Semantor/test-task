@@ -1,20 +1,16 @@
 package com.haulmont.testtask.backend.impls;
 
-import com.haulmont.testtask.App;
 import com.haulmont.testtask.Config;
-import com.haulmont.testtask.TestConfig;
+import com.haulmont.testtask.TestConfigForNonJpa;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,15 +18,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
-@ContextConfiguration(classes = {TestConfig.class, App.class, Config.class})
+@SpringBootTest(classes = {Config.class, TestConfigForNonJpa.class})
 class ClientSaverWithExceptionImplTest {
-    @MockBean
+    @Autowired
     private ClientRepository clientRepository;
     @MockBean
     private ClientFieldsValidator clientFieldsValidator;
-
     @Autowired
     private ClientSaverWithExceptionImpl clientSaver;
 

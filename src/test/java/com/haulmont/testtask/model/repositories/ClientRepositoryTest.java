@@ -2,7 +2,7 @@ package com.haulmont.testtask.model.repositories;
 
 import com.haulmont.testtask.App;
 import com.haulmont.testtask.Config;
-import com.haulmont.testtask.TestConfig;
+import com.haulmont.testtask.TestConfigForNonJpa;
 import com.haulmont.testtask.model.entity.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,15 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.awt.print.Pageable;
 import java.util.List;
-import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-@ContextConfiguration(classes = {TestConfig.class, App.class, Config.class})
+@ContextConfiguration(classes = App.class)
 class ClientRepositoryTest {
 
     @Autowired

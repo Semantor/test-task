@@ -2,9 +2,8 @@ package com.haulmont.testtask.model.repositories;
 
 import com.haulmont.testtask.App;
 import com.haulmont.testtask.Config;
-import com.haulmont.testtask.TestConfig;
+import com.haulmont.testtask.TestConfigForNonJpa;
 import com.haulmont.testtask.model.entity.Credit;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-@ContextConfiguration(classes = {TestConfig.class, App.class, Config.class})
+@ContextConfiguration(classes = App.class)
 class CreditRepositoryTest {
     @Autowired
     private CreditRepository creditRepository;
