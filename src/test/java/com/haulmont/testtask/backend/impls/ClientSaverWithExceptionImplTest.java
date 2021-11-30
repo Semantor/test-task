@@ -49,7 +49,7 @@ class ClientSaverWithExceptionImplTest {
 
     @Test
     void saveWithNullUUID() {
-        Mockito.when(input.getClientId()).then(null);
+        Mockito.when(input.getClientId()).thenReturn(null);
         Mockito.when(input.getLastName()).then(invocationOnMock -> client.getLastName());
         Mockito.when(input.getFirstName()).then(invocationOnMock -> client.getFirstName());
         Mockito.when(input.getPatronymic()).then(invocationOnMock -> client.getPatronymic());
@@ -83,7 +83,7 @@ class ClientSaverWithExceptionImplTest {
         UUID uuid = client.getClientId();
         Mockito.when(input.getClientId()).then(invocationOnMock -> uuid);
         Mockito.when(input.getLastName()).then(invocationOnMock -> client.getLastName());
-        Mockito.when(input.getFirstName()).then(invocationOnMock -> null);
+        Mockito.when(input.getFirstName()).thenReturn(null);
         Mockito.when(input.getPatronymic()).then(invocationOnMock -> client.getPatronymic());
         Mockito.when(input.getEmail()).then(invocationOnMock -> client.getEmail());
         Mockito.when(input.getPhoneNumber()).then(invocationOnMock -> client.getPhoneNumber());

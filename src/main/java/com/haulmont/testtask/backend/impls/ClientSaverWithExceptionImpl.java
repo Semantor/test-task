@@ -1,7 +1,7 @@
 package com.haulmont.testtask.backend.impls;
 
-import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
+import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.model.entity.Client;
@@ -22,24 +22,36 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
 
     @Override
     public void save(Client client) throws CreateClientException {
-        if (client==null) throw new CreateClientException("nullabe client");
+        if (client == null) throw new CreateClientException("nullabe client");
         if (client.getClientId() == null) throw new CreateClientException(CreateClientException.EMPTY_UUID);
         if (clientRepository.findById(client.getClientId()).isPresent())
             throw new CreateClientException(CreateClientException.UUID_IS_ALREADY_USED);
+
         if (validator.isNullOrBlank(client.getLastName()))
             throw new CreateClientException(CreateClientException.EMPTY_LASTNAME);
+        if (client.getLastName().length() < 3)
+            throw new CreateClientException(CreateClientException.TOO_SHORT_LASTNAME);
+        if (!client.getLastName().matches("[a-zA-z]+"))
+            throw new CreateClientException(CreateClientException.LASTNAME_INCORRECT_SYMBOLS);
+
         if (validator.isNullOrBlank(client.getFirstName()))
             throw new CreateClientException(CreateClientException.EMPTY_NAME);
+        if (client.getFirstName().length()<3)
+            throw new CreateClientException(CreateClientException.TOO_SHORT_NAME);
+        if (!client.getFirstName().matches("[a-zA-z]+"))
+            throw new CreateClientException(CreateClientException.NAME_INCORRECT_SYMBOLS);
+
         if (!clientFieldsValidator.validatePhone(client.getPhoneNumber()))
             throw new CreateClientException(CreateClientException.NO_VALID_PHONE);
         if (!clientFieldsValidator.validateEmail(client.getEmail()))
             throw new CreateClientException(CreateClientException.NO_VALID_EMAIL);
         if (!clientFieldsValidator.validatePassport(client.getPassport()))
             throw new CreateClientException(CreateClientException.NO_VALID_PASSPORT);
+
         log.info("trying to save client : " + client);
         try {
             clientRepository.save(client);
-        } catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             throw new CreateClientException(ex.getMessage());
         }
     }
