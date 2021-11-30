@@ -6,7 +6,6 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.CreditOfferRemover;
-import com.haulmont.testtask.backend.CreditOfferValidator;
 import com.haulmont.testtask.backend.excs.CreditOfferDeleteException;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.entity.Payment;
@@ -36,7 +35,8 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
         for (Payment payment : creditOffer.getPayments()) {
             if (payment.getDate().compareTo(now) < 0) isExistsEarlier = true;
             if (payment.getDate().compareTo(now) > 0) isExistsLater = true;
-            if (isExistsEarlier&&isExistsLater) throw new CreditOfferDeleteException("payment period is already start and doesn't end");
+            if (isExistsEarlier && isExistsLater)
+                throw new CreditOfferDeleteException("payment period is already start and doesn't end");
         }
 
         paymentRepository.deleteAll(creditOffer.getPayments());

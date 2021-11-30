@@ -12,7 +12,6 @@ Build and Run
 
 1. Run in the command line:
     ```
-    mvn package
     mvn spring-boot:run
     ```
 
