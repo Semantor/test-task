@@ -6,11 +6,12 @@ Prerequisites
 
 * [Java Development Kit (JDK) 11](https://libericajdk.ru/pages/downloads/#/java-11-lts)
 * [Maven 3](https://maven.apache.org/download.cgi)
+* [NPM](https://www.npmjs.com/)
 
 Build and Run
 -------------
 
-1. Run in the command line:
+1. Run in the command line in source folder:
     ```
     mvn spring-boot:run
     ```
