@@ -140,20 +140,3 @@ This credit offer automatically connect to corresponding client.
 * Payment can be deleted by canceled connecting credit offer.
 
 REMOVED, UNUSED and CANCELED are hidden from general lists. Some unique fields like email or phone cant be used ever.
-
-### Keep in mind
-```
-Комментрование
-Тесты
-Логгирование
-Интеграционные
-
-```
-
-### Wishlist
-```markdown
-dto for binder setter methods
-entity state
-validate incoming date from DatePicker
-Spring Projection
-```
