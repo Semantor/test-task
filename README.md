@@ -27,7 +27,6 @@ Stack
 5. [HSQLDB](http://hsqldb.org/doc/2.0/guide/running-chapt.html#rgc_inprocess)
 6. Lombok
 7. jakarta.validation/hibernate validation
-8. SonarQube
 
 ### Функционал
 1. Авторизация
