@@ -16,13 +16,11 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import static com.haulmont.testtask.view.Constant.creditLimitFormat;
 import static com.haulmont.testtask.view.Constant.creditRateFormat;
 
 public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanBeClosed, HasEvent {
-
 
 
     private final Grid<Credit> grid = new Grid<>();
@@ -55,7 +53,7 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
     private void tuneGrid() {
         grid.addColumn(Credit::getCreditId).setHeader("UUID");
 
-        Grid.Column<Credit> bank_uuid = grid.addColumn((ValueProvider<Credit, UUID>) credit -> credit.getBank().getBankId()).setHeader("Bank UUID").setWidth("40px");
+        Grid.Column<Credit> bankName = grid.addColumn((ValueProvider<Credit, String>) credit -> credit.getBank().getName()).setHeader("Bank Name").setWidth("40px");
 
         Grid.Column<Credit> creditLimit = grid.addColumn(new NumberRenderer<>(Credit::getCreditLimit, creditLimitFormat,
                 Locale.US, "$ 0.00")).setHeader("Credit limit");
@@ -71,7 +69,7 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
         });
 
         List<GridSortOrder<Credit>> bankSort = new GridSortOrderBuilder<Credit>()
-                .thenDesc(bank_uuid).build();
+                .thenDesc(bankName).build();
         List<GridSortOrder<Credit>> rateSort = new GridSortOrderBuilder<Credit>().thenDesc(creditRate).build();
         List<GridSortOrder<Credit>> limitSort = new GridSortOrderBuilder<Credit>().thenDesc(creditLimit).build();
         grid.sort(bankSort);

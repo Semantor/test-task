@@ -305,6 +305,7 @@ public class MainScreen extends VerticalLayout {
     }
 
     private void openCreateBankFormDialog() {
+        createBankForm.show();
         createBankFormDialog.open();
     }
 

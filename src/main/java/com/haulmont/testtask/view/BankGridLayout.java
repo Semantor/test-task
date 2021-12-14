@@ -38,6 +38,7 @@ public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeU
 
     private void tuneGrid() {
         grid.addColumn(Bank::getBankId).setHeader("UUID");
+        grid.addColumn(Bank::getName).setHeader("name");
         grid.setDetailsVisibleOnClick(true);
         grid.addComponentColumn(bank -> {
             Button delete = new Button();

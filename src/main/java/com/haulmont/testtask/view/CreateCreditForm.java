@@ -72,7 +72,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     private void tuneFields() {
         bankComboBox.setLabel("bank");
-        bankComboBox.setItemLabelGenerator(Bank::toString);
+        bankComboBox.setItemLabelGenerator(Bank::toField);
 
         creditLimitField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
         creditLimitField.setLabel("credit limit");
