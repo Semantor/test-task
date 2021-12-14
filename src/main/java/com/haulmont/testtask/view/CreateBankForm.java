@@ -1,41 +1,43 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.BankSaver;
+import com.haulmont.testtask.backend.excs.CreateBankException;
 import com.haulmont.testtask.model.entity.Bank;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import static com.haulmont.testtask.view.Constant.*;
 
 @Slf4j
 public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeSaved {
     private final BankSaver bankSaver;
+    private final BankFieldAvailabilityChecker bankFieldAvailabilityChecker;
 
-    private final ComboBox<UUID> uuidComboBox = new ComboBox<>();
+    private final TextField nameField = new TextField("enter name");
 
     private final Label infoLabel = new Label();
 
     private final Button save = new Button();
     private final Button close = new Button();
 
-    public CreateBankForm(BankSaver bankSaver) {
+    public CreateBankForm(BankSaver bankSaver, BankFieldAvailabilityChecker bankFieldAvailabilityChecker) {
         this.bankSaver = bankSaver;
+        this.bankFieldAvailabilityChecker = bankFieldAvailabilityChecker;
         setupFields();
-        add(new H3("Create new Bank"), uuidComboBox, createButtons());
+        add(new H3("Create new Bank"), nameField, createButtons());
     }
 
     private void setupFields() {
-        uuidComboBox.setLabel("choose one uuid");
-        uuidComboBox.setItems(generateUUID());
+        nameField.setAutofocus(true);
     }
 
     private HorizontalLayout createButtons() {
@@ -46,11 +48,29 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
 
     @Override
     public void validateAndSave() {
-        String s = "trying to save new Bank with id: " + uuidComboBox.getValue();
+        String nameFieldValue = nameField.getValue();
+        if (!bankFieldAvailabilityChecker.isAvailableName(nameFieldValue)) {
+            String response = "this name: `" + nameFieldValue+"` already in used";
+            log.info(response);
+            Notification.show(response, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            nameField.setInvalid(true);
+            return;
+        }
+        nameField.setInvalid(false);
+        String s = "trying to save new Bank with id: " + nameFieldValue;
         log.info(s);
         infoLabel.setText(s);
-        bankSaver.save(Bank.builder().bankId(uuidComboBox.getValue()).build());
-
+        Notification.show(s,NOTIFICATION_DURATION,DEFAULT_POSITION);
+        try {
+            bankSaver.save(Bank.builder().name(nameField.getValue()).build());
+        } catch (CreateBankException ex) {
+            log.info(ex.getMessage());
+            infoLabel.setText(ex.getMessage());
+            Notification.show(ex.getMessage(), NOTIFICATION_DURATION, DEFAULT_POSITION);
+        }
+        s = "successfully save bank";
+        infoLabel.setText(s);
+        Notification.show(s,NOTIFICATION_DURATION,DEFAULT_POSITION);
     }
 
     @Override
@@ -69,17 +89,9 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
         }
     }
 
-    private List<UUID> generateUUID() {
-        List<UUID> uuidList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            uuidList.add(UUID.randomUUID());
-        }
-        return uuidList;
-    }
-
     @Override
     public void show() {
-        this.uuidComboBox.setItems(generateUUID());
+        nameField.setValue("");
     }
 
     @Override
