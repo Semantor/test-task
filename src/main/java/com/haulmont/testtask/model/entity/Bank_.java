@@ -11,4 +11,5 @@ import java.util.UUID;
 public class Bank_ {
     public static volatile SingularAttribute<Bank, UUID> bankId;
     public static volatile SetAttribute<Bank, Credit> credits;
+    public static volatile SingularAttribute<Bank,String> name;
 }

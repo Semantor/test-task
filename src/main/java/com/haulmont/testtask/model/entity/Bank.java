@@ -10,17 +10,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Table(name = "banks")
-public class Bank implements Removable{
+@Setter(AccessLevel.PROTECTED)
+@ToString
+public class Bank implements Removable {
     @Id
-    @Setter(AccessLevel.PROTECTED)
     @Column(name = "bank_id")
     private UUID bankId = UUID.randomUUID();
 
+    @Column(name = "bank_name")
+    private String name;
+
     @Transient
     @Setter
+    @ToString.Exclude
     private Set<Client> clients;
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ToString.Exclude
     private Set<Credit> credits;
 
     @Override
@@ -32,9 +38,10 @@ public class Bank implements Removable{
 
         return bankId.equals(bank.bankId);
     }
+
     @Builder
-    public Bank(UUID bankId) {
-        this.bankId = bankId;
+    public Bank(String name) {
+        this.name = name;
     }
 
     @Override
@@ -42,10 +49,8 @@ public class Bank implements Removable{
         return bankId.hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "Bank{" +
-                "uuid=" + bankId +
-                '}';
+
+    public String toField() {
+        return "Bank(name=" + this.getName() + ")";
     }
 }
