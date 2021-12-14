@@ -19,4 +19,6 @@ public interface BankRepository extends JpaRepository<Bank, UUID>, BankClientsRe
 
     @Override
     Optional<Bank> findById(UUID uuid);
+
+    List<Bank> findByName(String name);
 }
