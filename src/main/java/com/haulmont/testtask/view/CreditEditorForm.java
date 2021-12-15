@@ -27,6 +27,7 @@ public class CreditEditorForm extends CreateCreditForm {
     }
 
     void fillField() {
+        getBankComboBox().setItems(updatedCredit.getBank());
         getBankComboBox().setValue(updatedCredit.getBank());
         getCreditLimitField().setValue(updatedCredit.getCreditLimit());
         getCreditRateField().setValue(updatedCredit.getCreditRate());
