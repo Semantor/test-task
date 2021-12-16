@@ -12,11 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@ToString
 @Table(name = "credits")
 public class Credit implements Removable {
     @Id
-    @ToString.Exclude
     @Setter(AccessLevel.PROTECTED)
     @Column(name = "credit_id")
     private UUID creditId = UUID.randomUUID();
@@ -34,7 +32,8 @@ public class Credit implements Removable {
     @Column(precision = 4, scale = 2, nullable = false)
     private BigDecimal creditRate;
 
-    @OneToMany(mappedBy = "credit",cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY) @Getter(AccessLevel.PROTECTED)@ToString.Exclude
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Getter(AccessLevel.PROTECTED)
     private List<CreditOffer> creditOffers;
 
     @Builder
@@ -68,7 +67,14 @@ public class Credit implements Removable {
         return toField();
     }
 
-    public void unused(){
+    public void unused() {
         isUnused = true;
+    }
+
+    public String toStringForClient() {
+        return "Credit: \n" +
+                "bank: " + bank.getName() + "\n" +
+                "credit limit: " + creditLimit + "\n" +
+                "credit rate: " + creditRate;
     }
 }

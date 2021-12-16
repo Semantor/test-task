@@ -129,13 +129,13 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     public void validateAndSave() {
         if (binder.writeBeanIfValid(credit)) {
-            String msg1 = "trying to save credit: " + credit;
-            log.info(msg1);
-            Notification.show(msg1, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            String msg1 = "trying to save credit: ";
+            log.info(msg1 + credit.toString());
+            Notification.show(msg1 + credit.toStringForClient(), NOTIFICATION_DURATION, DEFAULT_POSITION);
             creditSaver.save(credit);
-            String msg2 = "Successfully saved credit: " + credit;
-            log.info(msg2);
-            Notification.show(msg2, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            String msg2 = "Successfully saved credit: ";
+            log.info(msg2 + credit.toString());
+            Notification.show(msg2 + credit.toStringForClient(), NOTIFICATION_DURATION, DEFAULT_POSITION);
             close();
             clear();
         }
