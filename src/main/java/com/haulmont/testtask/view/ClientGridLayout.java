@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 
 @Slf4j
@@ -31,12 +32,18 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
     private final CreditOfferGridLayout creditOfferGridLayout;
     private final Grid<Client> clientGrid = new Grid<>();
 
+    private boolean isFinal = false;
 
     @PostConstruct
     private void init() {
+        setDefaultPaginationOptions();
+    }
+
+    private void setDefaultPaginationOptions() {
         currentPage = 0;
         currentPageSize = DEFAULT_PAGE_SIZE;
         currentSort = DEFAULT_SORT_COLUMN;
+        isFinal = false;
     }
 
     public ClientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout, Integer DEFAULT_PAGE_SIZE, String DEFAULT_SORT_COLUMN) {
@@ -91,7 +98,8 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
      * open first tuple of client with default filter options.
      */
     public void update() {
-        clientGrid.setItems(clientProvider.getClients(DEFAULT_PAGE_SIZE, 0, DEFAULT_SORT_COLUMN));
+        setDefaultPaginationOptions();
+        clientGrid.setItems(clientProvider.getClients(currentPageSize, currentPage, currentSort));
     }
 
     /**
@@ -99,7 +107,14 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
      * doesnt do anything if current page is final page.
      */
     public void nextPage() {
-        clientGrid.setItems(clientProvider.getClients(currentPageSize, ++currentPage, currentSort));
+        if (isFinal) return;
+        List<Client> clients = clientProvider.getClients(currentPageSize, currentPage + 1, currentSort);
+        if (clients.isEmpty()) {
+            isFinal = true;
+            return;
+        }
+        currentPage++;
+        clientGrid.setItems(clients);
     }
 
     /**
@@ -109,6 +124,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
     public void previousPage() {
         if (currentPage == 0) return;
         clientGrid.setItems(clientProvider.getClients(currentPageSize, --currentPage, currentSort));
+        isFinal = false;
     }
 
     public void sort(String sortColumn) {
