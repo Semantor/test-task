@@ -53,9 +53,9 @@ public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, C
         grid.setHeightFull();
         grid.setItems(Collections.emptyList());
 
-        grid.addColumn((ValueProvider<CreditOffer, UUID>) creditOffer ->
-                        creditOffer.getCredit().getBank().getBankId())
-                .setHeader("bank uuid");
+        grid.addColumn((ValueProvider<CreditOffer, String>) creditOffer ->
+                        creditOffer.getCredit().getBank().getName())
+                .setHeader("bank name");
 
         grid.addColumn(new NumberRenderer<>(creditOffer -> creditOffer.getCredit().getCreditLimit(), creditLimitFormat,
                         Locale.US, "$ 0.00"))
