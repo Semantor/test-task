@@ -43,7 +43,10 @@ public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeU
             Button delete = new Button();
             delete.setText(Constant.DELETE_TEXT_BUTTON);
             delete.addThemeVariants(Constant.DELETE_STYLE);
-            delete.addClickListener(event -> fireEvent(new BankGridLayout.DeleteEvent(this, bank)));
+            delete.addClickListener(event -> {
+                fireEvent(new BankGridLayout.CloseEvent(this));
+                fireEvent(new BankGridLayout.DeleteEvent(this, bank));
+            });
             return delete;
         });
         grid.setItemDetailsRenderer(
