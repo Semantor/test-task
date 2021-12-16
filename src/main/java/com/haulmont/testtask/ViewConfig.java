@@ -60,8 +60,8 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    CreateBankForm createBankForm(BankSaver bankSaver) {
-        return new CreateBankForm(bankSaver);
+    CreateBankForm createBankForm(BankSaver bankSaver,BankFieldAvailabilityChecker bankFieldAvailabilityChecker) {
+        return new CreateBankForm(bankSaver, bankFieldAvailabilityChecker);
     }
 
     @Bean
