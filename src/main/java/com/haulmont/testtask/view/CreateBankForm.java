@@ -63,14 +63,17 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
         Notification.show(s,NOTIFICATION_DURATION,DEFAULT_POSITION);
         try {
             bankSaver.save(Bank.builder().name(nameField.getValue()).build());
+            s = "successfully save bank";
+            infoLabel.setText(s);
+            Notification.show(s,NOTIFICATION_DURATION,DEFAULT_POSITION);
+
+            close();
         } catch (CreateBankException ex) {
             log.info(ex.getMessage());
             infoLabel.setText(ex.getMessage());
             Notification.show(ex.getMessage(), NOTIFICATION_DURATION, DEFAULT_POSITION);
         }
-        s = "successfully save bank";
-        infoLabel.setText(s);
-        Notification.show(s,NOTIFICATION_DURATION,DEFAULT_POSITION);
+
     }
 
     @Override
