@@ -67,6 +67,13 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
             delete.addClickListener(event -> fireEvent(new CreditGridLayout.DeleteEvent(this, credit)));
             return delete;
         });
+        grid.addComponentColumn(credit -> {
+            Button edit = new Button();
+            edit.setText(Constant.EDIT_TEXT_BUTTON);
+            edit.addThemeVariants(Constant.DELETE_STYLE);
+            edit.addClickListener(event -> fireEvent(new CreditGridLayout.EditEvent(this, credit)));
+            return edit;
+        });
 
         List<GridSortOrder<Credit>> bankSort = new GridSortOrderBuilder<Credit>()
                 .thenDesc(bankName).build();

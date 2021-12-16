@@ -221,7 +221,14 @@ public class MainScreen extends VerticalLayout {
 
         clientGridLayout.addEventListener(ClientGridLayout.EditEvent.class, this::openClientEditorForm);
         clientEditorForm.addEventListener(ClientEditorForm.CloseEvent.class, this::closeClientEditorForm);
+        creditGridLayout.addEventListener(CreditGridLayout.EditEvent.class, this::openCreditEditForm);
         creditEditorForm.addEventListener(CreditEditorForm.CloseEvent.class, this::closeCreditEditorForm);
+    }
+
+    private void openCreditEditForm(CreditGridLayout.EditEvent event) {
+        creditEditorForm.setUpdatedCredit(event.getCredit());
+        creditEditorForm.show();
+        creditEditorFormDialog.open();
     }
 
     private void updateClientGridLayout(DeleteForm.UpdateEvent t) {
