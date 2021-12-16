@@ -34,9 +34,9 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     private static final String WRONG_CREDIT_LIMIT_MESSAGE = "wrong credit limit value";
     private static final String WRONG_CREDIT_RATE_MESSAGE = "wrong credit rate value";
 
-    private final BankProvider bankProvider;
-    private final CreditSaver creditSaver;
-    private final Validator validator;
+    protected final BankProvider bankProvider;
+    protected final CreditSaver creditSaver;
+    protected final Validator validator;
 
     private Credit credit;
 
@@ -64,10 +64,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     }
 
     public void show() {
-        creditLimitField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
-        creditRateField.setValue(BigDecimal.TEN);
-        credit = Credit.builder().build();
-        bankComboBox.setItems(bankProvider.getAllBanks());
+        clear();
     }
 
     private void tuneFields() {
@@ -168,5 +165,13 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     @Override
     public Button getClearButton() {
         return clear;
+    }
+
+    /**
+     * signal a message in notification and logger
+     */
+    protected void horn(String msg){
+        Notification.show(msg, Constant.NOTIFICATION_DURATION, Constant.DEFAULT_POSITION);
+        log.info(msg);
     }
 }
