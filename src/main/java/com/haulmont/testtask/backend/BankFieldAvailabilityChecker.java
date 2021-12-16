@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * check for availability field value
  * return false if this value already in used or incorrect
+ * using for real time computing in client form validation
  */
 public interface BankFieldAvailabilityChecker {
     boolean isAvailableName(@NotNull String bankName);
