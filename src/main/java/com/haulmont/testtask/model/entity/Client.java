@@ -71,6 +71,10 @@ public class Client implements Removable {
         return clientId.equals(client.clientId);
     }
 
+    public String getStringPassport(){
+        return passport.substring(0,4) + " / " + passport.substring(4);
+    }
+
     @Override
     public int hashCode() {
         return clientId.hashCode();
@@ -82,5 +86,13 @@ public class Client implements Removable {
 
     public void remove() {
         isRemoved = true;
+    }
+
+    @Override
+    public String toDeleteString() {
+        return lastName + " " + firstName + "\n" +
+                "phone: "+ phoneNumber +"\n"+
+                "email: " + email + "\n" +
+                "passport: "+ getStringPassport();
     }
 }
