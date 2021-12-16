@@ -51,8 +51,6 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
     }
 
     private void tuneGrid() {
-        grid.addColumn(Credit::getCreditId).setHeader("UUID");
-
         Grid.Column<Credit> bankName = grid.addColumn((ValueProvider<Credit, String>) credit -> credit.getBank().getName()).setHeader("Bank Name").setWidth("40px");
 
         Grid.Column<Credit> creditLimit = grid.addColumn(new NumberRenderer<>(Credit::getCreditLimit, creditLimitFormat,
