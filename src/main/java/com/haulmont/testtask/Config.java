@@ -125,6 +125,10 @@ public class Config {
                                           PaymentRepository paymentRepository) {
         return new CreditOfferRemoverImpl(creditOfferRepository, paymentRepository);
     }
+    @Bean
+    BankFieldAvailabilityChecker bankFieldAvailabilityChecker(BankRepository bankRepository) {
+        return new BankFieldAvailabilityCheckerImpl(bankRepository);
+    }
 
     @Bean
     CreditEditService creditEditService(CreditRepository creditRepository) {
