@@ -211,9 +211,8 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         try {
             if (client.getPatronymic() == null) client.setPatronymic("");
             clientSaver.save(client);
-            String msg = "Saved bean values: " + client;
-            Notification.show(msg, NOTIFICATION_DURATION, DEFAULT_POSITION);
-            log.info(msg);
+            Notification.show("Saved bean values: " + client.toStringWithoutId(), NOTIFICATION_DURATION, DEFAULT_POSITION);
+            log.info("Saved bean values: " + client.toString());
             close();
             clear();
         } catch (CreateClientException ex) {

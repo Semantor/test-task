@@ -14,7 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@ToString
 @Table(name = "clients")
 public class Client implements Removable {
     @Id
@@ -22,7 +21,8 @@ public class Client implements Removable {
     @Column(name = "client_id")
     private UUID clientId = UUID.randomUUID();
 
-    @Column(name = "is_removed")@Setter(AccessLevel.PROTECTED)
+    @Column(name = "is_removed")
+    @Setter(AccessLevel.PROTECTED)
     private boolean isRemoved = false;
 
     private String firstName;
@@ -46,7 +46,6 @@ public class Client implements Removable {
     private String passport;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    @ToString.Exclude
     private List<CreditOffer> creditOffers;
 
     @Builder
@@ -71,8 +70,8 @@ public class Client implements Removable {
         return clientId.equals(client.clientId);
     }
 
-    public String getStringPassport(){
-        return passport.substring(0,4) + " / " + passport.substring(4);
+    public String getStringPassport() {
+        return passport.substring(0, 4) + " / " + passport.substring(4);
     }
 
     @Override
@@ -90,9 +89,17 @@ public class Client implements Removable {
 
     @Override
     public String toDeleteString() {
-        return lastName + " " + firstName + "\n" +
-                "phone: "+ phoneNumber +"\n"+
+        return toStringWithoutId();
+    }
+
+    public String toStringWithoutId() {
+        return lastName + " " + firstName + " " + patronymic + "\n" +
+                "phone: " + phoneNumber + "\n" +
                 "email: " + email + "\n" +
-                "passport: "+ getStringPassport();
+                "passport: " + getStringPassport();
+    }
+
+    public String toString() {
+        return "Client(clientId=" + this.getClientId() + ", isRemoved=" + this.isRemoved() + ", firstName=" + this.getFirstName() + ", lastName=" + this.getLastName() + ", patronymic=" + this.getPatronymic() + ", phoneNumber=" + this.getPhoneNumber() + ", email=" + this.getEmail() + ", passport=" + this.getPassport() + ")";
     }
 }
