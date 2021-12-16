@@ -9,8 +9,6 @@ import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -22,16 +20,15 @@ public class CreditSaverImpl implements CreditSaver {
 
     @Override
     public void save(@Nullable Credit credit) {
-        if (credit==null) return;
-        if (credit.getCreditId()==null) return;
+        if (credit == null) return;
+        if (credit.getCreditId() == null) return;
         if (!validator.validateCreditAmount(credit.getCreditLimit())) return;
         if (!validator.validateCreditRate(credit.getCreditRate())) return;
-        Optional<Bank> bank;
-        if (credit.getBank()==null || credit.getBank().getBankId()==null ||
-                (bank = bankRepository.findById(credit.getBank().getBankId())).isEmpty())
+        if (credit.getBank() == null || credit.getBank().getBankId() == null) return;
+        Optional<Bank> bank = bankRepository.findById(credit.getBank().getBankId());
+        if (bank.isEmpty())
             return;
         credit.setBank(bank.get());
-
         creditRepository.save(credit);
     }
 }
