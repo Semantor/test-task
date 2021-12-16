@@ -5,14 +5,10 @@ import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class CreditProviderImpl implements CreditProvider {
