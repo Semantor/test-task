@@ -79,7 +79,10 @@ public class CreditOffer implements Removable{
 
     @Override
     public String toDeleteString() {
-        return "CreditOffer(client=" + this.client.getClientId() + ", credit=" + this.getCredit() + ", creditAmount=" + this.getCreditAmount() + ", monthCount=" + this.getMonthCount() + ")";
+        return "CreditOffer:" +
+                "\nClient: " + client.toStringWithoutId() +
+                "\n" + this.getCredit().toStringForClient() +
+                "\ncredit amount=" + this.getCreditAmount() + ", month count=" + this.getMonthCount();
     }
 
     public void cancel(){
