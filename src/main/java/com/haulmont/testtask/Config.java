@@ -126,5 +126,9 @@ public class Config {
         return new CreditOfferRemoverImpl(creditOfferRepository, paymentRepository);
     }
 
+    @Bean
+    CreditEditService creditEditService(CreditRepository creditRepository) {
+        return new CreditEditServiceImpl(creditRepository);
+    }
 
 }
