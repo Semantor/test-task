@@ -1,7 +1,6 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.ClientProvider;
-import com.haulmont.testtask.backend.ClientRemover;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
@@ -29,7 +28,7 @@ public class ClientProviderNonRemovedImpl implements ClientProvider {
     @Override
     public List<Client> getClients(int pageSize, int pageNumber, @NotNull String sort) {
         if (pageSize < 1 || pageNumber < 0) return Collections.emptyList();
-        return clientRepository.findByIsRemoved(false, PageRequest.of(pageNumber,pageSize, Sort.by(sort))).toList();
+        return clientRepository.findByIsRemoved(false, PageRequest.of(pageNumber, pageSize, Sort.by(sort))).toList();
     }
 
     @Override
