@@ -53,4 +53,9 @@ public class Bank implements Removable {
     public String toField() {
         return "Bank(name=" + this.getName() + ")";
     }
+
+    @Override
+    public String toDeleteString() {
+        return toField();
+    }
 }
