@@ -60,7 +60,12 @@ public class Credit implements Removable {
     }
 
     public String toField() {
-        return "Bank{" + bank.getBankId() + "} $" + creditLimit + "/" + creditRate + "%";
+        return "Credit: bank=" + bank.getName().toUpperCase() + " $" + creditLimit + "/" + creditRate + "%";
+    }
+
+    @Override
+    public String toDeleteString() {
+        return toField();
     }
 
     public void unused(){
