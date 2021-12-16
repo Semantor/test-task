@@ -62,14 +62,20 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
             Button delete = new Button();
             delete.setText(Constant.DELETE_TEXT_BUTTON);
             delete.addThemeVariants(Constant.DELETE_STYLE);
-            delete.addClickListener(event -> fireEvent(new CreditGridLayout.DeleteEvent(this, credit)));
+            delete.addClickListener(event -> {
+                fireEvent(new CreditGridLayout.CloseEvent(this));
+                fireEvent(new CreditGridLayout.DeleteEvent(this, credit));
+            });
             return delete;
         });
         grid.addComponentColumn(credit -> {
             Button edit = new Button();
             edit.setText(Constant.EDIT_TEXT_BUTTON);
             edit.addThemeVariants(Constant.DELETE_STYLE);
-            edit.addClickListener(event -> fireEvent(new CreditGridLayout.EditEvent(this, credit)));
+            edit.addClickListener(event -> {
+                fireEvent(new CreditGridLayout.CloseEvent(this));
+                fireEvent(new CreditGridLayout.EditEvent(this, credit));
+            });
             return edit;
         });
 
