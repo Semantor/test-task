@@ -97,8 +97,9 @@ public class ViewConfig {
     @Scope("prototype")
     CreditEditorForm creditEditorForm(BankProvider bankProvider,
                                       CreditSaver creditSaver,
-                                      Validator validator) {
-        return new CreditEditorForm(bankProvider, creditSaver, validator);
+                                      Validator validator,
+                                      CreditEditService creditEditService) {
+        return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService);
     }
 
 }
