@@ -12,6 +12,8 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextAreaVariant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,9 +22,9 @@ public class DeleteForm extends VerticalLayout implements CanBeShown, CanBeClose
     private final Button close = new Button();
     @Getter
     private final Button accept = new Button();
-    private final H2 h2label = new H2();
     @Getter
     private final Div objectDiv = new Div();
+    private final TextArea entityDescription = new TextArea();
     private Remover remover;
     private final BankRemover bankRemover;
     private final CreditRemover creditRemover;
@@ -36,8 +38,11 @@ public class DeleteForm extends VerticalLayout implements CanBeShown, CanBeClose
         this.clientRemover = clientRemover;
         this.creditOfferRemover = creditOfferRemover;
         this.creditRemover = creditRemover;
-        h2label.setText(Constant.DELETE_TEXT);
-        add(h2label, objectDiv, createButtons());
+        entityDescription.setEnabled(false);
+        entityDescription.setMinWidth("600px");
+        entityDescription.addThemeVariants(TextAreaVariant.LUMO_ALIGN_CENTER);
+        objectDiv.add(entityDescription);
+        add(new H2(Constant.DELETE_TEXT), objectDiv, createButtons());
     }
 
     private HorizontalLayout createButtons() {
@@ -101,7 +106,8 @@ public class DeleteForm extends VerticalLayout implements CanBeShown, CanBeClose
      */
     @Override
     public void show() {
-        objectDiv.setText(removable.toDeleteString());
+        entityDescription.setValue(removable.toDeleteString());
+        objectDiv.setTitle(removable.toDeleteString());
     }
 
     @Override
@@ -115,7 +121,7 @@ public class DeleteForm extends VerticalLayout implements CanBeShown, CanBeClose
         }
     }
 
-    public static class UpdateEvent extends ComponentEvent<DeleteForm>{
+    public static class UpdateEvent extends ComponentEvent<DeleteForm> {
         public UpdateEvent(DeleteForm source) {
             super(source, false);
         }

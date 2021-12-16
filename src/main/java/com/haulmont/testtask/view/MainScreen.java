@@ -189,7 +189,7 @@ public class MainScreen extends VerticalLayout {
         paymentGridDialog.setCloseOnOutsideClick(true);
 
         deleteFormDialog.add(deleteForm);
-        deleteFormDialog.setWidth("50%");
+        deleteFormDialog.setWidth("40%");
         deleteFormDialog.setCloseOnEsc(true);
         deleteFormDialog.setCloseOnOutsideClick(true);
 
