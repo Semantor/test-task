@@ -122,24 +122,30 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     @Override
     public void validateAndSave() {
         LocalDate firstPaymentDate = paymentGridLayout.getPayments().get(0).getDate();
-        CreditOffer build = CreditOffer.builder()
+        CreditOffer builtCreditOffer = CreditOffer.builder()
                 .client(client)
                 .credit(creditOffer.getCredit())
                 .creditAmount(creditOffer.getCreditAmount())
                 .monthCount(creditOffer.getMonthCount())
                 .build();
-        List<Payment> calculate = paymentCalculator.calculate(build.getCredit(), build, build.getMonthCount(), build.getCreditAmount(), firstPaymentDate);
-        build.setPayments(calculate);
-        try {
-            creditOfferCreator.save(build);
-            String msg = "successfully save new credit offer";
-            log.info(msg + ": " + build);
+        List<Payment> calculatingPayment = paymentCalculator.calculate(builtCreditOffer.getCredit(), builtCreditOffer, builtCreditOffer.getMonthCount(), builtCreditOffer.getCreditAmount(), firstPaymentDate);
+        if (calculatingPayment.isEmpty()) {
+            String msg = "wrong incoming data";
+            log.info(msg + ": " + builtCreditOffer);
             Notification.show(msg, NOTIFICATION_DURATION, DEFAULT_POSITION);
-            close();
+        }
+
+        builtCreditOffer.setPayments(calculatingPayment);
+        try {
+            creditOfferCreator.save(builtCreditOffer);
+            String msg = "successfully save new credit offer";
+            log.info(msg + ": " + builtCreditOffer);
+            Notification.show(msg, NOTIFICATION_DURATION, DEFAULT_POSITION);
             clear();
+            close();
         } catch (CreateCreditOfferException ex) {
             Notification.show(ex.getMessage(), NOTIFICATION_DURATION, DEFAULT_POSITION);
-            log.warn(ex.getMessage() + build);
+            log.warn(ex.getMessage() + builtCreditOffer);
         }
     }
 
