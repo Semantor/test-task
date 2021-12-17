@@ -2,6 +2,7 @@ package com.haulmont.testtask.model.entity;
 
 
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -79,6 +80,11 @@ public class CreditOffer implements Removable{
 
     @Override
     public String toDeleteString() {
+        return toStringForClient();
+    }
+
+    @NotNull
+    private String toStringForClient() {
         return "CreditOffer:" +
                 "\nClient: " + client.toStringWithoutId() +
                 "\n" + this.getCredit().toStringForClient() +

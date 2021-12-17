@@ -3,6 +3,8 @@ package com.haulmont.testtask.backend;
 import com.haulmont.testtask.Config;
 import com.haulmont.testtask.TestConfigForNonJpa;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -18,35 +20,22 @@ class ValidatorTest {
     @Autowired
     private Validator validator;
 
+    @ParameterizedTest
+    @ValueSource(strings = {"", "   ", "asdfasdf"})
+    void validateStringUUIDAndReturnNullOrUUID(String validatingString) {
+        assertNull(validator.validateStringUUIDAndReturnNullOrUUID(validatingString));
+    }
+
     @Test
     void validateUUIDWithNullInput() {
-        String input = null;
-        assertNull(validator.validateUUID(input));
-    }
-
-    @Test
-    void validateUUIDWithEmptyInput() {
-        String input = "";
-        assertNull(validator.validateUUID(input));
-    }
-
-    @Test
-    void validateUUIDWithBlankInput() {
-        String input = "   ";
-        assertNull(validator.validateUUID(input));
-    }
-
-    @Test
-    void validateUUIDWithRandomStringInput() {
-        String input = "  asdefasd ";
-        assertNull(validator.validateUUID(input));
+        assertNull(validator.validateStringUUIDAndReturnNullOrUUID(null));
     }
 
     @Test
     void validateUUIDWithCorrectInput() {
         String input = "c9457c4d-d778-4ef4-abd8-917212cddb75";
         UUID expected = UUID.fromString("c9457c4d-d778-4ef4-abd8-917212cddb75");
-        assertEquals(expected, validator.validateUUID(input));
+        assertEquals(expected, validator.validateStringUUIDAndReturnNullOrUUID(input));
     }
 
 
