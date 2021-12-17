@@ -13,5 +13,5 @@ public interface CreditProvider {
     /**
      * validate UUID
      */
-    Optional<Credit> getCredit(@Nullable String uuid);
+    Optional<Credit> getCredit(@Nullable String uuidString);
 }

@@ -36,8 +36,8 @@ public class ClientSaverImpl implements ClientSaver {
 
 
     @Override
-    public void save(String uuid, Client client) {
-        UUID uuid1 = validator.validateUUID(uuid);
+    public void save(String uuidString, Client client) {
+        UUID uuid1 = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid1 == null) return;
 
         Optional<Client> byId = clientRepository.findById(uuid1);

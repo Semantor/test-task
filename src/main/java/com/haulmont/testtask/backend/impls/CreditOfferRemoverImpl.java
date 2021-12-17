@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 @AllArgsConstructor
 @Transactional
@@ -41,6 +42,7 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
 
         paymentRepository.deleteAll(creditOffer.getPayments());
         creditOffer.cancel();
+        creditOffer.setPayments(Collections.emptyList());
         creditOfferRepository.save(creditOffer);
         return true;
     }

@@ -19,10 +19,11 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
     private final ClientFieldsValidator clientFieldsValidator;
     private final ClientRepository clientRepository;
     private final Validator validator;
+    private static final String ONLY_LETTER_REG_EX = "[a-zA-Z]+";
 
     @Override
     public void save(Client client) throws CreateClientException {
-        if (client == null) throw new CreateClientException("nullabe client");
+        if (client == null) throw new CreateClientException("nullable client");
         if (client.getClientId() == null) throw new CreateClientException(CreateClientException.EMPTY_UUID);
         if (clientRepository.findById(client.getClientId()).isPresent())
             throw new CreateClientException(CreateClientException.UUID_IS_ALREADY_USED);
@@ -31,14 +32,14 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
             throw new CreateClientException(CreateClientException.EMPTY_LASTNAME);
         if (client.getLastName().length() < 3)
             throw new CreateClientException(CreateClientException.TOO_SHORT_LASTNAME);
-        if (!client.getLastName().matches("[a-zA-z]+"))
+        if (!client.getLastName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(CreateClientException.LASTNAME_INCORRECT_SYMBOLS);
 
         if (validator.isNullOrBlank(client.getFirstName()))
             throw new CreateClientException(CreateClientException.EMPTY_NAME);
         if (client.getFirstName().length()<3)
             throw new CreateClientException(CreateClientException.TOO_SHORT_NAME);
-        if (!client.getFirstName().matches("[a-zA-z]+"))
+        if (!client.getFirstName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(CreateClientException.NAME_INCORRECT_SYMBOLS);
 
         if (!clientFieldsValidator.validatePhone(client.getPhoneNumber()))
@@ -57,11 +58,11 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
     }
 
     @Override
-    public void save(String uuid, Client client) {
-        UUID uuid1 = validator.validateUUID(uuid);
-        if (uuid1 == null) throw new CreateClientException(CreateClientException.WRONG_UUID);
+    public void save(String uuidString, Client client) {
+        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        if (uuid == null) throw new CreateClientException(CreateClientException.WRONG_UUID);
 
-        Optional<Client> byId = clientRepository.findById(uuid1);
+        Optional<Client> byId = clientRepository.findById(uuid);
         if (byId.isEmpty()) throw new CreateClientException(CreateClientException.DOES_NOT_PRESENT);
         Client persistClient = byId.get();
         if (!validator.isNullOrBlank(client.getFirstName()))

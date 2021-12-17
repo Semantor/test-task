@@ -35,5 +35,5 @@ public interface ClientProvider {
      * trying to return client by client id
      * validate uuid
      */
-    Optional<Client> getClient(@Nullable String uuid);
+    Optional<Client> getClient(@Nullable String uuidString);
 }

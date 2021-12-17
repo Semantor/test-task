@@ -30,5 +30,5 @@ public interface ClientSaver {
      * {@link ClientFieldsValidator#validatePassport(String)} to validate
      * This method can not to change fields to null value.
      */
-    void save(String uuid, Client client);
+    void save(String uuidString, Client client);
 }

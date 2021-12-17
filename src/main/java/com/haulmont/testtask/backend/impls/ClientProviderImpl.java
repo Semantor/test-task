@@ -36,9 +36,9 @@ public class ClientProviderImpl implements ClientProvider {
     }
 
     @Override
-    public Optional<Client> getClient(@Nullable String uuid) {
-        UUID uuid1 = validator.validateUUID(uuid);
-        if (uuid1 == null) return Optional.empty();
-        return clientRepository.findById(uuid1);
+    public Optional<Client> getClient(@Nullable String uuidString) {
+        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        if (uuid == null) return Optional.empty();
+        return clientRepository.findById(uuid);
     }
 }

@@ -12,7 +12,7 @@ public interface BankProvider {
      * Provide bank buy its id from database.
      * validating incoming param
      */
-    Optional<Bank> getBank(@Nullable String UUID);
+    Optional<Bank> getBank(@Nullable String uuidString);
 
     /**
      * @return all banks list or {@link Collections#emptyList()} due to some problem

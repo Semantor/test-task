@@ -22,10 +22,10 @@ public class CreditProviderNonUnusedImpl implements CreditProvider {
     }
 
     @Override
-    public Optional<Credit> getCredit(@Nullable String uuid) {
-        UUID uuid1 = validator.validateUUID(uuid);
-        if (uuid1 == null) return Optional.empty();
-        Optional<Credit> byId = creditRepository.findById(uuid1);
+    public Optional<Credit> getCredit(@Nullable String uuidString) {
+        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        if (uuid == null) return Optional.empty();
+        Optional<Credit> byId = creditRepository.findById(uuid);
         if (byId.isEmpty() || byId.get().isUnused()) return Optional.empty();
         return byId;
     }

@@ -19,10 +19,10 @@ public class BankProviderImpl implements BankProvider {
     private final Validator validator;
 
     @Override
-    public Optional<Bank> getBank(String uuid) {
-        UUID uuid1 = validator.validateUUID(uuid);
-        if (uuid1 == null) return Optional.empty();
-        return bankRepository.findById(uuid1);
+    public Optional<Bank> getBank(String uuidString) {
+        UUID bankUUID = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        if (bankUUID == null) return Optional.empty();
+        return bankRepository.findById(bankUUID);
     }
 
     @Override

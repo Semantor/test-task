@@ -23,8 +23,8 @@ public class CreditProviderImpl implements CreditProvider {
 
 
     @Override
-    public Optional<Credit> getCredit(String uuid) {
-        UUID id = validator.validateUUID(uuid);
+    public Optional<Credit> getCredit(String uuidString) {
+        UUID id = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (id == null) return Optional.empty();
         return creditRepository.findById(id);
     }

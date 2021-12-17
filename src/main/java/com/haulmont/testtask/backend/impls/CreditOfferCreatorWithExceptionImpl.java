@@ -36,13 +36,50 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void save(@NotNull CreditOffer creditOffer) {
+        checkCreditOfferForCorrectnessClient(creditOffer);
+        checkCreditOfferForCorrectnessCredit(creditOffer);
+
+        if (creditOffer.getMonthCount() < 1) throw new CreateCreditOfferException("not valid month count");
+        if (creditOffer.getPayments() == null || creditOffer.getPayments().isEmpty())
+            throw new CreateCreditOfferException("empty payment list");
+
+        checkCreditOfferThatPaymentsHasCorrectCreditOffer(creditOffer);
+
+        checkCreditOfferForCorrectnessPayments(creditOffer);
+
+        log.info("save new credit offer: " + creditOffer);
+        List<Payment> payment = creditOffer.getPayments();
+        creditOffer.setPayments(Collections.emptyList());
+        creditOfferRepository.save(creditOffer);
+        creditOffer.setPayments(payment);
+        paymentRepository.saveAll(creditOffer.getPayments());
+    }
+
+    private void checkCreditOfferThatPaymentsHasCorrectCreditOffer(@NotNull CreditOffer creditOffer) {
+        boolean isAllPaymentsHasCorrectCreditOffer = false;
+        for (Payment payment : creditOffer.getPayments()) {
+            if (!payment.getCreditOffer().equals(creditOffer)) {
+                isAllPaymentsHasCorrectCreditOffer = true;
+                break;
+            }
+        }
+
+        if (isAllPaymentsHasCorrectCreditOffer) {
+            log.warn("payments is not connected to credit offer");
+            throw new CreateCreditOfferException("payments is not connected to credit offer");
+        }
+    }
+
+    private void checkCreditOfferForCorrectnessClient(@NotNull CreditOffer creditOffer) {
         if (creditOffer.getCreditOfferId() == null)
             throw new CreateCreditOfferException("credit offer has empty id ");
         if (creditOffer.getClient() == null || creditOffer.getClient().getClientId() == null)
             throw new CreateCreditOfferException("unidentified client");
         Optional<Client> clientOpt = clientRepository.findById(creditOffer.getClient().getClientId());
         if (clientOpt.isEmpty()) throw new CreateCreditOfferException("this client does not present in db ");
-        creditOffer.setClient(clientOpt.get());
+    }
+
+    private void checkCreditOfferForCorrectnessCredit(@NotNull CreditOffer creditOffer) {
         if (creditOffer.getCredit() == null || creditOffer.getCredit().getCreditId() == null)
             throw new CreateCreditOfferException("unidentified credit");
         Optional<Credit> creditOpt = creditRepository.findById(creditOffer.getCredit().getCreditId());
@@ -50,22 +87,9 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
         if (creditOffer.getCreditAmount() == null ||
                 !validator.validateCreditAmount(creditOffer.getCreditAmount(), creditOpt.get().getCreditLimit()))
             throw new CreateCreditOfferException("not valid credit amount");
-        creditOffer.setCredit(creditOpt.get());
-        if (creditOffer.getMonthCount() < 1) throw new CreateCreditOfferException("not valid month count");
-        if (creditOffer.getPayments() == null || creditOffer.getPayments().isEmpty())
-            throw new CreateCreditOfferException("empty payment list");
-        boolean b = false;
-        for (Payment payment : creditOffer.getPayments()) {
-            if (!payment.getCreditOffer().equals(creditOffer)) {
-                b = true;
-                break;
-            }
-        }
-        if (b) {
-            log.warn("payments is not connected to credit offer");
-            throw new CreateCreditOfferException("payments is not connected to credit offer");
-        }
+    }
 
+    private void checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
         List<Payment> calculatePayments = paymentCalculator
                 .calculate(creditOffer.getCredit(), creditOffer, creditOffer.getMonthCount(),
                         creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate());
@@ -87,13 +111,5 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
                 throw new CreateCreditOfferException("wrong payments percent part: must be:" + calculatePayments.get(i).getPercentPart() + ", but found:" +
                         creditOffer.getPayments().get(i).getPercentPart());
         }
-
-        log.info("save new credit offer: " + creditOffer);
-        List<Payment> payment = creditOffer.getPayments();
-        creditOffer.setPayments(Collections.emptyList());
-        creditOfferRepository.save(creditOffer);
-        creditOffer.setPayments(payment);
-        paymentRepository.saveAll(creditOffer.getPayments());
-        System.out.println(creditOffer.toSql());
     }
 }

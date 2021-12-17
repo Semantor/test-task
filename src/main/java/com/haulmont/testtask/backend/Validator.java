@@ -11,17 +11,18 @@ import java.util.UUID;
 public class Validator {
     /**
      * check for null, empty and correct
+     * @return UUID or null on fail validation
      */
-    public @Nullable UUID validateUUID(String uuid) {
-        if (uuid == null || uuid.isBlank()) {
-            log.warn("incoming empty UUID :" + uuid);
+    public @Nullable UUID validateStringUUIDAndReturnNullOrUUID(String uuidString) {
+        if (uuidString == null) {
+            log.warn("Nullable UUID" );
             return null;
         }
         UUID fromString;
         try {
-            fromString = UUID.fromString(uuid);
+            fromString = UUID.fromString(uuidString);
         } catch (IllegalArgumentException ex) {
-            log.warn("wrong UUID: " + uuid);
+            log.warn("wrong UUID: " + uuidString);
             return null;
         }
         return fromString;
