@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -63,7 +64,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
         clientGrid.addColumn(Client::getFirstName).setHeader("name");
         clientGrid.addColumn(Client::getPatronymic).setHeader("patronymic");
         clientGrid.addColumn(Client::getPhoneNumber).setHeader("phone");
-        clientGrid.addColumn(Client::getEmail).setHeader("email");
+        clientGrid.addColumn(Client::getEmail).setHeader("email").setWidth("10%");
         clientGrid.addColumn((ValueProvider<Client, String>) client -> client.getPassport().substring(0, 4) + " / " + client.getPassport().substring(4)).setHeader("passport");
         clientGrid.addComponentColumn(client -> {
             Button addNewCreditOfferButton = new Button();
