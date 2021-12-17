@@ -203,25 +203,29 @@ public class MainScreen extends VerticalLayout {
     }
 
     private void setupEventListener() {
-        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.CreateEvent.class, this::openCreateCreditOfferDialog);
+        clientGridLayout.addEventListener(ClientGridLayout.EditEvent.class, this::openClientEditorForm);
+        clientGridLayout.addEventListener(ClientGridLayout.DeleteEvent.class, this::openClientDeleteDialog);
+        clientGridLayout.addEventListener(CreditOfferGridLayout.CreateEvent.class, this::openCreateCreditOfferDialog);
+
+        bankGridLayout.addEventListener(BankGridLayout.CloseEvent.class, this::closeBankGridLayoutDialog);
+        bankGridLayout.addEventListener(BankGridLayout.DeleteEvent.class, this::openBankDeleteDialog);
+
+        creditGridLayout.addEventListener(CreditGridLayout.EditEvent.class, this::openCreditEditForm);
+        creditGridLayout.addEventListener(CreditGridLayout.CloseEvent.class, this::closeCreditGridLayout);
+        creditGridLayout.addEventListener(CreditGridLayout.DeleteEvent.class, this::openCreditDeleteDialog);
+
+        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DeleteEvent.class, this::openCreditOfferDeleteDialog);
+        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DetailsEvent.class, this::openCreditOfferPaymentDialog);
+
         createBankForm.addEventListener(CreateBankForm.CloseEvent.class, this::closeCreateBankFormDialog);
         createClientForm.addEventListener(CreateClientForm.CloseEvent.class, this::closeCreateClientFormDialog);
         createCreditForm.addEventListener(CreateCreditForm.CloseEvent.class, this::closeCreateCreditFormDialog);
         createCreditOfferForm.addEventListener(CreateCreditOfferForm.CloseEvent.class, this::closeCreateCreditOfferDialog);
-        bankGridLayout.addEventListener(BankGridLayout.CloseEvent.class, this::closeBankGridLayoutDialog);
-        creditGridLayout.addEventListener(CreditGridLayout.CloseEvent.class, this::closeCreditGridLayout);
-        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DetailsEvent.class, this::openCreditOfferPaymentDialog);
 
         deleteForm.addEventListener(DeleteForm.CloseEvent.class, this::closeDeleteForm);
         deleteForm.addEventListener(DeleteForm.UpdateEvent.class, this::updateClientGridLayout);
-        creditOfferGridLayout.addEventListener(CreditOfferGridLayout.DeleteEvent.class, this::openCreditOfferDeleteDialog);
-        clientGridLayout.addEventListener(ClientGridLayout.DeleteEvent.class, this::openClientDeleteDialog);
-        creditGridLayout.addEventListener(CreditGridLayout.DeleteEvent.class, this::openCreditDeleteDialog);
-        bankGridLayout.addEventListener(BankGridLayout.DeleteEvent.class, this::openBankDeleteDialog);
 
-        clientGridLayout.addEventListener(ClientGridLayout.EditEvent.class, this::openClientEditorForm);
         clientEditorForm.addEventListener(ClientEditorForm.CloseEvent.class, this::closeClientEditorForm);
-        creditGridLayout.addEventListener(CreditGridLayout.EditEvent.class, this::openCreditEditForm);
         creditEditorForm.addEventListener(CreditEditorForm.CloseEvent.class, this::closeCreditEditorForm);
     }
 

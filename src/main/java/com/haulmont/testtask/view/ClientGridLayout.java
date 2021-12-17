@@ -66,6 +66,17 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
         clientGrid.addColumn(Client::getEmail).setHeader("email");
         clientGrid.addColumn((ValueProvider<Client, String>) client -> client.getPassport().substring(0, 4) + " / " + client.getPassport().substring(4)).setHeader("passport");
         clientGrid.addComponentColumn(client -> {
+            Button addNewCreditOfferButton = new Button();
+            addNewCreditOfferButton.setText("add credit offer");
+            addNewCreditOfferButton.setIcon(VaadinIcon.PLUS.create());
+            addNewCreditOfferButton.addClickListener(event -> {
+                fireEvent(new CreditOfferGridLayout.CreateEvent(creditOfferGridLayout, client));
+                clientGrid.setDetailsVisible(client, false);
+            });
+            return addNewCreditOfferButton;
+        }).setWidth("10%");
+
+        clientGrid.addComponentColumn(client -> {
             Button editButton = new Button();
             editButton.setText(Constant.EDIT_TEXT_BUTTON);
             editButton.addThemeVariants(Constant.EDIT_STYLE);

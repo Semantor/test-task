@@ -9,9 +9,6 @@ import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -31,7 +28,6 @@ public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, C
     private final CreditOfferProviderByClient creditOfferProviderByClient;
 
     private final Grid<CreditOffer> grid = new Grid<>();
-    private final Button createNewCreditOfferButton = new Button("create new credit offer");
     @Setter
     @Getter
     private Client client;
@@ -39,15 +35,9 @@ public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, C
     public CreditOfferGridLayout(CreditOfferProviderByClient creditOfferProviderByClient) {
         this.creditOfferProviderByClient = creditOfferProviderByClient;
         tuneGrid();
-        add(tuneTopButtons(), grid);
+        add(grid);
     }
 
-    private HorizontalLayout tuneTopButtons() {
-        createNewCreditOfferButton.setIcon(new Icon(VaadinIcon.PLUS));
-        createNewCreditOfferButton.addClickListener(event ->
-                fireEvent(new CreditOfferGridLayout.CreateEvent(this, client)));
-        return new HorizontalLayout(createNewCreditOfferButton);
-    }
 
     private void tuneGrid() {
         grid.setHeightFull();
