@@ -50,7 +50,7 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
         BigDecimal overprice = monthlyPayment.multiply(monthCount).subtract(amount).divide(monthCount, 2, RoundingMode.HALF_UP);
         BigDecimal main = monthlyPayment.subtract(overprice).setScale(2, RoundingMode.HALF_UP);
         List<Payment> result = new ArrayList<>(month);
-        for (int i = 1; i < month+1; i++) {
+        for (int i = 1; i < month + 1; i++) {
             LocalDate paymentDate = dateOfReceiving.plus(i, ChronoUnit.MONTHS);
             result.add(Payment.builder()
                     .date(paymentDate)
