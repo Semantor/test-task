@@ -216,7 +216,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
         month.setRequired(true);
         month.setHelperText("you can enter your own number");
 
-        datePicker.setLabel("First payment date");
+        datePicker.setLabel("Date of receiving credit");
     }
 
     private void tuneBinder() {

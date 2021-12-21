@@ -13,20 +13,20 @@ import java.util.List;
  */
 public interface PaymentCalculator {
     /**
-     * on default credit offer are null and first payment date are the day of creature
+     * on default credit offer are null and date of receiving is the day of creature
      */
     List<Payment> calculate(Credit credit, int month, BigDecimal amount);
 
     /**
      * on default credit offer are null
      */
-    List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate firstPaymentDate);
+    List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate dateOfReceiving);
 
     /**
-     * on default first payment date are the day of creature
+     * on default date of receiving is the day of creature
      */
     List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount);
 
-    List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount, LocalDate firstPaymentDate);
+    List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount, LocalDate dateOfReceiving);
 
 }

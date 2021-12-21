@@ -28,8 +28,8 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
     }
 
     @Override
-    public List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate firstPaymentDate) {
-        return calculate(credit, null, month, amount, firstPaymentDate);
+    public List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate dateOfReceiving) {
+        return calculate(credit, null, month, amount, dateOfReceiving);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
     }
 
     @Override
-    public List<Payment> calculate(final Credit credit, final CreditOffer creditOffer, int month, final BigDecimal amount, final LocalDate firstPaymentDate) {
+    public List<Payment> calculate(final Credit credit, final CreditOffer creditOffer, int month, final BigDecimal amount, final LocalDate dateOfReceiving) {
         if (!validator.validateCreditAmount(credit.getCreditLimit()) && !validator.validateCreditRate(credit.getCreditRate()))
             return Collections.emptyList();
         if (!validator.validateCreditAmount(amount)) return Collections.emptyList();
@@ -50,8 +50,8 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
         BigDecimal overprice = monthlyPayment.multiply(monthCount).subtract(amount).divide(monthCount, 2, RoundingMode.HALF_UP);
         BigDecimal main = monthlyPayment.subtract(overprice).setScale(2, RoundingMode.HALF_UP);
         List<Payment> result = new ArrayList<>(month);
-        for (int i = 0; i < month; i++) {
-            LocalDate paymentDate = firstPaymentDate.plus(i, ChronoUnit.MONTHS);
+        for (int i = 1; i < month+1; i++) {
+            LocalDate paymentDate = dateOfReceiving.plus(i, ChronoUnit.MONTHS);
             result.add(Payment.builder()
                     .date(paymentDate)
                     .amount(monthlyPayment)
