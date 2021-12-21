@@ -15,17 +15,23 @@ public interface PaymentCalculator {
     /**
      * on default credit offer are null and date of receiving is the day of creature
      */
-    List<Payment> calculate(Credit credit, int month, BigDecimal amount);
+    default List<Payment> calculate(Credit credit, int month, BigDecimal amount) {
+        return calculate(credit, month, amount, LocalDate.now());
+    }
 
     /**
      * on default credit offer are null
      */
-    List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate dateOfReceiving);
+    default List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate dateOfReceiving) {
+        return calculate(credit, null, month, amount, dateOfReceiving);
+    }
 
     /**
      * on default date of receiving is the day of creature
      */
-    List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount);
+    default List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount) {
+        return calculate(credit, creditOffer, month, amount, LocalDate.now());
+    }
 
     List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount, LocalDate dateOfReceiving);
 

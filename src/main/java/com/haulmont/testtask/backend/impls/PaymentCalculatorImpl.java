@@ -23,21 +23,6 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
     private final Validator validator;
 
     @Override
-    public List<Payment> calculate(Credit credit, int month, BigDecimal amount) {
-        return calculate(credit, month, amount, LocalDate.now());
-    }
-
-    @Override
-    public List<Payment> calculate(Credit credit, int month, BigDecimal amount, LocalDate dateOfReceiving) {
-        return calculate(credit, null, month, amount, dateOfReceiving);
-    }
-
-    @Override
-    public List<Payment> calculate(Credit credit, CreditOffer creditOffer, int month, BigDecimal amount) {
-        return calculate(credit, creditOffer, month, amount, LocalDate.now());
-    }
-
-    @Override
     public List<Payment> calculate(final Credit credit, final CreditOffer creditOffer, int month, final BigDecimal amount, final LocalDate dateOfReceiving) {
         if (!validator.validateCreditAmount(credit.getCreditLimit()) && !validator.validateCreditRate(credit.getCreditRate()))
             return Collections.emptyList();
