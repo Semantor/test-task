@@ -39,7 +39,7 @@ public class Config {
 
     @Bean
     AnnuityCreditCalculator annuityCreditCalculator() {
-        return new AnnuityCreditCalculatorImpl();
+        return new AnnuityCreditCalculatorWithRootFormulaImpl();
     }
 
     @Bean
@@ -101,8 +101,10 @@ public class Config {
 
     @Bean
     PaymentCalculator paymentCalculator(AnnuityCreditCalculator annuityCreditCalculator,
-                                        Validator validator) {
-        return new PaymentCalculatorImpl(annuityCreditCalculator, validator);
+                                        Validator validator,
+                                        PercentPartInCreditCalculator percentPartInCreditCalculator) {
+        return new PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod(annuityCreditCalculator,
+                validator, percentPartInCreditCalculator);
     }
 
     @Bean
@@ -135,4 +137,13 @@ public class Config {
         return new CreditEditServiceImpl(creditRepository);
     }
 
+    @Bean
+    PartOfYearCalculator partOfYearCalculator() {
+        return new PartOfYearCalculatorImpl();
+    }
+
+    @Bean
+    PercentPartInCreditCalculator percentPartInCreditCalculator(PartOfYearCalculator partOfYearCalculator) {
+        return new PercentPartInCreditCalculatorImpl(partOfYearCalculator);
+    }
 }
