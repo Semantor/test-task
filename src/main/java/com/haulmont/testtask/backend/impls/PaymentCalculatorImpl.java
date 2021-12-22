@@ -29,8 +29,7 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
         if (!validator.validateCreditAmount(amount)) return Collections.emptyList();
         if (month < 1) return Collections.emptyList();
         BigDecimal monthCount = new BigDecimal(month);
-        BigDecimal interestRate = credit.getCreditRate().divide(new BigDecimal(100 * 12), 4, RoundingMode.HALF_UP);
-        BigDecimal monthlyPayment = annuityCreditCalculator.calculateMonthlyPayment(amount, interestRate, month);
+        BigDecimal monthlyPayment = annuityCreditCalculator.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
 
         BigDecimal overprice = monthlyPayment.multiply(monthCount).subtract(amount).divide(monthCount, 2, RoundingMode.HALF_UP);
         BigDecimal main = monthlyPayment.subtract(overprice).setScale(2, RoundingMode.HALF_UP);

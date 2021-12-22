@@ -10,9 +10,9 @@ public interface AnnuityCreditCalculator {
      * interest rate must be more than 0, interest period must be more than 0.
      *
      * @param creditAmount   amount of credit
-     * @param interestRate   monthly interest rate {@code loan rate / (100 *12)}
+     * @param yearCreditRateInPercent   credit rate per year
      * @param interestPeriod interest periods until the end of the loan
      * @return monthly payment
      */
-    BigDecimal calculateMonthlyPayment(BigDecimal creditAmount, BigDecimal interestRate, int interestPeriod);
+    BigDecimal calculateMonthlyPayment(BigDecimal creditAmount, BigDecimal yearCreditRateInPercent, int interestPeriod);
 }

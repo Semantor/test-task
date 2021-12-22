@@ -7,7 +7,8 @@ import java.math.RoundingMode;
 
 public class AnnuityCreditCalculatorImpl implements AnnuityCreditCalculator {
     @Override
-    public BigDecimal calculateMonthlyPayment(BigDecimal creditAmount, BigDecimal interestRate, int interestPeriod) {
+    public BigDecimal calculateMonthlyPayment(BigDecimal creditAmount, BigDecimal yearCreditRateInPercent, int interestPeriod) {
+        BigDecimal interestRate = yearCreditRateInPercent.divide(new BigDecimal(100 * 12), 4, RoundingMode.HALF_UP);
         BigDecimal plus = interestRate.add(BigDecimal.ONE);
         BigDecimal divide0 = BigDecimal.ONE.divide(plus, 4, RoundingMode.HALF_UP);
         BigDecimal pow = divide0.pow(interestPeriod);
