@@ -24,7 +24,7 @@ public class PartOfYearCalculatorImpl implements PartOfYearCalculator {
 
         double partOfThePassedYear = whatPartOfYearIsPeriod(isLeapPassedYear, periodLengthInPassedYear);
         double partOfNewYear = whatPartOfYearIsPeriod(isLeapNewYear, dayOfYearOnPaymentDate);
-        
+
         return partOfThePassedYear + partOfNewYear;
     }
 
