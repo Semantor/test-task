@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.excs.CreateClientException;
@@ -8,6 +9,7 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.BindingValidationStatus;
@@ -62,15 +65,16 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
     private final Label infoLabel = new Label();
 
 
-    final Binder<Client> binder = new Binder<>(Client.class);
+    final Binder<Client> binder = new BeanValidationBinder<>(Client.class);
 
     private final Button save = new Button();
     private final Button clear = new Button();
     private final Button close = new Button();
 
-    public CreateClientForm(ClientFieldsValidator clientFieldsValidator, ClientSaver clientSaver) {
+    public CreateClientForm(ClientFieldsValidator clientFieldsValidator, ClientSaver clientSaver, ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
         this.clientFieldsValidator = clientFieldsValidator;
         this.clientSaver = clientSaver;
+        this.clientFieldAvailabilityChecker = clientFieldAvailabilityChecker;
         tuneBinder();
         HorizontalLayout buttons = createButtons();
         tuneFields();
@@ -127,7 +131,8 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         passportSeriesField.setMax(9999);
         passportSeriesField.setRequiredIndicatorVisible(true);
         passportSeriesField.addValueChangeListener(event -> passportField.setValue(
-                Integer.toString(event.getValue()) + passportNumberField.getValue()
+                (event.getValue() == null ? "" : Integer.toString(event.getValue()))
+                        + passportNumberField.getValue()
         ));
 
         passportNumberField.setLabel("passport number");
@@ -136,9 +141,9 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         passportNumberField.setMin(100000);
         passportNumberField.setRequiredIndicatorVisible(true);
         passportNumberField.addValueChangeListener(event -> passportField.setValue(
-                passportSeriesField.getValue() + Integer.toString(event.getValue())
+                passportSeriesField.getValue()
+                        + (event.getValue() == null ? "" : Integer.toString(event.getValue()))
         ));
-
 
         passportField.setVisible(false);
     }
@@ -155,43 +160,52 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                         .replace("\\s", "")
                         .replace("\\d", "")
                 );
+        final String mustBeLetterError = "You can use only letter symbols";
+        final String mustBeMinimumThreeSymbols = "Must be minimum three symbols";
 
         binder.forField(nameField)
                 .withNullRepresentation("")
-                .withValidator(mustBeNotBlank, "This must be filled")
-                .withValidator(mustBeLetter, "You can use only letter symbols")
-                .withValidator(new StringLengthValidator("enter your name", 3, null))
+                .withValidator(mustBeNotBlank, "Name is required field")
+                .withValidator(mustBeLetter, mustBeLetterError)
+                .withValidator(new StringLengthValidator(mustBeMinimumThreeSymbols, 3, null))
                 .bind(Client::getFirstName, Client::setFirstName);
 
         binder.forField(lastNameField)
                 .withNullRepresentation("")
-                .withValidator(mustBeNotBlank, "This must be filled")
-                .withValidator(mustBeLetter, "You can use only letter symbols")
-                .withValidator(new StringLengthValidator("enter your last name", 3, null))
+                .withValidator(mustBeNotBlank, "Last name is required field")
+                .withValidator(mustBeLetter, mustBeLetterError)
+                .withValidator(new StringLengthValidator(mustBeMinimumThreeSymbols, 3, null))
                 .bind(Client::getLastName, Client::setLastName);
 
         binder.forField(patronymicField)
                 .withNullRepresentation("")
-                .withValidator(mustBeLetterForPatronymic, "You can use only letter symbols")
+                .withValidator(mustBeLetterForPatronymic, mustBeLetterError)
                 .bind(Client::getPatronymic, Client::setPatronymic);
 
         binder.forField(phoneNumberField)
                 .withNullRepresentation("")
-                .withValidator((SerializablePredicate<String>) clientFieldsValidator::validatePhone, "not valid number")
+                .withValidator(mustBeNotBlank, "Phone is required field")
+                .withValidator((SerializablePredicate<String>) clientFieldsValidator::validatePhone, "not valid number, must be 10 digits starting with 9")
+                .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailablePhone, "this phone is already in use")
                 .bind(Client::getPhoneNumber, Client::setPhoneNumber);
 
         binder.forField(emailField)
                 .withNullRepresentation("")
-                .withValidator(mustBeNotBlank, "This must be filled")
+                .withValidator(mustBeNotBlank, "Email is required field")
                 .withValidator(new EmailValidator("Incorrect email address"))
+                .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailableEmail,
+                        "this email is already in use")
                 .bind(Client::getEmail, Client::setEmail);
 
         binder.forField(passportField)
                 .withNullRepresentation("")
+                .withValidator(mustBeNotBlank, "Passport is required field")
+                .withValidator((SerializablePredicate<? super String>) s -> s.length() == 10, "must be 10 digits length")
                 .withValidator(
                         (SerializablePredicate<String>) s -> s != null && s.equals(s.replaceAll("\\D", "")),
                         "Must be only digits in passport series and passport number.")
-                .withValidator((SerializablePredicate<? super String>) s -> s.length() == 10, "must be 10 digits length")
+                .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailablePassport,
+                        "this passport already in use")
                 .bind(Client::getPassport, Client::setPassport);
 
     }
@@ -204,7 +218,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                     .stream().filter(BindingValidationStatus::isError)
                     .map(BindingValidationStatus::getMessage)
                     .map(Optional::get).distinct()
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining(". "));
             infoLabel.setText("There are errors: " + errorText);
             return;
         }
