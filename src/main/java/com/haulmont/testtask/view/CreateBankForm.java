@@ -49,6 +49,13 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
     @Override
     public void validateAndSave() {
         String nameFieldValue = nameField.getValue();
+        if (nameFieldValue == null || nameFieldValue.isBlank()) {
+            String response = "Name can not be empty";
+            log.info("attempt to save bank is null or empty field");
+            Notification.show(response, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            nameField.setInvalid(true);
+            return;
+        }
         if (!bankFieldAvailabilityChecker.isAvailableName(nameFieldValue)) {
             String response = "this name: `" + nameFieldValue+"` already in used";
             log.info(response);
