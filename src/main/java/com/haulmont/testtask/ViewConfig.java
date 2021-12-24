@@ -34,8 +34,10 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    CreateClientForm createClientForm(ClientFieldsValidator clientFieldsValidator, ClientSaver clientSaver) {
-        return new CreateClientForm(clientFieldsValidator, clientSaver);
+    CreateClientForm createClientForm(ClientFieldsValidator clientFieldsValidator,
+                                      ClientSaver clientSaver,
+                                      ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
+        return new CreateClientForm(clientFieldsValidator, clientSaver, clientFieldAvailabilityChecker);
     }
 
     @Bean
@@ -89,8 +91,9 @@ public class ViewConfig {
     @Bean
     @Scope("prototype")
     ClientEditorForm clientEditorForm(ClientFieldsValidator clientFieldsValidator,
-                                      ClientSaver clientSaver) {
-        return new ClientEditorForm(clientFieldsValidator, clientSaver);
+                                      ClientSaver clientSaver,
+                                      ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
+        return new ClientEditorForm(clientFieldsValidator, clientSaver,clientFieldAvailabilityChecker);
     }
 
     @Bean
