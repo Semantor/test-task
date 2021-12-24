@@ -155,8 +155,8 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     }
 
     private void calculate() {
-        LocalDate value = datePicker.getValue();
-        if (value.compareTo(LocalDate.now()) < 0) {
+        LocalDate dateOfReceiving = datePicker.getValue();
+        if (dateOfReceiving.isBefore(LocalDate.now())) {
             infoLabel.setText("wrong date is picked");
             Notification.show("wrong date is picked", NOTIFICATION_DURATION, DEFAULT_POSITION);
             return;
@@ -167,7 +167,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
             save.setVisible(true);
             clear.setVisible(true);
             paymentGridLayout.setPayments(paymentCalculator.calculate(creditOffer.getCredit(),
-                    creditOffer.getMonthCount(), creditOffer.getCreditAmount(), value));
+                    creditOffer.getMonthCount(), creditOffer.getCreditAmount(), dateOfReceiving));
 
             paymentGridLayout.show();
         } catch (ValidationException ex) {
