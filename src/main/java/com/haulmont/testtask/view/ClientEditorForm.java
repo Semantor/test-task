@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.excs.CreateClientException;
@@ -13,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientEditorForm extends CreateClientForm {
 
     @Setter
-    private Client updatingClient;
-    private final ClientSaver clientSaver;
+    private transient Client updatingClient;
+    private final transient ClientSaver clientSaver;
 
-    public ClientEditorForm(ClientFieldsValidator clientFieldsValidator, ClientSaver clientSaver) {
-        super(clientFieldsValidator, clientSaver);
+    public ClientEditorForm(ClientFieldsValidator clientFieldsValidator,
+                            ClientSaver clientSaver,
+                            ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
+        super(clientFieldsValidator, clientSaver, clientFieldAvailabilityChecker);
         this.clientSaver = clientSaver;
         getClearButton().setVisible(false);
         tuneImmutableFields();
