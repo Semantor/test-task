@@ -100,8 +100,6 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         tuneSaveButton();
         tuneClearButton();
         tuneCloseButton();
-        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
-        save.setEnabled(false);
         return new HorizontalLayout(save, clear, close);
     }
 
