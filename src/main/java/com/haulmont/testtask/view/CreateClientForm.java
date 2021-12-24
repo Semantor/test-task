@@ -9,7 +9,6 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -41,7 +40,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
 
     private final ClientFieldsValidator clientFieldsValidator;
     private final ClientSaver clientSaver;
-
+    private final ClientFieldAvailabilityChecker clientFieldAvailabilityChecker;
     @Getter(AccessLevel.PROTECTED)
     private Client client;
 
