@@ -146,4 +146,15 @@ public class Config {
     PercentPartInCreditCalculator percentPartInCreditCalculator(PartOfYearCalculator partOfYearCalculator) {
         return new PercentPartInCreditCalculatorImpl(partOfYearCalculator);
     }
+
+    @Bean
+    ClientSpecifications clientSpecifications() {
+        return new ClientSpecifications();
+    }
+
+    @Bean
+    ClientFieldAvailabilityChecker clientFieldAvailabilityChecker(ClientRepository clientRepository,
+                                                                  ClientSpecifications clientSpecifications) {
+        return new ClientFieldAvailabilityCheckerImpl(clientRepository, clientSpecifications);
+    }
 }
