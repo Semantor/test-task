@@ -6,7 +6,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -39,9 +38,7 @@ public class MainScreen extends VerticalLayout {
     private final DeleteForm deleteForm;
     private final ClientEditorForm clientEditorForm;
     private final CreditEditorForm creditEditorForm;
-
-    private final Notification notification = new Notification();
-
+    
     private final Dialog createClientFormDialog = new Dialog();
     private final Dialog createCreditFormDialog = new Dialog();
     private final Dialog createBankFormDialog = new Dialog();
@@ -146,12 +143,7 @@ public class MainScreen extends VerticalLayout {
         searchField.setAutofocus(true);
         searchField.addKeyDownListener(Key.ENTER, event -> searchButton.click());
         searchButton.addClickShortcut(Key.ENTER);
-        searchButton.addClickListener(event -> {
-            notification.setText("Search is not implemented yet");
-            notification.setPosition(Notification.Position.BOTTOM_CENTER);
-            notification.setDuration(2000);
-            notification.open();
-        });
+        searchButton.addClickListener(event -> clientGridLayout.search(searchField.getValue()));
         return new HorizontalLayout(radioButtonGroup, searchField, searchButton);
     }
 
