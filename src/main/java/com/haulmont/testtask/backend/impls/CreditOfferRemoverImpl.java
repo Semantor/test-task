@@ -27,7 +27,7 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
     @Override
     public boolean remove(@Nullable CreditOffer creditOffer) {
         if (creditOffer == null || creditOffer.getCreditOfferId() == null || creditOfferRepository.findById(creditOffer.getCreditOfferId()).isEmpty())
-            throw new CreditOfferDeleteException("credit offer does not exists");
+            throw new CreditOfferDeleteException(CreditOfferDeleteException.CREDIT_OFFER_DOES_NOT_EXIST);
 
 
         LocalDate now = LocalDate.now();
@@ -37,7 +37,7 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
             if (payment.getDate().compareTo(now) < 0) isExistsEarlier = true;
             if (payment.getDate().compareTo(now) > 0) isExistsLater = true;
             if (isExistsEarlier && isExistsLater)
-                throw new CreditOfferDeleteException("payment period is already start and doesn't end");
+                throw new CreditOfferDeleteException(CreditOfferDeleteException.PAYMENT_PERIOD_IS_ALREADY_START_AND_DOESNT_END);
         }
 
         paymentRepository.deleteAll(creditOffer.getPayments());

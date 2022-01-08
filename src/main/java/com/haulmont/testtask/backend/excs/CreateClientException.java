@@ -1,6 +1,7 @@
 package com.haulmont.testtask.backend.excs;
 
 public class CreateClientException extends IllegalStateException {
+    public static final String NULLABLE_CLIENT = "nullable client";
     public static final String EMPTY_UUID = "empty client id";
     public static final String WRONG_UUID = "Wrong uuid";
     public static final String UUID_IS_ALREADY_USED = "this id is already used";

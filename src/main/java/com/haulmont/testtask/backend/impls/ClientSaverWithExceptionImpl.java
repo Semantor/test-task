@@ -20,24 +20,25 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
     private final ClientRepository clientRepository;
     private final Validator validator;
     private static final String ONLY_LETTER_REG_EX = "[a-zA-Z]+";
+    public static final int MIN_FIRST_OR_LAST_NAME_LENGTH = 3;
 
     @Override
     public void save(Client client) throws CreateClientException {
-        if (client == null) throw new CreateClientException("nullable client");
+        if (client == null) throw new CreateClientException(CreateClientException.NULLABLE_CLIENT);
         if (client.getClientId() == null) throw new CreateClientException(CreateClientException.EMPTY_UUID);
         if (clientRepository.findById(client.getClientId()).isPresent())
             throw new CreateClientException(CreateClientException.UUID_IS_ALREADY_USED);
 
         if (validator.isNullOrBlank(client.getLastName()))
             throw new CreateClientException(CreateClientException.EMPTY_LASTNAME);
-        if (client.getLastName().length() < 3)
+        if (client.getLastName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
             throw new CreateClientException(CreateClientException.TOO_SHORT_LASTNAME);
         if (!client.getLastName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(CreateClientException.LASTNAME_INCORRECT_SYMBOLS);
 
         if (validator.isNullOrBlank(client.getFirstName()))
             throw new CreateClientException(CreateClientException.EMPTY_NAME);
-        if (client.getFirstName().length()<3)
+        if (client.getFirstName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
             throw new CreateClientException(CreateClientException.TOO_SHORT_NAME);
         if (!client.getFirstName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(CreateClientException.NAME_INCORRECT_SYMBOLS);

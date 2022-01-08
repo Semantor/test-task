@@ -21,6 +21,9 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
     private final Validator validator;
     private final PercentPartInCreditCalculator percentCalculator;
 
+    public static final String WRONG_INCOME_AMOUNT = "wrong income data - amount in Payment Calculator";
+    public static final String WRONG_INCOME_RECEIVING_DATE = "wrong income data - date of receiving in Payment Calculator";
+
     @Override
     public List<Payment> calculate(Credit credit,
                                    CreditOffer creditOffer,
@@ -28,9 +31,9 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
                                    BigDecimal amount,
                                    LocalDate dateOfReceiving) throws IllegalArgumentException {
         if (month < 1 || !validator.validateCreditAmount(amount))
-            throw new IllegalArgumentException("wrong income data - amount in Payment Calculator");
+            throw new IllegalArgumentException(WRONG_INCOME_AMOUNT);
         if (dateOfReceiving.isBefore(LocalDate.now()))
-            throw new IllegalArgumentException("wrong income data - date of receiving in Payment Calculator");
+            throw new IllegalArgumentException(WRONG_INCOME_RECEIVING_DATE);
 
         BigDecimal monthlyPayment = annuityCreditCalculator.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
         List<Payment> result = new ArrayList<>(month);

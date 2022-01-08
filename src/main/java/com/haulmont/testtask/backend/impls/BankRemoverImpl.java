@@ -19,7 +19,7 @@ public class BankRemoverImpl implements BankRemover {
     @Override
     public boolean remove(@Nullable Bank bank) {
         if (bank == null || bank.getBankId() == null || bankRepository.findById(bank.getBankId()).isEmpty())
-            throw new BankDeleteException("bank does not exists");
+            throw new BankDeleteException(BankDeleteException.BANK_DOES_NOT_EXIST);
 
         bankRepository.delete(bank);
 

@@ -8,29 +8,32 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 
+import static com.haulmont.testtask.model.entity.Client_.*;
+
 @Slf4j
 @AllArgsConstructor
 public class ClientFieldsValidatorImpl implements ClientFieldsValidator {
     private final Validator validator;
 
-    private static final String EMAIL_REG_EX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
-    private static final String PHONE_REG_EX = "9[0-9]{9}";
-    private static final String PASSPORT_REG_EX = "[1-9][0-9]{9}";
+    public static final String EMAIL_REG_EX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+    public static final String PHONE_REG_EX = "9[0-9]{9}";
+    public static final String PASSPORT_REG_EX = "[1-9][0-9]{9}";
+
 
     @Override
     public boolean validateEmail(@Nullable String email) {
-        return validate(email, "email", EMAIL_REG_EX, () -> true);
+        return validate(email, emailFieldName, EMAIL_REG_EX, () -> true);
 
     }
 
     @Override
     public boolean validatePhone(@Nullable String phone) {
-        return validate(phone, "phone", PHONE_REG_EX, () -> true);
+        return validate(phone, phoneNumberFieldName, PHONE_REG_EX, () -> true);
     }
 
     @Override
     public boolean validatePassport(@Nullable String passport) {
-        return validate(passport, "passport", PASSPORT_REG_EX, () -> {
+        return validate(passport, passportFieldName, PASSPORT_REG_EX, () -> {
             int i = Integer.parseInt(passport.substring(2, 4));
             return (i < 22 || i > 90);
         });

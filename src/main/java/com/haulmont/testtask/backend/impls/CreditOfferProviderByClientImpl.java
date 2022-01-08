@@ -18,7 +18,8 @@ public class CreditOfferProviderByClientImpl implements CreditOfferProviderByCli
 
     @Override
     public List<CreditOffer> getByClient(Client client) {
-        if (client == null||client.getClientId()==null||clientRepository.findById(client.getClientId()).isEmpty()) return Collections.emptyList();
+        if (client == null||client.getClientId()==null||clientRepository.findById(client.getClientId()).isEmpty())
+            return Collections.emptyList();
         return creditOfferRepository.findByClient(client);
     }
 

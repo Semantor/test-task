@@ -18,8 +18,8 @@ public class CreditEditServiceImpl implements CreditEditService {
     @Transactional
     public void edit(@NotNull Credit oldPersistCredit, @NotNull Credit newNonPersist) {
         Optional<Credit> byId = creditRepository.findById(oldPersistCredit.getCreditId());
-        if (byId.isEmpty()) throw new CreditDeleteException("old credit is non persist");
-        if (byId.get().isUnused()) throw new CreditDeleteException("already unused");
+        if (byId.isEmpty()) throw new CreditDeleteException(CreditDeleteException.OLD_CREDIT_IS_NON_PERSIST);
+        if (byId.get().isUnused()) throw new CreditDeleteException(CreditDeleteException.ALREADY_UNUSED);
 
         oldPersistCredit.unused();
         creditRepository.save(oldPersistCredit);

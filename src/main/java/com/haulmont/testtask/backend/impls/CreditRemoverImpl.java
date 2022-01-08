@@ -18,7 +18,7 @@ public class CreditRemoverImpl implements CreditRemover {
     @Override
     public boolean remove(@Nullable Credit credit) {
         if (credit==null||credit.getCreditId() == null||creditRepository.findById(credit.getCreditId()).isEmpty())
-            throw new CreditDeleteException("no valid credit");
+            throw new CreditDeleteException(CreditDeleteException.NO_VALID_CREDIT);
 
         credit.unused();
         creditRepository.save(credit);
