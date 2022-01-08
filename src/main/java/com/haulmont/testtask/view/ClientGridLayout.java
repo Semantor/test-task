@@ -1,6 +1,7 @@
 package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.backend.ClientProvider;
+import com.haulmont.testtask.backend.ClientSearchByKeyWordService;
 import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
@@ -28,12 +29,15 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
     private String currentSort;
 
 
-    private final ClientProvider clientProvider;
+    private final transient ClientProvider clientProvider;
+    private final transient ClientSearchByKeyWordService searchByKeyWordService;
     @Getter
     private final CreditOfferGridLayout creditOfferGridLayout;
     private final Grid<Client> clientGrid = new Grid<>();
 
     private boolean isFinal = false;
+    private boolean isSearch = false;
+    private String searchKeyword = "";
 
     @PostConstruct
     private void init() {
@@ -45,13 +49,15 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
         currentPageSize = DEFAULT_PAGE_SIZE;
         currentSort = DEFAULT_SORT_COLUMN;
         isFinal = false;
+        isSearch = false;
     }
 
-    public ClientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout, Integer DEFAULT_PAGE_SIZE, String DEFAULT_SORT_COLUMN) {
+    public ClientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout, Integer DEFAULT_PAGE_SIZE, String DEFAULT_SORT_COLUMN, ClientSearchByKeyWordService searchByKeyWordService) {
         this.DEFAULT_PAGE_SIZE = DEFAULT_PAGE_SIZE;
         this.DEFAULT_SORT_COLUMN = DEFAULT_SORT_COLUMN;
         this.creditOfferGridLayout = creditOfferGridLayout;
         this.clientProvider = clientProvider;
+        this.searchByKeyWordService = searchByKeyWordService;
         log.info("create new client grid with " + DEFAULT_PAGE_SIZE + " page size and " + DEFAULT_SORT_COLUMN + " default sort column");
         clientGrid.setItems(clientProvider.getClients(DEFAULT_PAGE_SIZE, 0, DEFAULT_SORT_COLUMN));
         tuneGrid();
@@ -120,7 +126,11 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
      */
     public void nextPage() {
         if (isFinal) return;
-        List<Client> clients = clientProvider.getClients(currentPageSize, currentPage + 1, currentSort);
+        List<Client> clients;
+        if (!isSearch)
+            clients = clientProvider.getClients(currentPageSize, currentPage + 1, currentSort);
+        else
+            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, currentPage + 1, currentSort);
         if (clients.isEmpty()) {
             isFinal = true;
             return;
@@ -135,8 +145,21 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
      */
     public void previousPage() {
         if (currentPage == 0) return;
-        clientGrid.setItems(clientProvider.getClients(currentPageSize, --currentPage, currentSort));
+        List<Client> clients;
+        if (isSearch)
+            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, --currentPage, currentSort);
+        else
+            clients = clientProvider.getClients(currentPageSize, --currentPage, currentSort);
+
+        clientGrid.setItems(clients);
         isFinal = false;
+    }
+
+    public void search(String keyword) {
+        setDefaultPaginationOptions();
+        searchKeyword = keyword;
+        isSearch = true;
+        clientGrid.setItems(searchByKeyWordService.search(searchKeyword, currentPageSize, currentPage, currentSort));
     }
 
     public void sort(String sortColumn) {
@@ -161,7 +184,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
 
     public static class DeleteEvent extends ComponentEvent<ClientGridLayout> {
         @Getter
-        private final Client client;
+        private transient final Client client;
 
         public DeleteEvent(ClientGridLayout source, Client client) {
             super(source, false);
