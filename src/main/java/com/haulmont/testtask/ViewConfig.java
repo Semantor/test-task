@@ -16,8 +16,8 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    ClientGridLayout clientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout) {
-        return new ClientGridLayout(clientProvider, creditOfferGridLayout, DEFAULT_PAGE_SIZE, DEFAULT_SORT_COLUMN);
+    ClientGridLayout clientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout, ClientSearchByKeyWordService searchByKeyWordService) {
+        return new ClientGridLayout(clientProvider, creditOfferGridLayout, DEFAULT_PAGE_SIZE, DEFAULT_SORT_COLUMN, searchByKeyWordService);
     }
 
     @Bean

@@ -127,6 +127,7 @@ public class Config {
                                           PaymentRepository paymentRepository) {
         return new CreditOfferRemoverImpl(creditOfferRepository, paymentRepository);
     }
+
     @Bean
     BankFieldAvailabilityChecker bankFieldAvailabilityChecker(BankRepository bankRepository) {
         return new BankFieldAvailabilityCheckerImpl(bankRepository);
@@ -156,5 +157,11 @@ public class Config {
     ClientFieldAvailabilityChecker clientFieldAvailabilityChecker(ClientRepository clientRepository,
                                                                   ClientSpecifications clientSpecifications) {
         return new ClientFieldAvailabilityCheckerImpl(clientRepository, clientSpecifications);
+    }
+
+    @Bean
+    ClientSearchByKeyWordService clientSearchByKeyWordService(ClientRepository clientRepository,
+                                                              ClientSpecifications clientSpecifications) {
+        return new ClientSearchByKeyWordServiceImpl(clientRepository, clientSpecifications);
     }
 }
