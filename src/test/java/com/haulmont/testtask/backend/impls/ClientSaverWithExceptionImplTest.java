@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.haulmont.testtask.Setting.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,6 +38,7 @@ class ClientSaverWithExceptionImplTest {
             .build();
 
     @MockBean
+    //todo rework
     private Client input;
 
 
@@ -50,7 +52,7 @@ class ClientSaverWithExceptionImplTest {
         Mockito.when(input.getPhoneNumber()).then(invocationOnMock -> client.getPhoneNumber());
         Mockito.when(input.getPassport()).then(invocationOnMock -> client.getPassport());
         CreateClientException createClientException = assertThrows(CreateClientException.class, () -> clientSaver.save(input));
-        assertEquals(CreateClientException.EMPTY_UUID, createClientException.getMessage());
+        assertEquals(NULLABLE_ID, createClientException.getMessage());
 
     }
 
@@ -67,7 +69,7 @@ class ClientSaverWithExceptionImplTest {
 
         Mockito.when(clientRepository.findById(uuid)).then(invocationOnMock -> Optional.of(client));
         CreateClientException createClientException = assertThrows(CreateClientException.class, () -> clientSaver.save(input));
-        assertEquals(CreateClientException.UUID_IS_ALREADY_USED, createClientException.getMessage());
+        assertEquals(UUID_IS_ALREADY_USED, createClientException.getMessage());
 
     }
 
@@ -84,7 +86,7 @@ class ClientSaverWithExceptionImplTest {
 
         Mockito.when(clientRepository.findById(uuid)).then(invocationOnMock -> Optional.empty());
         CreateClientException createClientException = assertThrows(CreateClientException.class, () -> clientSaver.save(input));
-        assertEquals(CreateClientException.EMPTY_NAME, createClientException.getMessage());
+        assertEquals(EMPTY_NAME, createClientException.getMessage());
 
     }
 
@@ -101,7 +103,7 @@ class ClientSaverWithExceptionImplTest {
 
         Mockito.when(clientRepository.findById(uuid)).then(invocationOnMock -> Optional.empty());
         CreateClientException createClientException = assertThrows(CreateClientException.class, () -> clientSaver.save(input));
-        assertEquals(CreateClientException.EMPTY_NAME, createClientException.getMessage());
+        assertEquals(EMPTY_NAME, createClientException.getMessage());
 
     }
 
@@ -118,7 +120,7 @@ class ClientSaverWithExceptionImplTest {
 
         Mockito.when(clientRepository.findById(uuid)).then(invocationOnMock -> Optional.empty());
         CreateClientException createClientException = assertThrows(CreateClientException.class, () -> clientSaver.save(input));
-        assertEquals(CreateClientException.TOO_SHORT_NAME, createClientException.getMessage());
+        assertEquals(TOO_SHORT_NAME, createClientException.getMessage());
 
     }
 
@@ -137,7 +139,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NAME_INCORRECT_SYMBOLS, createClientException.getMessage());
+        assertEquals(NAME_INCORRECT_SYMBOLS, createClientException.getMessage());
     }
 
     @Test
@@ -155,7 +157,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.EMPTY_LASTNAME, createClientException.getMessage());
+        assertEquals(EMPTY_LASTNAME, createClientException.getMessage());
     }
 
     @Test
@@ -173,7 +175,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.EMPTY_LASTNAME, createClientException.getMessage());
+        assertEquals(EMPTY_LASTNAME, createClientException.getMessage());
     }
 
     @Test
@@ -191,7 +193,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.TOO_SHORT_LASTNAME, createClientException.getMessage());
+        assertEquals(TOO_SHORT_LASTNAME, createClientException.getMessage());
     }
 
     @Test
@@ -209,7 +211,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.LASTNAME_INCORRECT_SYMBOLS, createClientException.getMessage());
+        assertEquals(LASTNAME_INCORRECT_SYMBOLS, createClientException.getMessage());
     }
 
     @Test
@@ -231,7 +233,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NO_VALID_PHONE, createClientException.getMessage());
+        assertEquals(NO_VALID_PHONE, createClientException.getMessage());
     }
 
     @Test
@@ -253,7 +255,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NO_VALID_PHONE, createClientException.getMessage());
+        assertEquals(NO_VALID_PHONE, createClientException.getMessage());
     }
 
     @Test
@@ -275,7 +277,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NO_VALID_PHONE, createClientException.getMessage());
+        assertEquals(NO_VALID_PHONE, createClientException.getMessage());
     }
 
     @Test
@@ -297,7 +299,7 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NO_VALID_PHONE, createClientException.getMessage());
+        assertEquals(NO_VALID_PHONE, createClientException.getMessage());
     }
 
     @Test
@@ -319,12 +321,8 @@ class ClientSaverWithExceptionImplTest {
         CreateClientException createClientException = assertThrows(
                 CreateClientException.class,
                 () -> clientSaver.save(input));
-        assertEquals(CreateClientException.NO_VALID_PHONE, createClientException.getMessage());
+        assertEquals(NO_VALID_PHONE, createClientException.getMessage());
     }
 
     //todo and so on
-
-    @Test
-    void testSave() {
-    }
 }
