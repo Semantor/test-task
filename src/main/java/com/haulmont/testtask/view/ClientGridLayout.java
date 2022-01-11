@@ -10,16 +10,17 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.function.ValueProvider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+import static com.haulmont.testtask.Setting.*;
+
 
 @Slf4j
-public class ClientGridLayout extends VerticalLayout implements HasEvent {
+public class ClientGridLayout extends VerticalLayout implements HasEvent, ClientGridTuner {
 
     private final int DEFAULT_PAGE_SIZE;
     private final String DEFAULT_SORT_COLUMN;
@@ -37,11 +38,11 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
 
     private boolean isFinal = false;
     private boolean isSearch = false;
-    private String searchKeyword = "";
+    private String searchKeyword;
 
     @PostConstruct
     private void init() {
-        setDefaultPaginationOptions();
+        update();
     }
 
     private void setDefaultPaginationOptions() {
@@ -52,48 +53,43 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
         isSearch = false;
     }
 
-    public ClientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout, Integer DEFAULT_PAGE_SIZE, String DEFAULT_SORT_COLUMN, ClientSearchByKeyWordService searchByKeyWordService) {
-        this.DEFAULT_PAGE_SIZE = DEFAULT_PAGE_SIZE;
-        this.DEFAULT_SORT_COLUMN = DEFAULT_SORT_COLUMN;
+    public ClientGridLayout(ClientProvider clientProvider, CreditOfferGridLayout creditOfferGridLayout,
+                            Integer defaultPageSize, String defaultSortColumn,
+                            ClientSearchByKeyWordService searchByKeyWordService) {
+        this.DEFAULT_PAGE_SIZE = defaultPageSize;
+        this.DEFAULT_SORT_COLUMN = defaultSortColumn;
         this.creditOfferGridLayout = creditOfferGridLayout;
         this.clientProvider = clientProvider;
         this.searchByKeyWordService = searchByKeyWordService;
-        log.info("create new client grid with " + DEFAULT_PAGE_SIZE + " page size and " + DEFAULT_SORT_COLUMN + " default sort column");
-        clientGrid.setItems(clientProvider.getClients(DEFAULT_PAGE_SIZE, 0, DEFAULT_SORT_COLUMN));
         tuneGrid();
         add(clientGrid);
     }
 
 
     private void tuneGrid() {
-        clientGrid.addColumn(Client::getLastName).setHeader("last name");
-        clientGrid.addColumn(Client::getFirstName).setHeader("name");
-        clientGrid.addColumn(Client::getPatronymic).setHeader("patronymic");
-        clientGrid.addColumn(Client::getPhoneNumber).setHeader("phone");
-        clientGrid.addColumn(Client::getEmail).setHeader("email").setWidth("10%");
-        clientGrid.addColumn((ValueProvider<Client, String>) client -> client.getPassport().substring(0, 4) + " / " + client.getPassport().substring(4)).setHeader("passport");
+        tuneClientGrid(clientGrid);
         clientGrid.addComponentColumn(client -> {
             Button addNewCreditOfferButton = new Button();
-            addNewCreditOfferButton.setText("add credit offer");
+            addNewCreditOfferButton.setText(ADD_CREDIT_OFFER_BUTTON_TEXT);
             addNewCreditOfferButton.setIcon(VaadinIcon.PLUS.create());
             addNewCreditOfferButton.addClickListener(event -> {
                 fireEvent(new CreditOfferGridLayout.CreateEvent(creditOfferGridLayout, client));
                 clientGrid.setDetailsVisible(client, false);
             });
             return addNewCreditOfferButton;
-        }).setWidth("10%");
+        }).setWidth(ADD_NEW_CREDIT_OFFER_BUTTON_WIDTH);
 
         clientGrid.addComponentColumn(client -> {
             Button editButton = new Button();
-            editButton.setText(Constant.EDIT_TEXT_BUTTON);
-            editButton.addThemeVariants(Constant.EDIT_STYLE);
+            editButton.setText(EDIT_BUTTON_TEXT);
+            editButton.addThemeVariants(EDIT_STYLE);
             editButton.addClickListener(event -> fireEvent(new EditEvent(this, client)));
             return editButton;
         });
         clientGrid.addComponentColumn(client -> {
             Button delete = new Button();
-            delete.setText(Constant.DELETE_TEXT_BUTTON);
-            delete.addThemeVariants(Constant.DELETE_STYLE);
+            delete.setText(DELETE_BUTTON_TEXT);
+            delete.addThemeVariants(DELETE_STYLE);
             delete.addClickListener(event -> fireEvent(new DeleteEvent(this, client)));
             return delete;
         });
@@ -103,7 +99,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
                         item -> {
                             creditOfferGridLayout.setClient(item);
                             creditOfferGridLayout.show();
-                            creditOfferGridLayout.setHeight("500px");
+                            creditOfferGridLayout.setHeight(CREDIT_OFFER_GRID_LAYOUT_HEIGHT);
                             return creditOfferGridLayout;
                         }
                 )
@@ -130,7 +126,10 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
         if (!isSearch)
             clients = clientProvider.getClients(currentPageSize, currentPage + 1, currentSort);
         else
-            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, currentPage + 1, currentSort);
+            clients = searchByKeyWordService.search(searchKeyword,
+                    currentPageSize,
+                    currentPage + 1,
+                    currentSort);
         if (clients.isEmpty()) {
             isFinal = true;
             return;
@@ -184,7 +183,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent {
 
     public static class DeleteEvent extends ComponentEvent<ClientGridLayout> {
         @Getter
-        private transient final Client client;
+        private final Client client;
 
         public DeleteEvent(ClientGridLayout source, Client client) {
             super(source, false);

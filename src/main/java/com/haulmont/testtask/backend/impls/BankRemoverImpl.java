@@ -12,6 +12,8 @@ import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
+import static com.haulmont.testtask.Setting.BANK_DOES_NOT_EXIST;
+
 @AllArgsConstructor
 public class BankRemoverImpl implements BankRemover {
     private final BankRepository bankRepository;
@@ -19,7 +21,7 @@ public class BankRemoverImpl implements BankRemover {
     @Override
     public boolean remove(@Nullable Bank bank) {
         if (bank == null || bank.getBankId() == null || bankRepository.findById(bank.getBankId()).isEmpty())
-            throw new BankDeleteException(BankDeleteException.BANK_DOES_NOT_EXIST);
+            throw new BankDeleteException(BANK_DOES_NOT_EXIST);
 
         bankRepository.delete(bank);
 

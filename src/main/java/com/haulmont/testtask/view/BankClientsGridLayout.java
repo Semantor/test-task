@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BankClientsGridLayout extends VerticalLayout implements CanBeShown {
+public class BankClientsGridLayout extends VerticalLayout implements CanBeShown, ClientGridTuner {
 
 
     private final Grid<Client> clientGrid = new Grid<>();
@@ -26,12 +26,7 @@ public class BankClientsGridLayout extends VerticalLayout implements CanBeShown 
 
 
     private void tuneGrid() {
-        clientGrid.addColumn(Client::getLastName).setHeader("last name");
-        clientGrid.addColumn(Client::getFirstName).setHeader("name");
-        clientGrid.addColumn(Client::getPatronymic).setHeader("patronymic");
-        clientGrid.addColumn(Client::getPhoneNumber).setHeader("phone");
-        clientGrid.addColumn(Client::getEmail).setHeader("email");
-        clientGrid.addColumn(Client::getPassport).setHeader("passport");
+        tuneClientGrid(clientGrid);
     }
 
     /**

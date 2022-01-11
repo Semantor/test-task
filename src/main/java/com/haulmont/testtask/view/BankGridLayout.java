@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.model.entity.Bank;
 import com.vaadin.flow.component.ComponentEvent;
@@ -10,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.Getter;
+
+import static com.haulmont.testtask.Setting.BANK_NAME_LABEL;
 
 public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeUpdated, HasEvent, CanBeClosed {
 
@@ -37,12 +40,12 @@ public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeU
     }
 
     private void tuneGrid() {
-        grid.addColumn(Bank::getName).setHeader("name");
+        grid.addColumn(Bank::getName).setHeader(BANK_NAME_LABEL);
         grid.setDetailsVisibleOnClick(true);
         grid.addComponentColumn(bank -> {
             Button delete = new Button();
-            delete.setText(Constant.DELETE_TEXT_BUTTON);
-            delete.addThemeVariants(Constant.DELETE_STYLE);
+            delete.setText(Setting.DELETE_BUTTON_TEXT);
+            delete.addThemeVariants(Setting.DELETE_STYLE);
             delete.addClickListener(event -> {
                 fireEvent(new BankGridLayout.CloseEvent(this));
                 fireEvent(new BankGridLayout.DeleteEvent(this, bank));

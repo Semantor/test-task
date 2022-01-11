@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.haulmont.testtask.Setting.*;
+
 @AllArgsConstructor
 @Slf4j
 public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
@@ -32,6 +34,11 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
     private final PaymentCalculator paymentCalculator;
     private final Validator validator;
     private final PaymentRepository paymentRepository;
+    public static final String SAVE_NEW_CREDIT_OFFER = "save new credit offer: ";
+    public static final String PAYMENT_DATE_FIELD_NAME = "date";
+    public static final String PAYMENT_MAIN_PART_FIELD_NAME = "main part";
+    public static final String PAYMENT_PERCENT_PART_FIELD_NAME = "percent part";
+    public static final String PAYMENT_AMOUNT_FIELD_NAME = "amount";
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -39,15 +46,16 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
         checkCreditOfferForCorrectnessClient(creditOffer);
         checkCreditOfferForCorrectnessCredit(creditOffer);
 
-        if (creditOffer.getMonthCount() < 1) throw new CreateCreditOfferException("not valid month count");
+        if (creditOffer.getMonthCount() < 1)
+            throw new CreateCreditOfferException(NOT_VALID_MONTH_COUNT);
         if (creditOffer.getPayments() == null || creditOffer.getPayments().isEmpty())
-            throw new CreateCreditOfferException("empty payment list");
+            throw new CreateCreditOfferException(EMPTY_PAYMENT_LIST);
 
         checkCreditOfferThatPaymentsHasCorrectCreditOffer(creditOffer);
 
         checkCreditOfferForCorrectnessPayments(creditOffer);
 
-        log.info("save new credit offer: " + creditOffer);
+        log.info(SAVE_NEW_CREDIT_OFFER + creditOffer);
         List<Payment> payment = creditOffer.getPayments();
         creditOffer.setPayments(Collections.emptyList());
         creditOfferRepository.save(creditOffer);
@@ -56,37 +64,36 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
     }
 
     private void checkCreditOfferThatPaymentsHasCorrectCreditOffer(@NotNull CreditOffer creditOffer) {
-        boolean isAllPaymentsHasCorrectCreditOffer = false;
+        boolean isSomePaymentsHasIncorrectCreditOffer = false;
         for (Payment payment : creditOffer.getPayments()) {
             if (!payment.getCreditOffer().equals(creditOffer)) {
-                isAllPaymentsHasCorrectCreditOffer = true;
+                isSomePaymentsHasIncorrectCreditOffer = true;
                 break;
             }
         }
 
-        if (isAllPaymentsHasCorrectCreditOffer) {
-            log.warn("payments is not connected to credit offer");
-            throw new CreateCreditOfferException("payments is not connected to credit offer");
+        if (isSomePaymentsHasIncorrectCreditOffer) {
+            throw new CreateCreditOfferException(PAYMENTS_IS_NOT_CONNECTED_TO_CREDIT_OFFER);
         }
     }
 
     private void checkCreditOfferForCorrectnessClient(@NotNull CreditOffer creditOffer) {
         if (creditOffer.getCreditOfferId() == null)
-            throw new CreateCreditOfferException("credit offer has empty id ");
+            throw new CreateCreditOfferException(NULLABLE_ID);
         if (creditOffer.getClient() == null || creditOffer.getClient().getClientId() == null)
-            throw new CreateCreditOfferException("unidentified client");
+            throw new CreateCreditOfferException(UNIDENTIFIED_CLIENT);
         Optional<Client> clientOpt = clientRepository.findById(creditOffer.getClient().getClientId());
-        if (clientOpt.isEmpty()) throw new CreateCreditOfferException("this client does not present in db ");
+        if (clientOpt.isEmpty()) throw new CreateCreditOfferException(CLIENT_DOES_NOT_PRESENT_IN_DB);
     }
 
     private void checkCreditOfferForCorrectnessCredit(@NotNull CreditOffer creditOffer) {
         if (creditOffer.getCredit() == null || creditOffer.getCredit().getCreditId() == null)
-            throw new CreateCreditOfferException("unidentified credit");
+            throw new CreateCreditOfferException(UNIDENTIFIED_CREDIT);
         Optional<Credit> creditOpt = creditRepository.findById(creditOffer.getCredit().getCreditId());
-        if (creditOpt.isEmpty()) throw new CreateCreditOfferException("this credit does not present in db ");
+        if (creditOpt.isEmpty()) throw new CreateCreditOfferException(CREDIT_DOES_NOT_PRESENT_IN_DB);
         if (creditOffer.getCreditAmount() == null ||
                 !validator.validateCreditAmount(creditOffer.getCreditAmount(), creditOpt.get().getCreditLimit()))
-            throw new CreateCreditOfferException("not valid credit amount");
+            throw new CreateCreditOfferException(NOT_VALID_CREDIT_AMOUNT);
     }
 
     private void checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
@@ -95,21 +102,39 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
                         creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate());
 
         if (calculatePayments.size() != creditOffer.getPayments().size())
-            throw new CreateCreditOfferException("wrong payments count");
+            throw new CreateCreditOfferException(WRONG_PAYMENTS_COUNT);
 
         for (int i = 0; i < creditOffer.getPayments().size(); i++) {
             if (!calculatePayments.get(i).getDate().equals(creditOffer.getPayments().get(i).getDate()))
-                throw new CreateCreditOfferException("wrong payments date: must be:" + calculatePayments.get(i).getDate() + ", but found: " +
-                        creditOffer.getPayments().get(i).getDate());
+                throw new CreateCreditOfferException(
+                        errorMessageInPaymentList(PAYMENT_DATE_FIELD_NAME,
+                                calculatePayments.get(i).getDate(),
+                                creditOffer.getPayments().get(i).getDate()));
+
             if (!calculatePayments.get(i).getAmount().equals(creditOffer.getPayments().get(i).getAmount()))
-                throw new CreateCreditOfferException("wrong payments amount: must be:" + calculatePayments.get(i).getAmount() + ", but found:" +
-                        creditOffer.getPayments().get(i).getAmount());
+                throw new CreateCreditOfferException(
+                        errorMessageInPaymentList(PAYMENT_AMOUNT_FIELD_NAME,
+                                calculatePayments.get(i).getAmount(),
+                                creditOffer.getPayments().get(i).getAmount()));
+
             if (!calculatePayments.get(i).getMainPart().equals(creditOffer.getPayments().get(i).getMainPart()))
-                throw new CreateCreditOfferException("wrong payments main part: must be:" + calculatePayments.get(i).getMainPart() + ", but found:" +
-                        creditOffer.getPayments().get(i).getMainPart());
+                throw new CreateCreditOfferException(
+                        errorMessageInPaymentList(PAYMENT_MAIN_PART_FIELD_NAME,
+                                calculatePayments.get(i).getMainPart(),
+                                creditOffer.getPayments().get(i).getMainPart()));
+
             if (!calculatePayments.get(i).getPercentPart().equals(creditOffer.getPayments().get(i).getPercentPart()))
-                throw new CreateCreditOfferException("wrong payments percent part: must be:" + calculatePayments.get(i).getPercentPart() + ", but found:" +
-                        creditOffer.getPayments().get(i).getPercentPart());
+                throw new CreateCreditOfferException(
+                        errorMessageInPaymentList(PAYMENT_PERCENT_PART_FIELD_NAME,
+                                calculatePayments.get(i).getPercentPart(),
+                                creditOffer.getPayments().get(i).getPercentPart())
+                );
         }
+    }
+
+    @NotNull
+    private String errorMessageInPaymentList(String fieldName, @NotNull Object expected, @NotNull Object actual) {
+        return "wrong payments " + fieldName + ": must be:" + expected + ", but found: " +
+                actual;
     }
 }

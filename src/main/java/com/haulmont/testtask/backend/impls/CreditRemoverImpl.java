@@ -12,13 +12,15 @@ import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
+import static com.haulmont.testtask.Setting.NO_VALID_CREDIT;
+
 @AllArgsConstructor
 public class CreditRemoverImpl implements CreditRemover {
     private final CreditRepository creditRepository;
     @Override
     public boolean remove(@Nullable Credit credit) {
         if (credit==null||credit.getCreditId() == null||creditRepository.findById(credit.getCreditId()).isEmpty())
-            throw new CreditDeleteException(CreditDeleteException.NO_VALID_CREDIT);
+            throw new CreditDeleteException(NO_VALID_CREDIT);
 
         credit.unused();
         creditRepository.save(credit);

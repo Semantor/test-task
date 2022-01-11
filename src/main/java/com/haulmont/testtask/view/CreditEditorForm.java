@@ -1,14 +1,18 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.backend.CreditEditService;
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankProvider;
+import com.haulmont.testtask.backend.CreditEditService;
 import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.CreditDeleteException;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.haulmont.testtask.Setting.LOG_DELIMITER;
 
 @Slf4j
 public class CreditEditorForm extends CreateCreditForm {
@@ -39,14 +43,21 @@ public class CreditEditorForm extends CreateCreditForm {
     public void validateAndSave() {
         Credit newCredit = Credit.builder().build();
         getBinder().writeBeanIfValid(newCredit);
-        String tryingMsg = "trying to edit credit\n old credit: " + updatedCredit.toDeleteString() + "\nnew credit: " + newCredit.toDeleteString();
-        horn(tryingMsg);
+        Notification.show(Setting.TRYING_TO_EDIT_CREDIT, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+        log.info(LOG_TEMPLATE_8,
+                Setting.TRYING_TO_EDIT_CREDIT,
+                LOG_DELIMITER,
+                Setting.OLD_CREDIT,
+                LOG_DELIMITER,
+                updatedCredit.toDeleteString(),
+                Setting.NEW_CREDIT,
+                LOG_DELIMITER,
+                newCredit.toDeleteString());
         try {
             creditEditService.edit(updatedCredit, newCredit);
-            String successfulMsg = "Successfully edit!";
-            horn(successfulMsg);
+            hornIntoNotificationAndLoggerInfo(Setting.SUCCESSFULLY_EDITED_USER_MESSAGE);
         } catch (CreditDeleteException exception) {
-            horn(exception.getMessage());
+            hornIntoNotificationAndLoggerInfo(exception.getMessage());
         }
         close();
     }

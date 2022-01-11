@@ -11,6 +11,10 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.Setting.DOLLAR;
+import static com.haulmont.testtask.Setting.LOG_DELIMITER;
+
 
 public class PaymentGridLayout extends VerticalLayout implements CanBeShown {
     private final Grid<Payment> grid = new Grid<>();
@@ -29,10 +33,10 @@ public class PaymentGridLayout extends VerticalLayout implements CanBeShown {
     }
 
     private void tuneGrid() {
-        grid.addColumn(Payment::getDate).setHeader("date");
-        grid.addColumn(Payment::getAmount).setHeader("amount");
-        grid.addColumn(Payment::getMainPart).setHeader("main part");
-        grid.addColumn(Payment::getPercentPart).setHeader("percent part");
+        grid.addColumn(Payment::getDate).setHeader(DATE_LABEL);
+        grid.addColumn(Payment::getAmount).setHeader(AMOUNT_LABEL);
+        grid.addColumn(Payment::getMainPart).setHeader(MAIN_PART_LABEL);
+        grid.addColumn(Payment::getPercentPart).setHeader(PERCENT_PART_LABEL);
     }
 
     /**
@@ -42,22 +46,22 @@ public class PaymentGridLayout extends VerticalLayout implements CanBeShown {
     public void show() {
         grid.setItems(payments);
 
-        total.setText("total value: " + payments.stream().reduce(
+        total.setText(TOTAL_VALUE + LOG_DELIMITER + payments.stream().reduce(
                 BigDecimal.ZERO,
                 (bigDecimal, payment) -> payment.getAmount().add(bigDecimal),
                 BigDecimal::add
-        ) + " $");
+        ) + DOLLAR);
 
-        mainPart.setText("base value: " + payments.stream().reduce(
+        mainPart.setText(BASE_VALUE + LOG_DELIMITER + payments.stream().reduce(
                 BigDecimal.ZERO,
                 (bigDecimal, payment) -> payment.getMainPart().add(bigDecimal),
                 BigDecimal::add
-        ) + " $");
+        ) + DOLLAR);
 
-        percentPart.setText("percent value: " + payments.stream().reduce(
+        percentPart.setText(PERCENT_VALUE + LOG_DELIMITER + payments.stream().reduce(
                 BigDecimal.ZERO,
                 (bigDecimal, payment) -> payment.getPercentPart().add(bigDecimal),
                 BigDecimal::add
-        ) + " $");
+        ) + DOLLAR);
     }
 }

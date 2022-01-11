@@ -73,6 +73,7 @@ public class Setting {
     public static final String SUCCESSFULLY_DELETED_USER_MESSAGE = "DELETED!";
     public static final String TRYING_TO_SAVE_NEW_BANK = "Trying to save new Bank ";
     public static final String TRYING_TO_SAVE_NEW_CREDIT = "Trying to save new credit ";
+    public static final String TRYING_TO_SAVE_NEW_CLIENT = "Trying to save new client";
     public static final String TRYING_TO_EDIT_CREDIT = "trying to edit credit";
     public static final String IS_NULL_OR_BLANK = "is null or blank";
     public static final String IS_VALID = "is valid";
@@ -144,6 +145,10 @@ public class Setting {
     public static final String WRONG_MONTH_COUNT_INPUT = "wrong month count";
     public static final String WRONG_DATE_IS_PICKED = "wrong date is picked";
     public static final String MUST_BE_MORE_THAN_ZERO = "must be more then zero";
+    public static final String START_DATE_MUST_BE_EARLY_THAN_END_DATE = "start date must be early than end date";
+    public static final String CREDIT_RATE_MUST_BE_MORE_OR_EQUAL_ZERO = "credit rate must be more or equal ZERO";
+    public static final String CREDIT_REMAIN_BALANCE_MUST_BE_MORE_OR_EQUAL_ZERO = "credit remain balance must be more or equal ZERO";
+
 
     //Component settings
     public static final int NOTIFICATION_DURATION = 4000;

@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditOfferProviderByClient;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -7,7 +8,6 @@ import com.haulmont.testtask.model.entity.Payment;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.NumberRenderer;
@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static com.haulmont.testtask.view.Constant.creditLimitFormat;
-import static com.haulmont.testtask.view.Constant.creditRateFormat;
+import static com.haulmont.testtask.Setting.*;
 
 @Slf4j
 public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, CanBeShown {
@@ -45,31 +44,31 @@ public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, C
 
         grid.addColumn((ValueProvider<CreditOffer, String>) creditOffer ->
                         creditOffer.getCredit().getBank().getName())
-                .setHeader("bank name");
+                .setHeader(BANK_NAME_LABEL);
 
-        grid.addColumn(new NumberRenderer<>(creditOffer -> creditOffer.getCredit().getCreditLimit(), creditLimitFormat,
-                        Locale.US, "$ 0.00"))
-                .setHeader("credit limit");
-        grid.addColumn(new NumberRenderer<>(creditOffer -> creditOffer.getCredit().getCreditRate(), creditRateFormat,
-                        Locale.US, "$ 0.00"))
-                .setHeader("credit rate");
+        grid.addColumn(new NumberRenderer<>(creditOffer -> creditOffer.getCredit().getCreditLimit(), CREDIT_LIMIT_FORMAT,
+                        Locale.US, CREDIT_LIMIT_DEFAULT_VALUE))
+                .setHeader(CREDIT_LIMIT_LABEL);
+        grid.addColumn(new NumberRenderer<>(creditOffer -> creditOffer.getCredit().getCreditRate(), CREDIT_RATE_FORMAT,
+                        Locale.US, CREDIT_RATE_DEFAULT_VALUE))
+                .setHeader(CREDIT_RATE_LABEL);
 
-        grid.addColumn(new NumberRenderer<>(CreditOffer::getCreditAmount, creditLimitFormat,
-                Locale.US, "$ 0.00")).setHeader("amount");
-        grid.addColumn(CreditOffer::getMonthCount).setHeader("month count");
+        grid.addColumn(new NumberRenderer<>(CreditOffer::getCreditAmount, CREDIT_LIMIT_FORMAT,
+                Locale.US, CREDIT_LIMIT_DEFAULT_VALUE)).setHeader(AMOUNT_LABEL);
+        grid.addColumn(CreditOffer::getMonthCount).setHeader(MONTH_LABEL);
         grid.setSelectionMode(Grid.SelectionMode.NONE);
 
         grid.addComponentColumn(creditOffer -> {
             Button button = new Button();
-            button.setText("Details");
-            button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+            button.setText(DETAILS_BUTTON_TEXT);
+            button.addThemeVariants(DETAILS_STYLE);
             button.addClickListener(event -> fireEvent(new DetailsEvent(this, creditOffer.getPayments())));
             return button;
         });
         grid.addComponentColumn(creditOffer -> {
             Button delete = new Button();
-            delete.setText(Constant.DELETE_TEXT_BUTTON);
-            delete.addThemeVariants(Constant.DELETE_STYLE);
+            delete.setText(Setting.DELETE_BUTTON_TEXT);
+            delete.addThemeVariants(Setting.DELETE_STYLE);
             delete.addClickListener(event -> fireEvent(new CreditOfferGridLayout.DeleteEvent(this, creditOffer)));
             return delete;
         });

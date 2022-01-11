@@ -16,6 +16,9 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
+import static com.haulmont.testtask.Setting.HAVE_ACTIVE_CREDIT_OFFER;
+import static com.haulmont.testtask.Setting.NO_VALID_CLIENT;
+
 @AllArgsConstructor
 public class ClientRemoverImpl implements ClientRemover {
     private final ClientRepository clientRepository;
@@ -23,12 +26,12 @@ public class ClientRemoverImpl implements ClientRemover {
     @Override
     public boolean remove(Client client) {
         if (client == null || client.getClientId() == null || clientRepository.findById(client.getClientId()).isEmpty())
-            throw new ClientDeleteException(ClientDeleteException.NON_VALID);
+            throw new ClientDeleteException(NO_VALID_CLIENT);
         LocalDate now = LocalDate.now();
         for (CreditOffer creditOffer : client.getCreditOffers()) {
             for (Payment payment : creditOffer.getPayments()) {
                 if (payment.getDate().compareTo(now) > -1)
-                    throw new ClientDeleteException(ClientDeleteException.HAVE_ACTIVE_CREDIT_OFFER);
+                    throw new ClientDeleteException(HAVE_ACTIVE_CREDIT_OFFER);
             }
         }
 

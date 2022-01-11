@@ -5,12 +5,9 @@ import com.haulmont.testtask.backend.AnnuityCreditCalculator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class AnnuityCreditCalculatorImpl implements AnnuityCreditCalculator {
+import static com.haulmont.testtask.Setting.*;
 
-    public static final int CALCULATE_SCALE = 4;
-    public static final int PERCENT_TO_FRACTION_RATE = 100;
-    public static final int MONTH_IN_YEAR = 12;
-    public static final int MONEY_SCALE = 2;
+public class AnnuityCreditCalculatorImpl implements AnnuityCreditCalculator {
 
 
     @Override

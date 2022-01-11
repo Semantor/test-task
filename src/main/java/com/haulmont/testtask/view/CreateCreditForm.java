@@ -4,6 +4,7 @@ import com.haulmont.testtask.Config;
 import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
@@ -13,7 +14,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -22,17 +22,16 @@ import com.vaadin.flow.function.SerializablePredicate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static com.haulmont.testtask.view.Constant.DEFAULT_POSITION;
-import static com.haulmont.testtask.view.Constant.NOTIFICATION_DURATION;
+import static com.haulmont.testtask.Setting.*;
 
 @Slf4j
-public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown, CanBeSaved, CanBeCleared, CanBeClosed {
-    private static final String WRONG_CREDIT_LIMIT_MESSAGE = "wrong credit limit value";
-    private static final String WRONG_CREDIT_RATE_MESSAGE = "wrong credit rate value";
+public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown, CanBeSaved, CanBeCleared, CanBeClosed, Hornable {
+
 
     protected final BankProvider bankProvider;
     protected final CreditSaver creditSaver;
@@ -68,15 +67,15 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     }
 
     private void tuneFields() {
-        bankComboBox.setLabel("bank");
+        bankComboBox.setLabel(BANK_LABEL);
         bankComboBox.setItemLabelGenerator(Bank::toField);
 
         creditLimitField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
-        creditLimitField.setLabel("credit limit");
+        creditLimitField.setLabel(CREDIT_LIMIT_LABEL);
         creditLimitField.setPrefixComponent(new Icon(VaadinIcon.DOLLAR));
 
         creditRateField.setValue(BigDecimal.TEN);
-        creditRateField.setLabel("credit rate");
+        creditRateField.setLabel(CREDIT_RATE_LABEL);
         creditRateField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);
         creditRateField.setSuffixComponent(new Icon(VaadinIcon.BOOK_PERCENT));
     }
@@ -97,7 +96,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
 
         binder.forField(bankComboBox)
-                .withValidator(Objects::nonNull, "must choose bank")
+                .withValidator(Objects::nonNull, MUST_CHOOSE_BANK_ERROR_MSG)
                 .bind(Credit::getBank, Credit::setBank);
         binder.forField(creditLimitField)
                 .withValidator(predicateForCreditLimitField, WRONG_CREDIT_LIMIT_MESSAGE)
@@ -129,15 +128,15 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     public void validateAndSave() {
         if (binder.writeBeanIfValid(credit)) {
-            String msg1 = "trying to save credit: ";
-            log.info(msg1 + credit.toString());
-            Notification.show(msg1 + credit.toStringForClient(), NOTIFICATION_DURATION, DEFAULT_POSITION);
-            creditSaver.save(credit);
-            String msg2 = "Successfully saved credit: ";
-            log.info(msg2 + credit.toString());
-            Notification.show(msg2 + credit.toStringForClient(), NOTIFICATION_DURATION, DEFAULT_POSITION);
-            close();
-            clear();
+            hornIntoNotificationAndLoggerInfo(TRYING_TO_SAVE_NEW_CREDIT, credit);
+            try {
+                creditSaver.save(credit);
+                hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, credit);
+                close();
+                clear();
+            } catch (IllegalArgumentExceptionWithoutStackTrace ex) {
+                hornIntoNotificationAndLoggerInfo(ex.getMessage(), credit);
+            }
         }
     }
 
@@ -167,11 +166,8 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
         return clear;
     }
 
-    /**
-     * signal a message in notification and logger
-     */
-    protected void horn(String msg){
-        Notification.show(msg, Constant.NOTIFICATION_DURATION, Constant.DEFAULT_POSITION);
-        log.info(msg);
+    @Override
+    public Logger log() {
+        return log;
     }
 }

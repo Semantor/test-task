@@ -1,11 +1,13 @@
 package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Config;
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditOfferCreator;
 import com.haulmont.testtask.backend.CreditProvider;
 import com.haulmont.testtask.backend.PaymentCalculator;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.CreateCreditOfferException;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -20,7 +22,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -30,6 +31,7 @@ import com.vaadin.flow.data.binder.ValidationException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 
@@ -38,12 +40,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.haulmont.testtask.view.Constant.DEFAULT_POSITION;
-import static com.haulmont.testtask.view.Constant.NOTIFICATION_DURATION;
+import static com.haulmont.testtask.Setting.*;
 
 @PropertySource("config.properties")
 @Slf4j
-public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeCleared, CanBeSaved {
+public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeCleared, CanBeSaved, Hornable {
 
     private final List<Integer> DEFAULT_MONTH_COUNT = Arrays.asList(6, 12, 24, 36);
 
@@ -109,8 +110,8 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     }
 
     private HorizontalLayout createButtonsLayout() {
-        calculate.setText(Constant.CALCULATE_TEXT);
-        calculate.addThemeVariants(Constant.CALCULATE_STYLE);
+        calculate.setText(Setting.CALCULATE_BUTTON_TEXT);
+        calculate.addThemeVariants(Setting.CALCULATE_STYLE);
         calculate.addClickListener(event -> calculate());
         tuneSaveButton();
         tuneCloseButton();
@@ -130,22 +131,17 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                 .build();
         List<Payment> calculatingPayment = paymentCalculator.calculate(builtCreditOffer.getCredit(), builtCreditOffer, builtCreditOffer.getMonthCount(), builtCreditOffer.getCreditAmount(), firstPaymentDate);
         if (calculatingPayment.isEmpty()) {
-            String msg = "wrong incoming data";
-            log.info(msg + ": " + builtCreditOffer);
-            Notification.show(msg, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            hornIntoNotificationAndLoggerInfo(WRONG_INCOME_DATA, builtCreditOffer);
         }
 
         builtCreditOffer.setPayments(calculatingPayment);
         try {
             creditOfferCreator.save(builtCreditOffer);
-            String msg = "successfully save new credit offer";
-            log.info(msg + ": " + builtCreditOffer);
-            Notification.show(msg, NOTIFICATION_DURATION, DEFAULT_POSITION);
+            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, builtCreditOffer);
             clear();
             close();
         } catch (CreateCreditOfferException ex) {
-            Notification.show(ex.getMessage(), NOTIFICATION_DURATION, DEFAULT_POSITION);
-            log.warn(ex.getMessage() + builtCreditOffer);
+            hornIntoNotificationAndLoggerInfo(ex.getMessage());
         }
     }
 
@@ -157,8 +153,8 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     private void calculate() {
         LocalDate dateOfReceiving = datePicker.getValue();
         if (dateOfReceiving.isBefore(LocalDate.now())) {
-            infoLabel.setText("wrong date is picked");
-            Notification.show("wrong date is picked", NOTIFICATION_DURATION, DEFAULT_POSITION);
+            infoLabel.setText(Setting.WRONG_DATE_IS_PICKED);
+            hornIntoNotificationAndLoggerInfo(WRONG_DATE_IS_PICKED);
             return;
         }
         try {
@@ -171,9 +167,8 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
             paymentGridLayout.show();
         } catch (ValidationException ex) {
-            log.error(ex.toString());
             infoLabel.setText(ex.getMessage());
-            Notification.show(ex.getMessage(), NOTIFICATION_DURATION, DEFAULT_POSITION);
+            hornIntoNotificationAndLoggerInfo(ex.getMessage());
 
         }
     }
@@ -191,32 +186,31 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     }
 
     private void tuneFields() {
-        clientField.setLabel("Client");
+        clientField.setLabel(CLIENT_LABEL);
         clientField.setEnabled(false);
 
 
-        credit.setLabel("Credit");
+        credit.setLabel(CREDIT_LABEL);
         credit.setItems(Collections.emptyList());
         credit.setItemLabelGenerator((ItemLabelGenerator<Credit>) Credit::toField);
 
-        amountField.setLabel("amount");
+        amountField.setLabel(AMOUNT_LABEL);
         amountField.setSuffixComponent(new Icon(VaadinIcon.DOLLAR));
 
-        month.setLabel("duration in month");
-        month.setItems(this.DEFAULT_MONTH_COUNT);
+        month.setLabel(MONTH_LABEL);
+        month.setItems(DEFAULT_MONTH_COUNT);
         month.addCustomValueSetListener(event -> {
             int k = DEFAULT_MONTH_COUNT.get(0);
             try {
                 k = Integer.parseInt(event.getDetail());
             } catch (NumberFormatException ex) {
-                log.warn("trying to input wrong month count");
+                log.warn(WRONG_MONTH_COUNT_INPUT);
             }
             month.setValue(k);
         });
         month.setRequired(true);
-        month.setHelperText("you can enter your own number");
-
-        datePicker.setLabel("Date of receiving credit");
+        month.setHelperText(ENTER_CUSTOM_MONTH_COUNT_HELPER_TEXT);
+        datePicker.setLabel(RECEIVING_DATE_LABEL);
     }
 
     private void tuneBinder() {
@@ -228,11 +222,10 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                                 validator.validateCreditAmount(
                                         bigDecimal,
                                         credit.getValue().getCreditLimit()),
-                        "should be more than " + Config.CREDIT_LIMIT_MIN_VALUE +
-                                " and less than " + Config.CREDIT_LIMIT_MAX_VALUE)
+                        IllegalArgumentExceptionWithoutStackTrace.amountErrorMsg())
                 .bind(CreditOffer::getCreditAmount, CreditOffer::setCreditAmount);
         binder.forField(month)
-                .withValidator(integer -> integer != null && integer > 0, "must be more then zero")
+                .withValidator(integer -> integer != null && integer > 0, Setting.MUST_BE_MORE_THAN_ZERO)
                 .bind(CreditOffer::getMonthCount, CreditOffer::setMonthCount);
     }
 
@@ -262,5 +255,10 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     @Override
     public Button getSaveButton() {
         return save;
+    }
+
+    @Override
+    public Logger log() {
+        return log;
     }
 }

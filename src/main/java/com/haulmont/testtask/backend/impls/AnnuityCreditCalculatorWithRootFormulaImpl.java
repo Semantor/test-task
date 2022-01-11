@@ -5,8 +5,8 @@ import com.haulmont.testtask.backend.AnnuityCreditCalculator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static com.haulmont.testtask.backend.impls.AnnuityCreditCalculatorImpl.MONEY_SCALE;
-import static com.haulmont.testtask.backend.impls.AnnuityCreditCalculatorImpl.MONTH_IN_YEAR;
+import static com.haulmont.testtask.Setting.MONEY_SCALE;
+import static com.haulmont.testtask.Setting.MONTH_IN_YEAR;
 
 public class AnnuityCreditCalculatorWithRootFormulaImpl implements AnnuityCreditCalculator {
     @Override

@@ -5,11 +5,15 @@ import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
+import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.haulmont.testtask.Setting.LOG_DELIMITER;
+import static com.haulmont.testtask.Setting.TRYING_TO_SAVE_NEW_CLIENT;
 
 @AllArgsConstructor
 @Slf4j
@@ -30,7 +34,7 @@ public class ClientSaverImpl implements ClientSaver {
                 !clientFieldsValidator.validateEmail(client.getEmail()) ||
                 !clientFieldsValidator.validatePassport(client.getPassport())
         ) return;
-        log.info("trying to save client : " + client);
+        log.info(Hornable.LOG_TEMPLATE_3, TRYING_TO_SAVE_NEW_CLIENT, LOG_DELIMITER, client);
         clientRepository.save(client);
     }
 

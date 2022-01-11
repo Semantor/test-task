@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.haulmont.testtask.Setting.ALREADY_UNUSED;
+import static com.haulmont.testtask.Setting.OLD_CREDIT_IS_NON_PERSIST;
+
 @RequiredArgsConstructor
 public class CreditEditServiceImpl implements CreditEditService {
     private final CreditRepository creditRepository;
@@ -18,8 +21,8 @@ public class CreditEditServiceImpl implements CreditEditService {
     @Transactional
     public void edit(@NotNull Credit oldPersistCredit, @NotNull Credit newNonPersist) {
         Optional<Credit> byId = creditRepository.findById(oldPersistCredit.getCreditId());
-        if (byId.isEmpty()) throw new CreditDeleteException(CreditDeleteException.OLD_CREDIT_IS_NON_PERSIST);
-        if (byId.get().isUnused()) throw new CreditDeleteException(CreditDeleteException.ALREADY_UNUSED);
+        if (byId.isEmpty()) throw new CreditDeleteException(OLD_CREDIT_IS_NON_PERSIST);
+        if (byId.get().isUnused()) throw new CreditDeleteException(ALREADY_UNUSED);
 
         oldPersistCredit.unused();
         creditRepository.save(oldPersistCredit);

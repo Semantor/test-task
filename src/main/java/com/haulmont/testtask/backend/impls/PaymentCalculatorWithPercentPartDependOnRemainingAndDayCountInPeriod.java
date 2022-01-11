@@ -15,6 +15,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.haulmont.testtask.Setting.MONTH_MIN_VALUE;
+
 @RequiredArgsConstructor
 public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod implements PaymentCalculator {
     private final AnnuityCreditCalculator annuityCreditCalculator;
@@ -30,7 +32,7 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
                                    int month,
                                    BigDecimal amount,
                                    LocalDate dateOfReceiving) throws IllegalArgumentException {
-        if (month < 1 || !validator.validateCreditAmount(amount))
+        if (month < MONTH_MIN_VALUE || !validator.validateCreditAmount(amount))
             throw new IllegalArgumentException(WRONG_INCOME_AMOUNT);
         if (dateOfReceiving.isBefore(LocalDate.now()))
             throw new IllegalArgumentException(WRONG_INCOME_RECEIVING_DATE);

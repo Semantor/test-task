@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 
+import static com.haulmont.testtask.Setting.CREDIT_OFFER_DOES_NOT_EXIST;
+import static com.haulmont.testtask.Setting.PAYMENT_PERIOD_IS_ALREADY_START_AND_DOES_NOT_END;
+
 @AllArgsConstructor
 @Transactional
 public class CreditOfferRemoverImpl implements CreditOfferRemover {
@@ -27,7 +30,7 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
     @Override
     public boolean remove(@Nullable CreditOffer creditOffer) {
         if (creditOffer == null || creditOffer.getCreditOfferId() == null || creditOfferRepository.findById(creditOffer.getCreditOfferId()).isEmpty())
-            throw new CreditOfferDeleteException(CreditOfferDeleteException.CREDIT_OFFER_DOES_NOT_EXIST);
+            throw new CreditOfferDeleteException(CREDIT_OFFER_DOES_NOT_EXIST);
 
 
         LocalDate now = LocalDate.now();
@@ -37,7 +40,7 @@ public class CreditOfferRemoverImpl implements CreditOfferRemover {
             if (payment.getDate().compareTo(now) < 0) isExistsEarlier = true;
             if (payment.getDate().compareTo(now) > 0) isExistsLater = true;
             if (isExistsEarlier && isExistsLater)
-                throw new CreditOfferDeleteException(CreditOfferDeleteException.PAYMENT_PERIOD_IS_ALREADY_START_AND_DOESNT_END);
+                throw new CreditOfferDeleteException(PAYMENT_PERIOD_IS_ALREADY_START_AND_DOES_NOT_END);
         }
 
         paymentRepository.deleteAll(creditOffer.getPayments());

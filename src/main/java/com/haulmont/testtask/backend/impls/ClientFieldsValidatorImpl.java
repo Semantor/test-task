@@ -2,13 +2,14 @@ package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 
-import static com.haulmont.testtask.model.entity.Client_.*;
+import static com.haulmont.testtask.Setting.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -22,34 +23,34 @@ public class ClientFieldsValidatorImpl implements ClientFieldsValidator {
 
     @Override
     public boolean validateEmail(@Nullable String email) {
-        return validate(email, emailFieldName, EMAIL_REG_EX, () -> true);
+        return validate(email, EMAIL_LABEL, EMAIL_REG_EX, () -> true);
 
     }
 
     @Override
     public boolean validatePhone(@Nullable String phone) {
-        return validate(phone, phoneNumberFieldName, PHONE_REG_EX, () -> true);
+        return validate(phone, PHONE_NUMBER_LABEL, PHONE_REG_EX, () -> true);
     }
 
     @Override
     public boolean validatePassport(@Nullable String passport) {
-        return validate(passport, passportFieldName, PASSPORT_REG_EX, () -> {
-            int i = Integer.parseInt(passport.substring(2, 4));
-            return (i < 22 || i > 90);
+        return validate(passport, PASSPORT_LABEL, PASSPORT_REG_EX, () -> {
+            int i = Integer.parseInt(passport.substring(PASSPORT_SERIES_YEAR_START_POSITION, PASSPORT_NUMBER_START_INDEX));
+            return (i <= MAX_YEAR_IN_PASSPORT || i > MIN_YEAR_IN_PASSPORT);
         });
     }
 
     private boolean validate(@Nullable String fieldValue, String fieldName,
                              String regExMatcher, BooleanSupplier additionalFilter) {
         if (validator.isNullOrBlank(fieldValue)) {
-            log.info(fieldName + " is null or blank");
+            log.info(Hornable.LOG_TEMPLATE_3, fieldName, LOG_DELIMITER, IS_NULL_OR_BLANK);
             return false;
         }
         if (fieldValue.matches(regExMatcher) && additionalFilter.getAsBoolean()) {
-            log.info(fieldName + ": " + fieldName + " is valid");
+            log.info(Hornable.LOG_TEMPLATE_3, fieldName, LOG_DELIMITER, IS_VALID);
             return true;
         }
-        log.info(fieldName + ": " + fieldName + " is not valid");
+        log.info(Hornable.LOG_TEMPLATE_3, fieldName, LOG_DELIMITER, IS_NOT_VALID);
         return false;
     }
 }

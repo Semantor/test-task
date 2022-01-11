@@ -1,17 +1,22 @@
 package com.haulmont.testtask.backend.impls;
 
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
+import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.view.Hornable.LOG_TEMPLATE_3;
 
 @AllArgsConstructor
 @Slf4j
@@ -24,33 +29,33 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
 
     @Override
     public void save(Client client) throws CreateClientException {
-        if (client == null) throw new CreateClientException(CreateClientException.NULLABLE_CLIENT);
-        if (client.getClientId() == null) throw new CreateClientException(CreateClientException.EMPTY_UUID);
+        if (client == null) throw new CreateClientException(NULLABLE_CLIENT);
+        if (client.getClientId() == null) throw new CreateClientException(NULLABLE_ID);
         if (clientRepository.findById(client.getClientId()).isPresent())
-            throw new CreateClientException(CreateClientException.UUID_IS_ALREADY_USED);
+            throw new CreateClientException(UUID_IS_ALREADY_USED);
 
         if (validator.isNullOrBlank(client.getLastName()))
-            throw new CreateClientException(CreateClientException.EMPTY_LASTNAME);
+            throw new CreateClientException(EMPTY_LASTNAME);
         if (client.getLastName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
-            throw new CreateClientException(CreateClientException.TOO_SHORT_LASTNAME);
+            throw new CreateClientException(TOO_SHORT_LASTNAME);
         if (!client.getLastName().matches(ONLY_LETTER_REG_EX))
-            throw new CreateClientException(CreateClientException.LASTNAME_INCORRECT_SYMBOLS);
+            throw new CreateClientException(LASTNAME_INCORRECT_SYMBOLS);
 
         if (validator.isNullOrBlank(client.getFirstName()))
-            throw new CreateClientException(CreateClientException.EMPTY_NAME);
+            throw new CreateClientException(EMPTY_NAME);
         if (client.getFirstName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
-            throw new CreateClientException(CreateClientException.TOO_SHORT_NAME);
+            throw new CreateClientException(TOO_SHORT_NAME);
         if (!client.getFirstName().matches(ONLY_LETTER_REG_EX))
-            throw new CreateClientException(CreateClientException.NAME_INCORRECT_SYMBOLS);
+            throw new CreateClientException(NAME_INCORRECT_SYMBOLS);
 
         if (!clientFieldsValidator.validatePhone(client.getPhoneNumber()))
-            throw new CreateClientException(CreateClientException.NO_VALID_PHONE);
+            throw new CreateClientException(NO_VALID_PHONE);
         if (!clientFieldsValidator.validateEmail(client.getEmail()))
-            throw new CreateClientException(CreateClientException.NO_VALID_EMAIL);
+            throw new CreateClientException(NO_VALID_EMAIL);
         if (!clientFieldsValidator.validatePassport(client.getPassport()))
-            throw new CreateClientException(CreateClientException.NO_VALID_PASSPORT);
+            throw new CreateClientException(NO_VALID_PASSPORT);
 
-        log.info("trying to save client : " + client);
+        log.info(LOG_TEMPLATE_3,TRYING_TO_SAVE_NEW_CLIENT,LOG_DELIMITER,client);
         try {
             clientRepository.save(client);
         } catch (DataIntegrityViolationException ex) {
@@ -61,10 +66,10 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
     @Override
     public void save(String uuidString, Client client) {
         UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
-        if (uuid == null) throw new CreateClientException(CreateClientException.WRONG_UUID);
+        if (uuid == null) throw new CreateClientException(NULLABLE_ID);
 
         Optional<Client> byId = clientRepository.findById(uuid);
-        if (byId.isEmpty()) throw new CreateClientException(CreateClientException.DOES_NOT_PRESENT);
+        if (byId.isEmpty()) throw new CreateClientException(CLIENT_DOES_NOT_PRESENT_IN_DB);
         Client persistClient = byId.get();
         if (!validator.isNullOrBlank(client.getFirstName()))
             persistClient.setFirstName(client.getFirstName());

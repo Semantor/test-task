@@ -1,5 +1,6 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.Setting;
 import com.vaadin.flow.component.button.Button;
 
 public interface CanBeCleared {
@@ -7,8 +8,8 @@ public interface CanBeCleared {
 
     default void tuneClearButton(){
         Button button = getClearButton();
-        button.setText(Constant.CLEAR_TEXT);
-        button.addThemeVariants(Constant.CLEAR_STYLE);
+        button.setText(Setting.CLEAR_BUTTON_TEXT);
+        button.addThemeVariants(Setting.CLEAR_STYLE);
         button.addClickListener(event -> clear());
     }
 
