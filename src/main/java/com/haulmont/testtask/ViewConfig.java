@@ -52,9 +52,9 @@ public class ViewConfig {
     @Bean
     @Scope("prototype")
     CreateCreditOfferForm createCreditOfferForm(CreditOfferCreator creditOfferCreator, CreditProvider creditProvider,
-                                                PaymentCalculator paymentCalculator, PaymentGridLayout paymentGridLayout,
+                                                PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, PaymentGridLayout paymentGridLayout,
                                                 Validator validator, CreditConstraintProvider creditConstraintProvider) {
-        return new CreateCreditOfferForm(creditOfferCreator, creditProvider, paymentCalculator, paymentGridLayout, validator, creditConstraintProvider);
+        return new CreateCreditOfferForm(creditOfferCreator, creditProvider, paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, paymentGridLayout, validator, creditConstraintProvider);
     }
 
     @Bean

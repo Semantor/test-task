@@ -30,7 +30,7 @@ public class CreditOfferCreator {
     private final CreditOfferRepository creditOfferRepository;
     private final CreditRepository creditRepository;
     private final ClientRepository clientRepository;
-    private final PaymentCalculator paymentCalculator;
+    private final PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
     private final Validator validator;
     private final PaymentRepository paymentRepository;
     /**
@@ -107,7 +107,7 @@ public class CreditOfferCreator {
     }
 
     private void checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
-        List<Payment> calculatePayments = paymentCalculator
+        List<Payment> calculatePayments = paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod
                 .calculate(creditOffer.getCredit(), creditOffer, creditOffer.getMonthCount(),
                         creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate().minusMonths(1));
 

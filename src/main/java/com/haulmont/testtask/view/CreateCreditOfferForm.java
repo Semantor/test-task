@@ -46,7 +46,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
     private final CreditOfferCreator creditOfferCreator;
     private final CreditProvider creditProvider;
-    private final PaymentCalculator paymentCalculator;
+    private final PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
     @Getter
     private final PaymentGridLayout paymentGridLayout;
     private final Validator validator;
@@ -74,11 +74,11 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
 
     @Autowired
-    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculator paymentCalculator, PaymentGridLayout paymentGridLayout, Validator validator, CreditConstraintProvider creditConstraintProvider) {
+    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, PaymentGridLayout paymentGridLayout, Validator validator, CreditConstraintProvider creditConstraintProvider) {
         this.validator = validator;
         this.creditOfferCreator = coc;
         this.creditProvider = cp;
-        this.paymentCalculator = paymentCalculator;
+        this.paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod = paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
         this.paymentGridLayout = paymentGridLayout;
         this.creditConstraintProvider = creditConstraintProvider;
 
@@ -127,7 +127,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                 .creditAmount(creditOffer.getCreditAmount())
                 .monthCount(creditOffer.getMonthCount())
                 .build();
-        List<Payment> calculatingPayment = paymentCalculator.calculate(builtCreditOffer.getCredit(), builtCreditOffer, builtCreditOffer.getMonthCount(), builtCreditOffer.getCreditAmount(), firstPaymentDate);
+        List<Payment> calculatingPayment = paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod.calculate(builtCreditOffer.getCredit(), builtCreditOffer, builtCreditOffer.getMonthCount(), builtCreditOffer.getCreditAmount(), firstPaymentDate);
         if (calculatingPayment.isEmpty()) {
             hornIntoNotificationAndLoggerInfo(WRONG_INCOME_DATA, builtCreditOffer);
         }
@@ -160,7 +160,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
             paymentGridLayout.setVisible(true);
             save.setVisible(true);
             clear.setVisible(true);
-            paymentGridLayout.setPayments(paymentCalculator.calculate(creditOffer.getCredit(),
+            paymentGridLayout.setPayments(paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod.calculate(creditOffer.getCredit(),
                     creditOffer.getMonthCount(), creditOffer.getCreditAmount(), dateOfReceiving));
 
             paymentGridLayout.show();

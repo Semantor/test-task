@@ -120,6 +120,9 @@ public class Setting {
     public static final String WRONG_PAYMENTS_COUNT = "wrong payments count";
     public static final String CREDIT_OFFER_DOES_NOT_EXIST = "credit offer does not exist";
     public static final String PAYMENT_PERIOD_IS_ALREADY_START_AND_DOES_NOT_END = "payment period is already start and doesn't end";
+    //payment
+    public static final String WRONG_INCOME_AMOUNT = "wrong income data - amount in Payment Calculator";
+    public static final String WRONG_INCOME_RECEIVING_DATE = "wrong income data - date of receiving in Payment Calculator";
 
     public static final String WRONG_AMOUNT_MUST_BE_MORE_OR_EQUAL =
             "Wrong credit amount: must be more or equal ";
