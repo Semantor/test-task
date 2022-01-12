@@ -1,7 +1,7 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Config;
 import com.haulmont.testtask.backend.BankProvider;
+import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
@@ -36,6 +36,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     protected final BankProvider bankProvider;
     protected final CreditSaver creditSaver;
     protected final Validator validator;
+    protected final CreditConstraintProvider creditConstraintProvider;
 
     private Credit credit;
 
@@ -53,10 +54,11 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     private final Button clear = new Button();
     private final Button close = new Button();
 
-    public CreateCreditForm(BankProvider bankProvider, CreditSaver creditSaver, Validator validator) {
+    public CreateCreditForm(BankProvider bankProvider, CreditSaver creditSaver, Validator validator, CreditConstraintProvider creditConstraintProvider) {
         this.validator = validator;
         this.creditSaver = creditSaver;
         this.bankProvider = bankProvider;
+        this.creditConstraintProvider = creditConstraintProvider;
         tuneFields();
         tuneBinder();
         add(bankComboBox, creditLimitField, creditRateField, createButtons());
@@ -70,7 +72,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
         bankComboBox.setLabel(BANK_LABEL);
         bankComboBox.setItemLabelGenerator(Bank::toField);
 
-        creditLimitField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
+        creditLimitField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
         creditLimitField.setLabel(CREDIT_LIMIT_LABEL);
         creditLimitField.setPrefixComponent(new Icon(VaadinIcon.DOLLAR));
 
@@ -120,7 +122,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     @Override
     public void clear() {
-        creditLimitField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
+        creditLimitField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
         creditRateField.setValue(BigDecimal.TEN);
         credit = Credit.builder().build();
         bankComboBox.setItems(bankProvider.getAllBanks());

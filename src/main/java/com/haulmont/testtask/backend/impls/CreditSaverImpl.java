@@ -1,5 +1,6 @@
 package com.haulmont.testtask.backend.impls;
 
+import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
@@ -24,6 +25,7 @@ public class CreditSaverImpl implements CreditSaver {
     private final CreditRepository creditRepository;
     private final BankRepository bankRepository;
     private final Validator validator;
+    private final CreditConstraintProvider creditConstraintProvider;
 
     @Override
     public void save(@Nullable Credit credit) throws IllegalArgumentExceptionWithoutStackTrace {
@@ -32,9 +34,9 @@ public class CreditSaverImpl implements CreditSaver {
         if (credit.getCreditId() == null)
             throw new IllegalArgumentExceptionWithoutStackTrace(NULLABLE_ID);
         if (!validator.validateCreditAmount(credit.getCreditLimit()))
-            throw new IllegalArgumentExceptionWithoutStackTrace(amountErrorMsg());
+            throw new IllegalArgumentExceptionWithoutStackTrace(amountErrorMsg(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE,creditConstraintProvider.CREDIT_LIMIT_MAX_VALUE));
         if (!validator.validateCreditRate(credit.getCreditRate()))
-            throw new IllegalArgumentExceptionWithoutStackTrace(rateErrorMsg());
+            throw new IllegalArgumentExceptionWithoutStackTrace(rateErrorMsg(creditConstraintProvider.CREDIT_RATE_MIN_VALUE, creditConstraintProvider.CREDIT_RATE_MAX_VALUE));
         if (credit.getBank() == null)
             throw new IllegalArgumentExceptionWithoutStackTrace(NULLABLE_BANK_FIELD);
         if (credit.getBank().getBankId() == null)

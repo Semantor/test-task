@@ -42,16 +42,19 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    CreateCreditForm createCreditForm(BankProvider bankProvider, CreditSaver creditSaver, Validator validator) {
-        return new CreateCreditForm(bankProvider, creditSaver, validator);
+    CreateCreditForm createCreditForm(BankProvider bankProvider,
+                                      CreditSaver creditSaver,
+                                      Validator validator,
+                                      CreditConstraintProvider creditConstraintProvider) {
+        return new CreateCreditForm(bankProvider, creditSaver, validator, creditConstraintProvider);
     }
 
     @Bean
     @Scope("prototype")
     CreateCreditOfferForm createCreditOfferForm(CreditOfferCreator creditOfferCreator, CreditProvider creditProvider,
                                                 PaymentCalculator paymentCalculator, PaymentGridLayout paymentGridLayout,
-                                                Validator validator) {
-        return new CreateCreditOfferForm(creditOfferCreator, creditProvider, paymentCalculator, paymentGridLayout, validator);
+                                                Validator validator, CreditConstraintProvider creditConstraintProvider) {
+        return new CreateCreditOfferForm(creditOfferCreator, creditProvider, paymentCalculator, paymentGridLayout, validator, creditConstraintProvider);
     }
 
     @Bean
@@ -101,8 +104,9 @@ public class ViewConfig {
     CreditEditorForm creditEditorForm(BankProvider bankProvider,
                                       CreditSaver creditSaver,
                                       Validator validator,
-                                      CreditEditService creditEditService) {
-        return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService);
+                                      CreditEditService creditEditService,
+                                      CreditConstraintProvider creditConstraintProvider) {
+        return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService,creditConstraintProvider);
     }
 
 }

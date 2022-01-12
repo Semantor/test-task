@@ -1,11 +1,7 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Config;
 import com.haulmont.testtask.Setting;
-import com.haulmont.testtask.backend.CreditOfferCreator;
-import com.haulmont.testtask.backend.CreditProvider;
-import com.haulmont.testtask.backend.PaymentCalculator;
-import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.backend.*;
 import com.haulmont.testtask.backend.excs.CreateCreditOfferException;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
@@ -54,6 +50,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     @Getter
     private final PaymentGridLayout paymentGridLayout;
     private final Validator validator;
+    private final CreditConstraintProvider creditConstraintProvider;
 
     @Getter
     @Setter
@@ -77,12 +74,13 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
 
     @Autowired
-    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculator paymentCalculator, PaymentGridLayout paymentGridLayout, Validator validator) {
+    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculator paymentCalculator, PaymentGridLayout paymentGridLayout, Validator validator, CreditConstraintProvider creditConstraintProvider) {
         this.validator = validator;
         this.creditOfferCreator = coc;
         this.creditProvider = cp;
         this.paymentCalculator = paymentCalculator;
         this.paymentGridLayout = paymentGridLayout;
+        this.creditConstraintProvider = creditConstraintProvider;
 
         tuneBinder();
         HorizontalLayout buttons = createButtonsLayout();
@@ -176,7 +174,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     @Override
     public void clear() {
         credit.setItems(creditProvider.getAllCredit());
-        amountField.setValue(Config.CREDIT_LIMIT_MIN_VALUE);
+        amountField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
         creditOffer = CreditOffer.builder().client(client).build();
         save.setVisible(false);
         clear.setVisible(false);
@@ -222,8 +220,11 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                                 validator.validateCreditAmount(
                                         bigDecimal,
                                         credit.getValue().getCreditLimit()),
-                        IllegalArgumentExceptionWithoutStackTrace.amountErrorMsg())
-                .bind(CreditOffer::getCreditAmount, CreditOffer::setCreditAmount);
+                        IllegalArgumentExceptionWithoutStackTrace.
+                                amountErrorMsg(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE,
+                                        creditConstraintProvider.CREDIT_LIMIT_MAX_VALUE)
+                ).bind(CreditOffer::getCreditAmount, CreditOffer::setCreditAmount);
+
         binder.forField(month)
                 .withValidator(integer -> integer != null && integer > 0, Setting.MUST_BE_MORE_THAN_ZERO)
                 .bind(CreditOffer::getMonthCount, CreditOffer::setMonthCount);
