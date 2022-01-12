@@ -3,7 +3,9 @@ package com.haulmont.testtask.model.repositories;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.Client_;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientSpecifications {
 
     public Specification<Client> searchClientByAllField(String keyword){
