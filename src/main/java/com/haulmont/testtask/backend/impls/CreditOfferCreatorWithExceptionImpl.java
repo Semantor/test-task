@@ -99,7 +99,7 @@ public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
     private void checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
         List<Payment> calculatePayments = paymentCalculator
                 .calculate(creditOffer.getCredit(), creditOffer, creditOffer.getMonthCount(),
-                        creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate());
+                        creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate().minusMonths(1));
 
         if (calculatePayments.size() != creditOffer.getPayments().size())
             throw new CreateCreditOfferException(WRONG_PAYMENTS_COUNT);
