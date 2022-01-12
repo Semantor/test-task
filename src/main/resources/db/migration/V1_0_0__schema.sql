@@ -23,7 +23,7 @@ create table if not exists credit_offers (
 credit_offer_id UUID primary key,
 client_id UUID foreign key references clients(client_id),
 credit_id UUID foreign key references credits(credit_id),
-credit_amount DECIMAL not null,
+credit_amount DECIMAL(12,2) not null,
 month_count int not null
 );
 
@@ -31,8 +31,8 @@ create table if not exists payments(
 payment_id UUID primary key,
 date DATE not null,
 credit_offer_id UUID foreign key references credit_offers(credit_offer_id),
-amount DECIMAL not null,
-main_part DECIMAL not null,
-percent_part DECIMAL not null
+amount DECIMAL(12,2) not null,
+main_part DECIMAL(12,2) not null,
+percent_part DECIMAL(12,2) not null
 );
 
