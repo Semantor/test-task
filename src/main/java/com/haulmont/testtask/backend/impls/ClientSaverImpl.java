@@ -2,6 +2,7 @@ package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.ClientSaver;
+import com.haulmont.testtask.backend.StringUUIDHandler;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
@@ -22,6 +23,7 @@ public class ClientSaverImpl implements ClientSaver {
     private final ClientRepository clientRepository;
     private final ClientFieldsValidator clientFieldsValidator;
     private final Validator validator;
+    private StringUUIDHandler stringUUIDHandler;
 
     @Override
     public void save(Client client) {
@@ -41,7 +43,7 @@ public class ClientSaverImpl implements ClientSaver {
 
     @Override
     public void save(String uuidString, Client client) {
-        UUID uuid1 = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        UUID uuid1 = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid1 == null) return;
 
         Optional<Client> byId = clientRepository.findById(uuid1);

@@ -1,7 +1,7 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.ClientProvider;
-import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.backend.StringUUIDHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Component
 public class ClientProviderNonRemovedImpl implements ClientProvider {
     private final ClientRepository clientRepository;
-    private final Validator validator;
+    private final StringUUIDHandler stringUUIDHandler;
 
     @Override
     public List<Client> getClients() {
@@ -35,7 +35,7 @@ public class ClientProviderNonRemovedImpl implements ClientProvider {
 
     @Override
     public Optional<Client> getClient(@Nullable String uuidString) {
-        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid == null) return Optional.empty();
         Optional<Client> byId = clientRepository.findById(uuid);
         if (byId.isEmpty()) return Optional.empty();

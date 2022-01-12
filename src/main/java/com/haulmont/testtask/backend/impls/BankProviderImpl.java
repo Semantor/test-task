@@ -1,6 +1,7 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.BankProvider;
+import com.haulmont.testtask.backend.StringUUIDHandler;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.repositories.BankRepository;
@@ -19,10 +20,11 @@ public class BankProviderImpl implements BankProvider {
 
     private final BankRepository bankRepository;
     private final Validator validator;
+    private final StringUUIDHandler uuidHandler;
 
     @Override
     public Optional<Bank> getBank(String uuidString) {
-        UUID bankUUID = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        UUID bankUUID = uuidHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (bankUUID == null) return Optional.empty();
         return bankRepository.findById(bankUUID);
     }

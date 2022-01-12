@@ -1,13 +1,12 @@
 package com.haulmont.testtask.backend.impls;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.ClientSaver;
+import com.haulmont.testtask.backend.StringUUIDHandler;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
-import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,8 +25,8 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
     private final ClientFieldsValidator clientFieldsValidator;
     private final ClientRepository clientRepository;
     private final Validator validator;
+    private final StringUUIDHandler stringUUIDHandler;
     private static final String ONLY_LETTER_REG_EX = "[a-zA-Z]+";
-    public static final int MIN_FIRST_OR_LAST_NAME_LENGTH = 3;
 
     @Override
     public void save(Client client) throws CreateClientException {
@@ -38,14 +37,14 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
 
         if (validator.isNullOrBlank(client.getLastName()))
             throw new CreateClientException(EMPTY_LASTNAME);
-        if (client.getLastName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
+        if (client.getLastName().length() < NAME_FIELD_MIN_LENGTH)
             throw new CreateClientException(TOO_SHORT_LASTNAME);
         if (!client.getLastName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(LASTNAME_INCORRECT_SYMBOLS);
 
         if (validator.isNullOrBlank(client.getFirstName()))
             throw new CreateClientException(EMPTY_NAME);
-        if (client.getFirstName().length() < MIN_FIRST_OR_LAST_NAME_LENGTH)
+        if (client.getFirstName().length() < NAME_FIELD_MIN_LENGTH)
             throw new CreateClientException(TOO_SHORT_NAME);
         if (!client.getFirstName().matches(ONLY_LETTER_REG_EX))
             throw new CreateClientException(NAME_INCORRECT_SYMBOLS);
@@ -57,7 +56,7 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
         if (!clientFieldsValidator.validatePassport(client.getPassport()))
             throw new CreateClientException(NO_VALID_PASSPORT);
 
-        log.info(LOG_TEMPLATE_3,TRYING_TO_SAVE_NEW_CLIENT,LOG_DELIMITER,client);
+        log.info(LOG_TEMPLATE_3, TRYING_TO_SAVE_NEW_CLIENT, LOG_DELIMITER, client);
         try {
             clientRepository.save(client);
         } catch (DataIntegrityViolationException ex) {
@@ -67,7 +66,7 @@ public class ClientSaverWithExceptionImpl implements ClientSaver {
 
     @Override
     public void save(String uuidString, Client client) {
-        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid == null) throw new CreateClientException(NULLABLE_ID);
 
         Optional<Client> byId = clientRepository.findById(uuid);

@@ -1,7 +1,7 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.CreditProvider;
-import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.backend.StringUUIDHandler;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Component
 public class CreditProviderNonUnusedImpl implements CreditProvider {
     private final CreditRepository creditRepository;
-    private final Validator validator;
+    private final StringUUIDHandler stringUUIDHandler;
 
     @Override
     public List<Credit> getAllCredit() {
@@ -25,7 +25,7 @@ public class CreditProviderNonUnusedImpl implements CreditProvider {
 
     @Override
     public Optional<Credit> getCredit(@Nullable String uuidString) {
-        UUID uuid = validator.validateStringUUIDAndReturnNullOrUUID(uuidString);
+        UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid == null) return Optional.empty();
         Optional<Credit> byId = creditRepository.findById(uuid);
         if (byId.isEmpty() || byId.get().isUnused()) return Optional.empty();
