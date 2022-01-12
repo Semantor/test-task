@@ -11,9 +11,11 @@ import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import static com.haulmont.testtask.Setting.NO_VALID_CREDIT;
 
+@Component
 @AllArgsConstructor
 public class CreditRemoverImpl implements CreditRemover {
     private final CreditRepository creditRepository;

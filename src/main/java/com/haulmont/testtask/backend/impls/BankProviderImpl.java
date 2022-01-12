@@ -6,6 +6,7 @@ import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Slf4j
+@Component
 public class BankProviderImpl implements BankProvider {
 
     private final BankRepository bankRepository;

@@ -4,8 +4,10 @@ import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
+@Component
 public class BankFieldAvailabilityCheckerImpl implements BankFieldAvailabilityChecker {
     private final BankRepository bankRepository;
 

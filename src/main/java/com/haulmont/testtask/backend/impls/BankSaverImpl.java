@@ -4,8 +4,10 @@ import com.haulmont.testtask.backend.BankSaver;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
+@Component
 public class BankSaverImpl implements BankSaver {
     private final BankRepository bankRepository;
 

@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 
 import static com.haulmont.testtask.Setting.MONEY_SCALE;
 import static com.haulmont.testtask.Setting.MONTH_IN_YEAR;
+@Component
 
 public class AnnuityCreditCalculatorWithRootFormulaImpl implements AnnuityCreditCalculator {
     @Override

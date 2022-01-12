@@ -8,12 +8,14 @@ import com.haulmont.testtask.model.repositories.CreditOfferRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
 @Slf4j
+@Component
 public class CreditOfferProviderNonCanceledByClientImpl implements CreditOfferProviderByClient {
     private final CreditOfferRepository creditOfferRepository;
     private final ClientRepository clientRepository;

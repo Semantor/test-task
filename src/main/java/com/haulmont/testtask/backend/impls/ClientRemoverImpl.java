@@ -13,6 +13,7 @@ import com.haulmont.testtask.model.entity.Payment;
 import com.haulmont.testtask.model.entity.Removable;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
@@ -20,6 +21,7 @@ import static com.haulmont.testtask.Setting.HAVE_ACTIVE_CREDIT_OFFER;
 import static com.haulmont.testtask.Setting.NO_VALID_CLIENT;
 
 @AllArgsConstructor
+@Component
 public class ClientRemoverImpl implements ClientRemover {
     private final ClientRepository clientRepository;
 

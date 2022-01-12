@@ -15,6 +15,7 @@ import com.haulmont.testtask.model.repositories.PaymentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import static com.haulmont.testtask.Setting.*;
 
 @AllArgsConstructor
 @Slf4j
+@Component
 public class CreditOfferCreatorWithExceptionImpl implements CreditOfferCreator {
 
     private final CreditOfferRepository creditOfferRepository;

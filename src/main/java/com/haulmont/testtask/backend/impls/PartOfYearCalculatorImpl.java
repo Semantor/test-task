@@ -1,10 +1,12 @@
 package com.haulmont.testtask.backend.impls;
 
 import com.haulmont.testtask.backend.PartOfYearCalculator;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Year;
 
+@Component
 public class PartOfYearCalculatorImpl implements PartOfYearCalculator {
 
     public double whatPartOfYearIsPeriod(LocalDate passedPaymentDate, LocalDate paymentDate) {

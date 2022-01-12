@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Component
 public class ClientSearchByKeyWordServiceImpl implements ClientSearchByKeyWordService {
     private final ClientRepository clientRepository;
     private final ClientSpecifications clientSpecifications;

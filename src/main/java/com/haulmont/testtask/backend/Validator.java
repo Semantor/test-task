@@ -2,12 +2,13 @@ package com.haulmont.testtask.backend;
 
 import com.haulmont.testtask.Config;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
+@Component
 public class Validator {
     /**
      * check for null, empty and correct

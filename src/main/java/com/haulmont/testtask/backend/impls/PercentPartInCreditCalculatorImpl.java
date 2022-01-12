@@ -3,6 +3,7 @@ package com.haulmont.testtask.backend.impls;
 import com.haulmont.testtask.backend.PartOfYearCalculator;
 import com.haulmont.testtask.backend.PercentPartInCreditCalculator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import static com.haulmont.testtask.Setting.*;
 
 @RequiredArgsConstructor
+@Component
 public class PercentPartInCreditCalculatorImpl implements PercentPartInCreditCalculator {
     private final PartOfYearCalculator partOfYearCalculator;
 

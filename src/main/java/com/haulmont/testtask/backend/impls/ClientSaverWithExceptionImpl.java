@@ -11,6 +11,7 @@ import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import static com.haulmont.testtask.view.Hornable.LOG_TEMPLATE_3;
 
 @AllArgsConstructor
 @Slf4j
+@Component
 public class ClientSaverWithExceptionImpl implements ClientSaver {
     private final ClientFieldsValidator clientFieldsValidator;
     private final ClientRepository clientRepository;

@@ -4,8 +4,10 @@ import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import com.haulmont.testtask.model.repositories.ClientSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class ClientFieldAvailabilityCheckerImpl implements ClientFieldAvailabilityChecker {
     private final ClientRepository clientRepository;
     private final ClientSpecifications clientSpecifications;

@@ -11,10 +11,12 @@ import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import static com.haulmont.testtask.Setting.BANK_DOES_NOT_EXIST;
 
 @AllArgsConstructor
+@Component
 public class BankRemoverImpl implements BankRemover {
     private final BankRepository bankRepository;
 

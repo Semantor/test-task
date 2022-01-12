@@ -6,6 +6,7 @@ import com.haulmont.testtask.view.Hornable;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.function.BooleanSupplier;
 
@@ -13,6 +14,7 @@ import static com.haulmont.testtask.Setting.*;
 
 @Slf4j
 @AllArgsConstructor
+@Component
 public class ClientFieldsValidatorImpl implements ClientFieldsValidator {
     private final Validator validator;
 

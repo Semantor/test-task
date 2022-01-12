@@ -6,12 +6,14 @@ import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
+@Component
 public class CreditProviderNonUnusedImpl implements CreditProvider {
     private final CreditRepository creditRepository;
     private final Validator validator;

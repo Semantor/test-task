@@ -8,6 +8,7 @@ import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.entity.Payment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.List;
 import static com.haulmont.testtask.Setting.MONTH_MIN_VALUE;
 
 @RequiredArgsConstructor
+@Component
 public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod implements PaymentCalculator {
     private final AnnuityCreditCalculator annuityCreditCalculator;
     private final Validator validator;

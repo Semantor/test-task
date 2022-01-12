@@ -9,6 +9,7 @@ import com.haulmont.testtask.model.repositories.BankRepository;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import static com.haulmont.testtask.Setting.*;
 import static com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace.amountErrorMsg;
 import static com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace.rateErrorMsg;
 
+@Component
 @AllArgsConstructor
 public class CreditSaverImpl implements CreditSaver {
 

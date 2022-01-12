@@ -13,6 +13,7 @@ import com.haulmont.testtask.model.repositories.CreditOfferRepository;
 import com.haulmont.testtask.model.repositories.PaymentRepository;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static com.haulmont.testtask.Setting.PAYMENT_PERIOD_IS_ALREADY_START_AND_
 
 @AllArgsConstructor
 @Transactional
+@Component
 public class CreditOfferRemoverImpl implements CreditOfferRemover {
     private final CreditOfferRepository creditOfferRepository;
     private final PaymentRepository paymentRepository;
