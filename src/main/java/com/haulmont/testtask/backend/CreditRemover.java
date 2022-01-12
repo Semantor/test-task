@@ -1,10 +1,25 @@
 package com.haulmont.testtask.backend;
 
+import com.haulmont.testtask.backend.excs.CreditDeleteException;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.Removable;
+import com.haulmont.testtask.model.repositories.CreditRepository;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface CreditRemover extends Remover {
+import static com.haulmont.testtask.Setting.NO_VALID_CREDIT;
+
+@Component
+@AllArgsConstructor
+@Transactional
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class CreditRemover implements Remover {
+    private final CreditRepository creditRepository;
+
     /**
      * trying to make client {@link Credit#isUnused()}
      *
@@ -12,10 +27,17 @@ public interface CreditRemover extends Remover {
      * @return true if successful removed
      * @throws com.haulmont.testtask.backend.excs.CreditDeleteException due to failed, fe credit is not persist
      */
-    boolean remove(@Nullable Credit credit);
+    public boolean remove(@Nullable Credit credit) {
+        if (credit==null||credit.getCreditId() == null||creditRepository.findById(credit.getCreditId()).isEmpty())
+            throw new CreditDeleteException(NO_VALID_CREDIT);
+
+        credit.unused();
+        creditRepository.save(credit);
+        return true;
+    }
 
     @Override
-    default boolean remove(@Nullable Removable removable){
+    public boolean remove(@Nullable Removable removable){
         return remove((Credit) removable);
     }
 }
