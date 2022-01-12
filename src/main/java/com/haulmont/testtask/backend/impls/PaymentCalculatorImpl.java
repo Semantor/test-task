@@ -1,6 +1,6 @@
 package com.haulmont.testtask.backend.impls;
 
-import com.haulmont.testtask.backend.AnnuityCreditCalculator;
+import com.haulmont.testtask.backend.AnnuityCreditCalculatorWithRootFormula;
 import com.haulmont.testtask.backend.PaymentCalculator;
 import com.haulmont.testtask.backend.Validator;
 import com.haulmont.testtask.model.entity.Credit;
@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentCalculatorImpl implements PaymentCalculator {
 
-    private final AnnuityCreditCalculator annuityCreditCalculator;
+    private final AnnuityCreditCalculatorWithRootFormula annuityCreditCalculatorWithRootFormula;
     private final Validator validator;
 
     @Override
@@ -29,7 +29,7 @@ public class PaymentCalculatorImpl implements PaymentCalculator {
         if (!validator.validateCreditAmount(amount)) return Collections.emptyList();
         if (month < 1) return Collections.emptyList();
         BigDecimal monthCount = new BigDecimal(month);
-        BigDecimal monthlyPayment = annuityCreditCalculator.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
+        BigDecimal monthlyPayment = annuityCreditCalculatorWithRootFormula.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
 
         BigDecimal overprice = monthlyPayment.multiply(monthCount).subtract(amount).divide(monthCount, 2, RoundingMode.HALF_UP);
         BigDecimal main = monthlyPayment.subtract(overprice).setScale(2, RoundingMode.HALF_UP);

@@ -1,6 +1,6 @@
 package com.haulmont.testtask.backend.impls;
 
-import com.haulmont.testtask.backend.AnnuityCreditCalculator;
+import com.haulmont.testtask.backend.AnnuityCreditCalculatorWithRootFormula;
 import com.haulmont.testtask.backend.PaymentCalculator;
 import com.haulmont.testtask.backend.PercentPartInCreditCalculator;
 import com.haulmont.testtask.backend.Validator;
@@ -21,7 +21,7 @@ import static com.haulmont.testtask.Setting.MONTH_MIN_VALUE;
 @RequiredArgsConstructor
 @Component
 public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod implements PaymentCalculator {
-    private final AnnuityCreditCalculator annuityCreditCalculator;
+    private final AnnuityCreditCalculatorWithRootFormula annuityCreditCalculatorWithRootFormula;
     private final Validator validator;
     private final PercentPartInCreditCalculator percentCalculator;
 
@@ -39,7 +39,7 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
         if (dateOfReceiving.isBefore(LocalDate.now()))
             throw new IllegalArgumentException(WRONG_INCOME_RECEIVING_DATE);
 
-        BigDecimal monthlyPayment = annuityCreditCalculator.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
+        BigDecimal monthlyPayment = annuityCreditCalculatorWithRootFormula.calculateMonthlyPayment(amount, credit.getCreditRate(), month);
         List<Payment> result = new ArrayList<>(month);
         BigDecimal remain = amount;
         LocalDate passedPayment = dateOfReceiving;
