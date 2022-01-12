@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class Setting {
     public static final String CREDIT_LIMIT_FORMAT = "$ %(,.2f";
     public static final String CREDIT_RATE_FORMAT = "%(,.2f";
+    public static final String ONLY_LETTER_REG_EX = "[a-zA-Z]+";
 
     //Button settings
     public static final ButtonVariant SAVE_STYLE = ButtonVariant.LUMO_PRIMARY;
