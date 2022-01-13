@@ -38,7 +38,6 @@ import java.util.List;
 
 import static com.haulmont.testtask.Setting.*;
 
-@PropertySource("config.properties")
 @Slf4j
 public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeCleared, CanBeSaved, Hornable {
 

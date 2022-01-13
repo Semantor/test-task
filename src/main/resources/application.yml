@@ -61,3 +61,12 @@ logging:
     org.springframework.transaction: DEBUG
 logging.level.org.springframework.jdbc.core.JdbcTemplate: INFO
 logging.level.org.springframework.jdbc.core.StatementCreatorUtils: INFO
+---
+spring.config.activate.on-profile: "dev,test,prod"
+client.list.default.page.size: 5
+client.list.default.sort.column: lastName
+credit.offer.creating.form.min.amount: 1000
+max.credit.limit: 9999999999.99
+min.credit.limit: 1000
+max.credit.rate: 99.99
+min.credit.rate: 0

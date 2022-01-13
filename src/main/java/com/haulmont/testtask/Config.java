@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 import java.math.BigDecimal;
 
 @SpringBootConfiguration
-@PropertySource("classpath:config.properties")
+@PropertySource("classpath:application.yml")
 public class Config {
 
 
