@@ -237,4 +237,5 @@ public class Setting {
     public static final boolean IS_CREATE_CLIENT_FORM_DIALOG_CLOSE_ON_OUTSIDE_CLICK = false;
 
 
+    public static final String SOME_DB_PROBLEM = "some db problem";
 }

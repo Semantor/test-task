@@ -3,7 +3,6 @@ package com.haulmont.testtask.view;
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.BankSaver;
-import com.haulmont.testtask.backend.excs.CreateBankException;
 import com.haulmont.testtask.model.entity.Bank;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
@@ -66,14 +65,19 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
         }
         nameField.setInvalid(false);
         hornIntoNotificationAndLoggerInfo(TRYING_TO_SAVE_NEW_BANK, nameFieldValue);
-        try {
-            bankSaver.save(Bank.builder().name(nameField.getValue()).build());
-            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE);
-            close();
-        } catch (CreateBankException ex) {
-            hornIntoNotificationAndLoggerInfo(ex.getMessage());
-        }
 
+        bankSaver.save(Bank.builder().name(nameField.getValue()).build())
+                .fold(
+                        aBoolean -> {
+                            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE);
+                            close();
+                            return aBoolean;
+                        },
+                        exception -> {
+                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                            return false;
+                        }
+                );
     }
 
     @Override
