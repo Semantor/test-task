@@ -1,8 +1,12 @@
 package com.haulmont.testtask.model.entity;
 
+import com.haulmont.testtask.Setting;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,9 +19,13 @@ import java.util.UUID;
 public class Bank implements Removable {
     @Id
     @Column(name = "bank_id")
+    @NotNull(message = Setting.NULLABLE_ID)
     private UUID bankId = UUID.randomUUID();
 
     @Column(name = "bank_name")
+    @NotNull(message = Setting.EMPTY_NAME)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String name;
 
     @Transient
