@@ -89,12 +89,21 @@ public class Setting {
     public static final String EMPTY_LASTNAME = "lastname field is empty";
     public static final String LASTNAME_INCORRECT_SYMBOLS = "incorrect symbols in lastname";
     public static final String TOO_SHORT_LASTNAME = "lastname min length is 3";
-    public static final String EMPTY_NAME = "firstname field is empty";
+    public static final String EMPTY_NAME = "name field is empty";
     public static final String NAME_INCORRECT_SYMBOLS = "incorrect symbols in firstname";
     public static final String TOO_SHORT_NAME = "name min length is 3";
     public static final String NO_VALID_EMAIL = "email is not valid";
     public static final String NO_VALID_PHONE = "phone is not valid";
     public static final String NO_VALID_PASSPORT = "passport is not valid";
+    public static final String EMPTY_PHONE_NUMBER = "phone is required";
+    public static final String EMPTY_EMAIL = "email is required";
+    public static final String EMAIL_IS_NOT_VALID = "email is not valid";
+    public static final String EMPTY_PASSPORT = "passport is empty";
+    public static final String PASSPORT_LENGTH_ERROR_MSG =
+            "passport must be 10 digits, where third + forth is year of passport receive";
+    public static final String PHONE_LENGTH_ERROR_MSG = "phone must be exactly 10 digits";
+    public static final String PHONE_PATTERN_ERROR_MSG = "phone must be start with 9";
+
     //client
     public static final String NULLABLE_CLIENT = "nullable client";
     public static final String CLIENT_DOES_NOT_PRESENT_IN_DB = "this client does not present in db";
@@ -112,6 +121,7 @@ public class Setting {
     public static final String NULLABLE_BANK_ID_IN_CREDIT = "nullable bank id in credit";
     //bank
     public static final String BANK_DOES_NOT_EXIST = "bank does not exists";
+    public static final String NULLABLE_BANK = "bank is nullable";
     //credit offer
     public static final String NOT_VALID_MONTH_COUNT = "not valid month count";
     public static final String EMPTY_PAYMENT_LIST = "empty payment list";
@@ -225,5 +235,6 @@ public class Setting {
     public static final boolean IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT = true;
     public static final boolean IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT = true;
     public static final boolean IS_CREATE_CLIENT_FORM_DIALOG_CLOSE_ON_OUTSIDE_CLICK = false;
+
 
 }

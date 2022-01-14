@@ -21,7 +21,7 @@ public class Client implements Removable {
     @Id
     @Setter(AccessLevel.PROTECTED)
     @Column(name = "client_id")
-    @NotNull
+    @NotNull(message = Setting.NULLABLE_ID)
     private UUID clientId = UUID.randomUUID();
 
     @Column(name = "is_removed")
@@ -42,19 +42,19 @@ public class Client implements Removable {
     @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String patronymic;
 
-    @NotNull
-    @Size(min = 10, max = 10, message = "Size must be exactly 10 numbers")
-    @Pattern(regexp = "9\\d{9}$", message = "string like 9[0123456789]{9}$")
+    @NotNull(message = Setting.EMPTY_PHONE_NUMBER)
+    @Size(min = 10, max = 10, message = Setting.PHONE_LENGTH_ERROR_MSG)
+    @Pattern(regexp = "9\\d{9}$", message = Setting.PHONE_PATTERN_ERROR_MSG)
     @Column(length = 10, unique = true, name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @NotNull
-    @Email
+    @NotNull(message = Setting.EMPTY_EMAIL)
+    @Email(message = Setting.EMAIL_IS_NOT_VALID)
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Size(min = 10, max = 10, message = "Size must be exactly 10 numbers")
-    @Pattern(regexp = "\\d{10}$", message = "string like [0123456789]{10}$")
+    @NotNull(message = Setting.EMPTY_PASSPORT)
+    @Pattern(regexp = "\\d{10}$", message = Setting.PASSPORT_LENGTH_ERROR_MSG)
     @Column(unique = true, nullable = false)
     private String passport;
 
