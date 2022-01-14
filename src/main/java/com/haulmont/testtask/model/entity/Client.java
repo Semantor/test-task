@@ -1,9 +1,11 @@
 package com.haulmont.testtask.model.entity;
 
+import com.haulmont.testtask.Setting;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -19,23 +21,34 @@ public class Client implements Removable {
     @Id
     @Setter(AccessLevel.PROTECTED)
     @Column(name = "client_id")
+    @NotNull
     private UUID clientId = UUID.randomUUID();
 
     @Column(name = "is_removed")
     @Setter(AccessLevel.PROTECTED)
     private boolean isRemoved = false;
 
+    @NotNull(message = Setting.EMPTY_NAME)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String firstName;
 
+    @NotNull(message = Setting.EMPTY_LASTNAME)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String lastName;
 
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String patronymic;
 
+    @NotNull
     @Size(min = 10, max = 10, message = "Size must be exactly 10 numbers")
     @Pattern(regexp = "9\\d{9}$", message = "string like 9[0123456789]{9}$")
     @Column(length = 10, unique = true, name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @NotNull
     @Email
     @Column(unique = true, nullable = false)
     private String email;
