@@ -1,9 +1,12 @@
 package com.haulmont.testtask.model.entity;
 
+import com.haulmont.testtask.Setting;
 import lombok.*;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -17,13 +20,16 @@ import java.util.UUID;
 public class Payment {
     @Id
     @Column(name = "payment_id")
+    @NotNull(message = Setting.NULLABLE_ID)
     private UUID paymentId = UUID.randomUUID();
 
     @Column(name = "date")
+    @NotNull(message = Setting.WRONG_DATE_IS_PICKED)
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "credit_offer_id",nullable = false)
+    @Valid
     private CreditOffer creditOffer;
 
     @Column(precision = 12, scale = 2, name = "amount")
