@@ -229,6 +229,8 @@ public class Setting {
     public static final String CLIENT_EMAIL_FOR_SORTING = "email";
     public static final String CLIENT_PASSPORT_FOR_SORTING = "passport";
 
+    public static final String BANK_NAME_FIELD_NAME = "name";
+
     //settings
     public static final boolean IS_SEARCH_FIELD_AUTOSELECTED = true;
     public static final boolean IS_SEARCH_FIELD_AUTOFOCUSED = true;

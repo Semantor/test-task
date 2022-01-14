@@ -1,7 +1,6 @@
 package com.haulmont.testtask.backend.util;
 
 import javax.validation.ConstraintViolation;
-import java.util.Arrays;
 import java.util.Set;
 
 public final class ProblemKeeper<T> {
@@ -28,6 +27,12 @@ public final class ProblemKeeper<T> {
 
     @Override
     public String toString() {
-        return "errors: " + Arrays.stream(problems).reduce("", (s, s2) -> s + ", " + s2) + ".";
+        if (problems==null) return "No errors";
+        StringBuilder stringBuilder = new StringBuilder("errors: ");
+        for (String problem :
+                problems) {
+            stringBuilder.append(problem).append(",");
+        }
+        return stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), ".").toString();
     }
 }

@@ -3,6 +3,7 @@ package com.haulmont.testtask.view;
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.BankSaver;
+import com.haulmont.testtask.backend.util.ProblemKeeper;
 import com.haulmont.testtask.model.entity.Bank;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
@@ -15,12 +16,18 @@ import com.vaadin.flow.component.textfield.TextField;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import java.util.Set;
+
 import static com.haulmont.testtask.Setting.*;
 
 @Slf4j
 public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeSaved, Hornable {
     private final BankSaver bankSaver;
     private final BankFieldAvailabilityChecker bankFieldAvailabilityChecker;
+    private final Validator validator;
 
     private final TextField nameField = new TextField(Setting.CREATE_BANK_FORM_NAME_FIELD_LABEL);
 
@@ -29,9 +36,10 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
     private final Button close = new Button();
 
 
-    public CreateBankForm(BankSaver bankSaver, BankFieldAvailabilityChecker bankFieldAvailabilityChecker) {
+    public CreateBankForm(BankSaver bankSaver, BankFieldAvailabilityChecker bankFieldAvailabilityChecker, Validator validator) {
         this.bankSaver = bankSaver;
         this.bankFieldAvailabilityChecker = bankFieldAvailabilityChecker;
+        this.validator = validator;
         setupFields();
         add(new H3(Setting.CREATE_BANK_FORM_H_3_LABEL), nameField, createButtons());
     }
@@ -50,9 +58,10 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
     public void validateAndSave() {
         String nameFieldValue = nameField.getValue();
         String infoMsg;
-        if (nameFieldValue == null || nameFieldValue.isBlank()) {
-            log.info(ATTEMPT_TO_SAVE_EMPTY_FIELD);
-            Notification.show(NAME_CAN_NOT_BE_EMPTY, NOTIFICATION_DURATION, DEFAULT_POSITION);
+        Set<ConstraintViolation<Bank>> nameFieldConstraintViolations =
+                validator.validateValue(Bank.class, BANK_NAME_FIELD_NAME, nameFieldValue);
+        if (!nameFieldConstraintViolations.isEmpty()) {
+            hornIntoNotificationAndLoggerInfo(ProblemKeeper.of(nameFieldConstraintViolations).toString());
             nameField.setInvalid(true);
             return;
         }
