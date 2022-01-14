@@ -1,9 +1,14 @@
 package com.haulmont.testtask.model.entity;
 
 
+import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.util.CreditLimitConstraint;
+import com.haulmont.testtask.backend.util.CreditRateConstraint;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +21,7 @@ import java.util.UUID;
 public class Credit implements Removable {
     @Id
     @Setter(AccessLevel.PROTECTED)
+    @NotNull(message = Setting.NULLABLE_ID)
     @Column(name = "credit_id")
     private UUID creditId = UUID.randomUUID();
 
@@ -24,12 +30,16 @@ public class Credit implements Removable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_id", nullable = false)
+    @NotNull(message = Setting.NULLABLE_BANK)
+    @Valid
     private Bank bank;
 
     @Column(precision = 12, scale = 2, nullable = false)
+    @CreditLimitConstraint
     private BigDecimal creditLimit;
 
     @Column(precision = 4, scale = 2, nullable = false)
+    @CreditRateConstraint
     private BigDecimal creditRate;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
