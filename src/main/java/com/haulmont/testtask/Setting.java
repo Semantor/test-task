@@ -242,4 +242,5 @@ public class Setting {
     public static final String SOME_DB_PROBLEM = "some db problem";
     public static final String UNIVERSAL_NAME_ERROR = "This field is required. Must be minimum three letter without other symbols";
     public static final String PATRONYMIC_ERROR = "This field is not required, cannot be length one or two. Must be use letter only";
+    public static final String NO_ERRORS = "No errors";
 }
