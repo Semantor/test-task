@@ -16,6 +16,6 @@ public final class ConstraintViolationHandler<T> {
                 objectConstraintViolation ->
                         result.append(objectConstraintViolation.getMessage()).append(Setting.ERROR_TEXT_DELIMITER)
         );
-        return result.replace(result.length() - 1, result.length(), ".").toString();
+        return result.toString();
     }
 }
