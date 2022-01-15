@@ -2,7 +2,6 @@ package com.haulmont.testtask.backend;
 
 import com.haulmont.testtask.Config;
 import com.haulmont.testtask.TestConfigForNonJpa;
-import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.backend.excs.Result;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +21,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.haulmont.testtask.Setting.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {Config.class, TestConfigForNonJpa.class})
 class ClientSaverWithExceptionImplTest {
@@ -65,7 +64,7 @@ class ClientSaverWithExceptionImplTest {
     public static Stream<Arguments> valueForWrongPhone() {
         return Stream.of(
                 Arguments.arguments(null, EMPTY_PHONE_NUMBER),
-                Arguments.arguments("asdf",PHONE_PATTERN_ERROR_MSG),
+                Arguments.arguments("asdf", PHONE_PATTERN_ERROR_MSG),
                 Arguments.arguments("", PHONE_LENGTH_ERROR_MSG),
                 Arguments.arguments("987654123", PHONE_PATTERN_ERROR_MSG),
                 Arguments.arguments("787654123", PHONE_LENGTH_ERROR_MSG)

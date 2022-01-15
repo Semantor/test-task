@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.excs.Result;
 import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
@@ -42,14 +41,14 @@ public class ClientSaver {
      * Patronymic can be null or Empty.
      * firstname, lastname or patronymic can not contain non-letter symbols
      */
-    public Result<Boolean> save(Client client) throws CreateClientException {
+    public Result<Boolean> save(Client client) {
         Set<ConstraintViolation<Client>> constraintViolations = validator.validate(client);
         if (!constraintViolations.isEmpty())
             return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                     ConstraintViolationHandler.handleToString(constraintViolations)));
 
         if (clientRepository.findById(client.getClientId()).isPresent())
-            return Result.failure(new CreateClientException(UUID_IS_ALREADY_USED));
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(UUID_IS_ALREADY_USED));
 
 
         log.info(LOG_TEMPLATE_3, TRYING_TO_SAVE_NEW_CLIENT, LOG_DELIMITER, client);
@@ -68,10 +67,11 @@ public class ClientSaver {
     public Result<Boolean> save(String uuidString, Client client) {
         UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
         if (uuid == null)
-            return Result.failure(new CreateClientException(NULLABLE_ID));
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(NULLABLE_ID));
 
         Optional<Client> byId = clientRepository.findById(uuid);
-        if (byId.isEmpty()) return Result.failure(new CreateClientException(CLIENT_DOES_NOT_PRESENT_IN_DB));
+        if (byId.isEmpty())
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(CLIENT_DOES_NOT_PRESENT_IN_DB));
         Client persistClient = byId.get();
         if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FOR_SORTING, client.getFirstName()).isEmpty())
             persistClient.setFirstName(client.getFirstName());
