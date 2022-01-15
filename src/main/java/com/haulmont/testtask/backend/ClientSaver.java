@@ -3,7 +3,7 @@ package com.haulmont.testtask.backend;
 import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.excs.Result;
-import com.haulmont.testtask.backend.util.ProblemKeeper;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
@@ -46,7 +46,7 @@ public class ClientSaver {
         Set<ConstraintViolation<Client>> constraintViolations = validator.validate(client);
         if (!constraintViolations.isEmpty())
             return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
-                    ProblemKeeper.of(constraintViolations).toString()));
+                    ConstraintViolationHandler.handleToString(constraintViolations)));
 
         if (clientRepository.findById(client.getClientId()).isPresent()) {
             throw new CreateClientException(UUID_IS_ALREADY_USED);

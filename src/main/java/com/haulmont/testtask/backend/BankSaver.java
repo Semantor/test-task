@@ -3,7 +3,7 @@ package com.haulmont.testtask.backend;
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.excs.Result;
-import com.haulmont.testtask.backend.util.ProblemKeeper;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.repositories.BankRepository;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class BankSaver {
         if (!constraintViolations.isEmpty())
             return Result.failure(
                     new IllegalArgumentExceptionWithoutStackTrace(
-                            ProblemKeeper.of(constraintViolations).toString()));
+                            ConstraintViolationHandler.handleToString(constraintViolations)));
         try {
             bankRepository.save(bank);
         } catch (Exception exception) {

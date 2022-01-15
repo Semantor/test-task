@@ -3,7 +3,7 @@ package com.haulmont.testtask.view;
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.BankSaver;
-import com.haulmont.testtask.backend.util.ProblemKeeper;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Bank;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
@@ -61,7 +61,7 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
         Set<ConstraintViolation<Bank>> nameFieldConstraintViolations =
                 validator.validateValue(Bank.class, BANK_NAME_FIELD_NAME, nameFieldValue);
         if (!nameFieldConstraintViolations.isEmpty()) {
-            hornIntoNotificationAndLoggerInfo(ProblemKeeper.of(nameFieldConstraintViolations).toString());
+            hornIntoNotificationAndLoggerInfo(ConstraintViolationHandler.handleToString(nameFieldConstraintViolations));
             nameField.setInvalid(true);
             return;
         }

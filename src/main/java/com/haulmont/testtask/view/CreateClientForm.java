@@ -3,7 +3,7 @@ package com.haulmont.testtask.view;
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.ClientSaver;
-import com.haulmont.testtask.backend.util.ProblemKeeper;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;
@@ -188,7 +188,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
     private SerializablePredicate<String> predict(String fieldName) {
         return s -> {
             Set<ConstraintViolation<Client>> constraintViolations = validator.validateValue(Client.class, fieldName, s);
-            log.info(ProblemKeeper.of(constraintViolations).toString());
+            log.info(ConstraintViolationHandler.handleToString(constraintViolations));
             return constraintViolations.isEmpty();
         };
     }
