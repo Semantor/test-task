@@ -48,9 +48,9 @@ public class ClientSaver {
             return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                     ConstraintViolationHandler.handleToString(constraintViolations)));
 
-        if (clientRepository.findById(client.getClientId()).isPresent()) {
-            throw new CreateClientException(UUID_IS_ALREADY_USED);
-        }
+        if (clientRepository.findById(client.getClientId()).isPresent())
+            return Result.failure(new CreateClientException(UUID_IS_ALREADY_USED));
+
 
         log.info(LOG_TEMPLATE_3, TRYING_TO_SAVE_NEW_CLIENT, LOG_DELIMITER, client);
         try {
