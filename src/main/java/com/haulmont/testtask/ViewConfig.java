@@ -34,10 +34,10 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    CreateClientForm createClientForm(ClientFieldsValidator clientFieldsValidator,
+    CreateClientForm createClientForm(javax.validation.Validator validator,
                                       ClientSaver clientSaver,
                                       ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
-        return new CreateClientForm(clientFieldsValidator, clientSaver, clientFieldAvailabilityChecker);
+        return new CreateClientForm(validator, clientSaver, clientFieldAvailabilityChecker);
     }
 
     @Bean
@@ -93,10 +93,10 @@ public class ViewConfig {
 
     @Bean
     @Scope("prototype")
-    ClientEditorForm clientEditorForm(ClientFieldsValidator clientFieldsValidator,
+    ClientEditorForm clientEditorForm(javax.validation.Validator validator,
                                       ClientSaver clientSaver,
                                       ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
-        return new ClientEditorForm(clientFieldsValidator, clientSaver,clientFieldAvailabilityChecker);
+        return new ClientEditorForm(validator, clientSaver, clientFieldAvailabilityChecker);
     }
 
     @Bean
@@ -106,7 +106,7 @@ public class ViewConfig {
                                       Validator validator,
                                       CreditEditService creditEditService,
                                       CreditConstraintProvider creditConstraintProvider) {
-        return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService,creditConstraintProvider);
+        return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService, creditConstraintProvider);
     }
 
 }

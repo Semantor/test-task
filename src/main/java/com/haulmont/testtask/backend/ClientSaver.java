@@ -1,15 +1,18 @@
 package com.haulmont.testtask.backend;
 
 import com.haulmont.testtask.backend.excs.CreateClientException;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.excs.Result;
+import com.haulmont.testtask.backend.util.ProblemKeeper;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ConstraintViolation;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.haulmont.testtask.Setting.*;
@@ -23,10 +26,9 @@ import static com.haulmont.testtask.view.Hornable.LOG_TEMPLATE_3;
 @Slf4j
 @Component
 public class ClientSaver {
-    private final ClientFieldsValidator clientFieldsValidator;
     private final ClientRepository clientRepository;
-    private final Validator validator;
     private final StringUUIDHandler stringUUIDHandler;
+    private final javax.validation.Validator validator;
 
     /**
      * check that UUID is unused in THIS table
@@ -36,79 +38,64 @@ public class ClientSaver {
      * {@link Client#getEmail()}
      * {@link Client#getPhoneNumber()}
      * {@link Client#getPassport()}
-     * for not null and valid with {@link ClientFieldsValidator}
+     * for not null and valid with
      * Patronymic can be null or Empty.
      * firstname, lastname or patronymic can not contain non-letter symbols
-     *
-     * @throws com.haulmont.testtask.backend.excs.CreateClientException if isn't valid
      */
-    public void save(@Nullable Client client) throws CreateClientException {
-        if (client == null) throw new CreateClientException(NULLABLE_CLIENT);
-        if (client.getClientId() == null) throw new CreateClientException(NULLABLE_ID);
+    public Result<Boolean> save(Client client) throws CreateClientException {
+        Set<ConstraintViolation<Client>> constraintViolations = validator.validate(client);
+        if (!constraintViolations.isEmpty())
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
+                    ProblemKeeper.of(constraintViolations).toString()));
+
         if (clientRepository.findById(client.getClientId()).isPresent()) {
             throw new CreateClientException(UUID_IS_ALREADY_USED);
         }
 
-        if (validator.isNullOrBlank(client.getLastName()))
-            throw new CreateClientException(EMPTY_LASTNAME);
-        if (client.getLastName().length() < NAME_FIELD_MIN_LENGTH)
-            throw new CreateClientException(TOO_SHORT_LASTNAME);
-        if (!client.getLastName().matches(ONLY_LETTER_REG_EX))
-            throw new CreateClientException(LASTNAME_INCORRECT_SYMBOLS);
-
-        if (validator.isNullOrBlank(client.getFirstName()))
-            throw new CreateClientException(EMPTY_NAME);
-        if (client.getFirstName().length() < NAME_FIELD_MIN_LENGTH)
-            throw new CreateClientException(TOO_SHORT_NAME);
-        if (!client.getFirstName().matches(ONLY_LETTER_REG_EX))
-            throw new CreateClientException(NAME_INCORRECT_SYMBOLS);
-
-        if (!clientFieldsValidator.validatePhone(client.getPhoneNumber()))
-            throw new CreateClientException(NO_VALID_PHONE);
-        if (!clientFieldsValidator.validateEmail(client.getEmail()))
-            throw new CreateClientException(NO_VALID_EMAIL);
-        if (!clientFieldsValidator.validatePassport(client.getPassport()))
-            throw new CreateClientException(NO_VALID_PASSPORT);
-
         log.info(LOG_TEMPLATE_3, TRYING_TO_SAVE_NEW_CLIENT, LOG_DELIMITER, client);
         try {
             clientRepository.save(client);
-        } catch (DataIntegrityViolationException ex) {
-            throw new CreateClientException(ex.getMessage());
+        } catch (Exception ex) {
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(ex.getMessage()));
         }
+        return Result.success(true);
     }
 
     /**
      * update only not null fields exclude UUID
-     * use {@link ClientFieldsValidator#validatePhone(String)}, {@link ClientFieldsValidator#validateEmail(String)},
-     * {@link ClientFieldsValidator#validatePassport(String)} to validate
      * This method can not to change fields to null value.
      */
-    public void save(String uuidString, Client client) {
+    public Result<Boolean> save(String uuidString, Client client) {
         UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
-        if (uuid == null) throw new CreateClientException(NULLABLE_ID);
+        if (uuid == null)
+            return Result.failure(new CreateClientException(NULLABLE_ID));
 
         Optional<Client> byId = clientRepository.findById(uuid);
-        if (byId.isEmpty()) throw new CreateClientException(CLIENT_DOES_NOT_PRESENT_IN_DB);
+        if (byId.isEmpty()) return Result.failure(new CreateClientException(CLIENT_DOES_NOT_PRESENT_IN_DB));
         Client persistClient = byId.get();
-        if (!validator.isNullOrBlank(client.getFirstName()))
+        if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FOR_SORTING, client.getFirstName()).isEmpty())
             persistClient.setFirstName(client.getFirstName());
 
-        if (!validator.isNullOrBlank(client.getLastName()))
+        if (validator.validateValue(Client.class, CLIENT_LAST_NAME_FOR_SORTING, client.getLastName()).isEmpty())
             persistClient.setLastName(client.getLastName());
 
-        if (!validator.isNullOrBlank(client.getPatronymic()))
+        if (validator.validateValue(Client.class, CLIENT_PATRONYMIC_FOR_SORTING, client.getPatronymic()).isEmpty())
             persistClient.setPatronymic(client.getPatronymic());
 
-        if (clientFieldsValidator.validateEmail(client.getEmail()))
+        if (validator.validateValue(Client.class, CLIENT_EMAIL_FOR_SORTING, client.getEmail()).isEmpty())
             persistClient.setEmail(client.getEmail());
 
-        if (clientFieldsValidator.validatePhone(client.getPhoneNumber()))
+        if (validator.validateValue(Client.class, CLIENT_PHONE_NUMBER_FOR_SORTING, client.getPhoneNumber()).isEmpty())
             persistClient.setPhoneNumber(client.getPhoneNumber());
 
-        if (clientFieldsValidator.validatePassport(client.getPassport()))
+        if (validator.validateValue(Client.class, CLIENT_PASSPORT_FOR_SORTING, client.getPassport()).isEmpty())
             persistClient.setPassport(client.getPassport());
 
-        clientRepository.save(persistClient);
+        try {
+            clientRepository.save(persistClient);
+        } catch (Exception ex) {
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(ex.getMessage()));
+        }
+        return Result.success(true);
     }
 }

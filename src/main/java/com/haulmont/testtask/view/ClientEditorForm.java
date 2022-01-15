@@ -2,14 +2,14 @@ package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
-import com.haulmont.testtask.backend.ClientFieldsValidator;
 import com.haulmont.testtask.backend.ClientSaver;
-import com.haulmont.testtask.backend.excs.CreateClientException;
 import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.notification.Notification;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.Validator;
 
 import static com.haulmont.testtask.Setting.*;
 
@@ -20,10 +20,10 @@ public class ClientEditorForm extends CreateClientForm {
     private transient Client updatingClient;
     private final transient ClientSaver clientSaver;
 
-    public ClientEditorForm(ClientFieldsValidator clientFieldsValidator,
+    public ClientEditorForm(Validator validator,
                             ClientSaver clientSaver,
                             ClientFieldAvailabilityChecker clientFieldAvailabilityChecker) {
-        super(clientFieldsValidator, clientSaver, clientFieldAvailabilityChecker);
+        super(validator, clientSaver, clientFieldAvailabilityChecker);
         this.clientSaver = clientSaver;
         getClearButton().setVisible(false);
         tuneImmutableFields();
@@ -43,7 +43,10 @@ public class ClientEditorForm extends CreateClientForm {
 
     private void tuneImmutableFields() {
         getPhoneNumberField().setReadOnly(true);
+        // the reason is to drop validating on immutable fields
+        binder.forField(getPhoneNumberField()).bind(Client::getPhoneNumber, Client::setPhoneNumber);
         getEmailField().setReadOnly(true);
+        binder.forField(getEmailField()).bind(Client::getEmail, Client::setEmail);
         getPassportSeriesField().setReadOnly(true);
         getPassportNumberField().setReadOnly(true);
     }
@@ -60,18 +63,23 @@ public class ClientEditorForm extends CreateClientForm {
     public void validateAndSave() {
         Client build = Client.builder().build();
         super.binder.writeBeanIfValid(build);
-        try {
-            clientSaver.save(updatingClient.getClientId().toString(), build);
-            Notification.show(UPDATING_MESSAGE, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
-            log.info(Hornable.LOG_TEMPLATE_5,
-                    UPDATING_MESSAGE,
-                    LOG_DELIMITER,
-                    updatingClient.getClientId(),
-                    LOG_DELIMITER,
-                    build.toField());
-        } catch (CreateClientException ex) {
-           hornIntoNotificationAndLoggerInfo(ex.getMessage());
-        }
+
+        clientSaver.save(updatingClient.getClientId().toString(), build)
+                .fold(aBoolean -> {
+                            Notification.show(UPDATING_MESSAGE, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+                            log.info(Hornable.LOG_TEMPLATE_5,
+                                    UPDATING_MESSAGE,
+                                    LOG_DELIMITER,
+                                    updatingClient.getClientId(),
+                                    LOG_DELIMITER,
+                                    build.toField());
+                            return aBoolean;
+                        },
+                        exception -> {
+                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                            return false;
+                        }
+                );
     }
 
     @Override

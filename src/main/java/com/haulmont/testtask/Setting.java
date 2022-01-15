@@ -146,7 +146,7 @@ public class Setting {
     public static final String WRONG_INCOME_DATA = "wrong incoming data";
     public static final String MUST_BE_LETTER_ERROR = "You can use only letter symbols";
     public static final String MUST_BE_MINIMUM_THREE_SYMBOLS = "Must be minimum three symbols";
-    public static final String ENUMERATION_ERRORS = "There are errors: ";
+    public static final String ENUMERATION_ERRORS = "errors: ";
     public static final String THIS_FIELD_IS_REQUIRED_MSG = "this field is required";
     public static final String NO_VALID_PHONE_ERROR_MSG = "not valid number, must be 10 digits starting with 9";
     public static final String PHONE_ALREADY_IN_USE_ERROR_MSG = "this phone is already in use";
@@ -240,4 +240,6 @@ public class Setting {
 
 
     public static final String SOME_DB_PROBLEM = "some db problem";
+    public static final String UNIVERSAL_NAME_ERROR = "This field is required. Must be minimum three letter without other symbols";
+    public static final String PATRONYMIC_ERROR = "This field is not required, cannot be length one or two. Must be use letter only";
 }

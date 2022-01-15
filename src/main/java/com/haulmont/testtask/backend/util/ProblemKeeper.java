@@ -27,7 +27,7 @@ public final class ProblemKeeper<T> {
 
     @Override
     public String toString() {
-        if (problems==null) return "No errors";
+        if (problems==null || problems.length==0) return "No errors";
         StringBuilder stringBuilder = new StringBuilder("errors: ");
         for (String problem :
                 problems) {
