@@ -188,6 +188,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                 }
         ));
         amountField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
+        amountField.setInvalid(false);
         creditOffer = CreditOffer.builder().client(client).build();
         save.setVisible(false);
         clear.setVisible(false);
