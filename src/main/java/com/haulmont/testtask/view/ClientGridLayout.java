@@ -15,13 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.List;
 
 import static com.haulmont.testtask.Setting.*;
 
 
 @Slf4j
-public class ClientGridLayout extends VerticalLayout implements HasEvent, ClientGridTuner,Hornable {
+public class ClientGridLayout extends VerticalLayout implements HasEvent, ClientGridTuner, Hornable {
 
     private final int DEFAULT_PAGE_SIZE;
     private final String DEFAULT_SORT_COLUMN;
@@ -119,7 +120,7 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
 
     /**
      * open next tuple of client with current filter options.
-     * doesnt do anything if current page is final page.
+     * doesn't do anything if current page is final page.
      */
     public void nextPage() {
         if (isFinal) return;
@@ -130,7 +131,12 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
             clients = searchByKeyWordService.search(searchKeyword,
                     currentPageSize,
                     currentPage + 1,
-                    currentSort);
+                    currentSort).fold(
+                    clients1 -> clients1,
+                    exception -> {
+                        hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                        return Collections.emptyList();
+                    });
         if (clients.isEmpty()) {
             isFinal = true;
             return;
@@ -141,13 +147,17 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
 
     /**
      * open previous tuple of client with current filter options.
-     * doesnt do anything if current page is first page.
+     * doesn't do anything if current page is first page.
      */
     public void previousPage() {
         if (currentPage == 0) return;
         List<Client> clients;
         if (isSearch)
-            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, --currentPage, currentSort);
+            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, --currentPage, currentSort)
+                    .fold(clients1 -> clients1, exception -> {
+                        hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                        return Collections.emptyList();
+                    });
         else
             clients = clientProvider.getClients(currentPageSize, --currentPage, currentSort);
 
@@ -159,7 +169,14 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
         setDefaultPaginationOptions();
         searchKeyword = keyword;
         isSearch = true;
-        clientGrid.setItems(searchByKeyWordService.search(searchKeyword, currentPageSize, currentPage, currentSort));
+        clientGrid.setItems((List<Client>) searchByKeyWordService
+                .search(searchKeyword, currentPageSize, currentPage, currentSort).fold(
+                        clients -> clients,
+                        exception -> {
+                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                            return Collections.emptyList();
+                        }
+                ));
     }
 
     public void sort(String sortColumn) {
