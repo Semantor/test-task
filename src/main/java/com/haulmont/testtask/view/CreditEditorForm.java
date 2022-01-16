@@ -2,7 +2,6 @@ package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.*;
-import com.haulmont.testtask.backend.excs.CreditDeleteException;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.notification.Notification;
@@ -50,12 +49,18 @@ public class CreditEditorForm extends CreateCreditForm {
                 Setting.NEW_CREDIT,
                 LOG_DELIMITER,
                 newCredit.toDeleteString());
-        try {
-            creditEditService.edit(updatedCredit, newCredit);
-            hornIntoNotificationAndLoggerInfo(Setting.SUCCESSFULLY_EDITED_USER_MESSAGE);
-        } catch (CreditDeleteException exception) {
-            hornIntoNotificationAndLoggerInfo(exception.getMessage());
-        }
+
+        creditEditService.edit(updatedCredit, newCredit)
+                .fold(
+                        aBoolean -> {
+                            hornIntoNotificationAndLoggerInfo(Setting.SUCCESSFULLY_EDITED_USER_MESSAGE);
+                            return aBoolean;
+                        },
+                        exception -> {
+                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                            return false;
+                        }
+                );
         close();
     }
 
