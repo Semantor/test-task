@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -20,7 +21,7 @@ import static com.haulmont.testtask.Setting.*;
 
 
 @Slf4j
-public class ClientGridLayout extends VerticalLayout implements HasEvent, ClientGridTuner {
+public class ClientGridLayout extends VerticalLayout implements HasEvent, ClientGridTuner,Hornable {
 
     private final int DEFAULT_PAGE_SIZE;
     private final String DEFAULT_SORT_COLUMN;
@@ -169,6 +170,11 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
     @Override
     public ComponentEventBus getEventBusFromLayout() {
         return getEventBus();
+    }
+
+    @Override
+    public Logger log() {
+        return log;
     }
 
     public static class EditEvent extends ComponentEvent<ClientGridLayout> {
