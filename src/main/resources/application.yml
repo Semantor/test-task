@@ -1,9 +1,11 @@
 spring:
   profiles:
     default: "prod"
-
   aop:
     proxy-target-class: false
+---
+# use it cause hibernate own validator implementation cannot get access to spring bean.
+spring.jpa.properties.javax.persistence.validation.mode: none
 ---
 spring.config.activate.on-profile: "prod"
 spring:
