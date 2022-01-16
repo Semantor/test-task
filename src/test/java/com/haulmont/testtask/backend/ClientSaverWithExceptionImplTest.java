@@ -46,8 +46,8 @@ class ClientSaverWithExceptionImplTest {
     public static Stream<Arguments> valueForWrongFirstName() {
         return Stream.of(
                 Arguments.arguments(null, EMPTY_NAME),
-                Arguments.arguments("", MUST_BE_MINIMUM_THREE_SYMBOLS),
-                Arguments.arguments("As", MUST_BE_MINIMUM_THREE_SYMBOLS),
+                Arguments.arguments("", MUST_BE_MINIMUM_THREE_SYMBOLS_IN_FIRST_NAME),
+                Arguments.arguments("As", MUST_BE_MINIMUM_THREE_SYMBOLS_IN_FIRST_NAME),
                 Arguments.arguments("@ASdw", MUST_BE_LETTER_ERROR)
         );
     }
@@ -55,8 +55,8 @@ class ClientSaverWithExceptionImplTest {
     public static Stream<Arguments> valueForWrongLastName() {
         return Stream.of(
                 Arguments.arguments(null, EMPTY_LASTNAME),
-                Arguments.arguments("", MUST_BE_MINIMUM_THREE_SYMBOLS),
-                Arguments.arguments("As", MUST_BE_MINIMUM_THREE_SYMBOLS),
+                Arguments.arguments("", MUST_BE_MINIMUM_THREE_SYMBOLS_IN_LAST_NAME),
+                Arguments.arguments("As", MUST_BE_MINIMUM_THREE_SYMBOLS_IN_LAST_NAME),
                 Arguments.arguments("@ASdw", MUST_BE_LETTER_ERROR)
         );
     }

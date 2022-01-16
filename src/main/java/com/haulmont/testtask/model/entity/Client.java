@@ -29,17 +29,16 @@ public class Client implements Removable {
     private boolean isRemoved = false;
 
     @NotNull(message = Setting.EMPTY_NAME)
-    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS_IN_FIRST_NAME)
     @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String firstName;
 
     @NotNull(message = Setting.EMPTY_LASTNAME)
-    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS_IN_LAST_NAME)
     @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String lastName;
 
-    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
-    @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
+    @Pattern(regexp = Setting.PATTERN_FOR_PATRONYMIC, message =Setting.PATRONYMIC_ERROR)
     private String patronymic;
 
     @NotNull(message = Setting.EMPTY_PHONE_NUMBER)

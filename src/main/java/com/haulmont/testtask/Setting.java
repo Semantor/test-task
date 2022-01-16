@@ -145,7 +145,10 @@ public class Setting {
     public static final String NAME_IS_ALREADY_EXISTS = "This name is already exists ";
     public static final String WRONG_INCOME_DATA = "wrong incoming data";
     public static final String MUST_BE_LETTER_ERROR = "You can use only letter symbols";
-    public static final String MUST_BE_MINIMUM_THREE_SYMBOLS = "Must be minimum three symbols";
+    public static final String MUST_BE_MINIMUM_THREE_SYMBOLS_IN_FIRST_NAME = "First name must be minimum three symbols";
+    public static final String MUST_BE_MINIMUM_THREE_SYMBOLS_IN_LAST_NAME = "Last name ust be minimum three symbols";
+    public static final String MUST_BE_MINIMUM_THREE_SYMBOLS_IN_PATRONYMIC = "Patronymic must be minimum three symbols";
+    public static final String MUST_BE_MINIMUM_THREE_SYMBOLS_IN_BANK_NAME = "Bank name must be minimum three symbols";
     public static final String ENUMERATION_ERRORS = "errors: ";
     public static final String THIS_FIELD_IS_REQUIRED_MSG = "this field is required";
     public static final String NO_VALID_PHONE_ERROR_MSG = "not valid number, must be 10 digits starting with 9";
@@ -231,6 +234,8 @@ public class Setting {
 
     public static final String BANK_NAME_FIELD_NAME = "name";
 
+    public static final String CREDIT_OFFER_AMOUNT_FIELD_NAME = "creditAmount";
+
     //settings
     public static final boolean IS_SEARCH_FIELD_AUTOSELECTED = true;
     public static final boolean IS_SEARCH_FIELD_AUTOFOCUSED = true;
@@ -243,4 +248,5 @@ public class Setting {
     public static final String UNIVERSAL_NAME_ERROR = "This field is required. Must be minimum three letter without other symbols";
     public static final String PATRONYMIC_ERROR = "This field is not required, cannot be length one or two. Must be use letter only";
     public static final String NO_ERRORS = "No errors";
+    public static final String PATTERN_FOR_PATRONYMIC = "^$|[a-zA-z]{3,}";
 }
