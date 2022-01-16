@@ -1,6 +1,7 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.CreditDeleteException;
+import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.excs.Result;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
@@ -25,9 +26,13 @@ public class CreditEditService {
     @Transactional
     public Result<Boolean> edit(@NotNull Credit oldPersistCredit, @NotNull Credit newNonPersist) {
         try {
+            if (creditRepository.findById(newNonPersist.getCreditId()).isPresent())
+                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.UUID_IS_ALREADY_USED);
             Optional<Credit> optionalOldCredit = creditRepository.findById(oldPersistCredit.getCreditId());
-            if (optionalOldCredit.isEmpty()) throw new CreditDeleteException(OLD_CREDIT_IS_NON_PERSIST);
-            if (optionalOldCredit.get().isUnused()) throw new CreditDeleteException(ALREADY_UNUSED);
+            if (optionalOldCredit.isEmpty())
+                throw new IllegalArgumentExceptionWithoutStackTrace(OLD_CREDIT_IS_NON_PERSIST);
+            if (optionalOldCredit.get().isUnused())
+                throw new IllegalArgumentExceptionWithoutStackTrace(ALREADY_UNUSED);
 
             oldPersistCredit.unused();
             creditRepository.save(oldPersistCredit);
