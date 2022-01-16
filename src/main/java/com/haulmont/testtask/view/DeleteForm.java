@@ -2,7 +2,6 @@ package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.*;
-import com.haulmont.testtask.backend.excs.DeleteException;
 import com.haulmont.testtask.model.entity.*;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventBus;

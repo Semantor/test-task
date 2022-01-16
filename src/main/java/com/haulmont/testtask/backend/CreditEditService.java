@@ -1,8 +1,8 @@
 package com.haulmont.testtask.backend;
 
 import com.haulmont.testtask.Setting;
-import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
-import com.haulmont.testtask.backend.excs.Result;
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.CreditRepository;
 import lombok.RequiredArgsConstructor;

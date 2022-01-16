@@ -1,7 +1,7 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.CreditDeleteException;
-import com.haulmont.testtask.backend.excs.Result;
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.Removable;
 import com.haulmont.testtask.model.repositories.CreditRepository;
@@ -26,7 +26,7 @@ public class CreditRemover implements Remover {
     public Result<Boolean> remove(Credit credit) {
         try {
             if (credit.getCreditId() == null || creditRepository.findById(credit.getCreditId()).isEmpty())
-                throw new CreditDeleteException(NO_VALID_CREDIT);
+                throw new IllegalArgumentExceptionWithoutStackTrace(NO_VALID_CREDIT);
 
             credit.unused();
             creditRepository.save(credit);

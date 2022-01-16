@@ -1,7 +1,7 @@
 package com.haulmont.testtask.backend;
 
 import com.haulmont.testtask.Setting;
-import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.repositories.ClientRepository;

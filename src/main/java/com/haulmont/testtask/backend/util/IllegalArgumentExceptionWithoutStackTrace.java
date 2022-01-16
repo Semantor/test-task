@@ -1,4 +1,4 @@
-package com.haulmont.testtask.backend.excs;
+package com.haulmont.testtask.backend.util;
 
 import java.math.BigDecimal;
 

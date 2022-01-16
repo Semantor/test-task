@@ -1,5 +1,6 @@
 package com.haulmont.testtask.backend.excs;
 
+import com.haulmont.testtask.backend.util.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,6 +1,6 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.Result;
+import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.model.entity.Removable;
 
 import javax.validation.constraints.NotNull;
