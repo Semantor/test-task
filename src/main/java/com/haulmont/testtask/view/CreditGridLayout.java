@@ -14,25 +14,29 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import static com.haulmont.testtask.Setting.*;
 
-public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanBeClosed, HasEvent {
+@Slf4j
+public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanBeClosed, HasEvent, Hornable {
 
 
-    private final Grid<Credit> grid = new Grid<>();
+    private final Grid<Credit> creditGrid = new Grid<>();
     private final CreditProvider creditProvider;
     private final Button close = new Button();
 
 
     public CreditGridLayout(CreditProvider creditProvider) {
         this.creditProvider = creditProvider;
-        grid.setItems(creditProvider.getAllCredit());
+        setCreditGridWithAllCredit();
         tuneGrid();
-        add(grid, createButtons());
+        add(creditGrid, createButtons());
     }
 
     private HorizontalLayout createButtons() {
@@ -51,16 +55,16 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
     }
 
     private void tuneGrid() {
-        Grid.Column<Credit> bankName = grid.addColumn((ValueProvider<Credit, String>) credit -> credit.getBank().getName()).setHeader("Bank Name").setWidth("40px");
+        Grid.Column<Credit> bankName = creditGrid.addColumn((ValueProvider<Credit, String>) credit -> credit.getBank().getName()).setHeader("Bank Name").setWidth("40px");
 
-        Grid.Column<Credit> creditLimit = grid.addColumn(
+        Grid.Column<Credit> creditLimit = creditGrid.addColumn(
                 new NumberRenderer<>(Credit::getCreditLimit, CREDIT_LIMIT_FORMAT,
                         Locale.US, Setting.CREDIT_LIMIT_DEFAULT_VALUE)).setHeader(Setting.CREDIT_LIMIT_LABEL);
 
-        Grid.Column<Credit> creditRate = grid.addColumn(
+        Grid.Column<Credit> creditRate = creditGrid.addColumn(
                 new NumberRenderer<>(Credit::getCreditRate, CREDIT_RATE_FORMAT,
-                Locale.US, Setting.CREDIT_RATE_DEFAULT_VALUE)).setHeader(CREDIT_RATE_LABEL);
-        grid.addComponentColumn(credit -> {
+                        Locale.US, Setting.CREDIT_RATE_DEFAULT_VALUE)).setHeader(CREDIT_RATE_LABEL);
+        creditGrid.addComponentColumn(credit -> {
             Button delete = new Button();
             delete.setText(Setting.DELETE_BUTTON_TEXT);
             delete.addThemeVariants(Setting.DELETE_STYLE);
@@ -70,7 +74,7 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
             });
             return delete;
         });
-        grid.addComponentColumn(credit -> {
+        creditGrid.addComponentColumn(credit -> {
             Button edit = new Button();
             edit.setText(Setting.EDIT_BUTTON_TEXT);
             edit.addThemeVariants(Setting.DELETE_STYLE);
@@ -85,23 +89,38 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
                 .thenDesc(bankName).build();
         List<GridSortOrder<Credit>> rateSort = new GridSortOrderBuilder<Credit>().thenDesc(creditRate).build();
         List<GridSortOrder<Credit>> limitSort = new GridSortOrderBuilder<Credit>().thenDesc(creditLimit).build();
-        grid.sort(bankSort);
-        grid.sort(limitSort);
-        grid.sort(rateSort);
+        creditGrid.sort(bankSort);
+        creditGrid.sort(limitSort);
+        creditGrid.sort(rateSort);
     }
 
     @Override
     public void show() {
-        grid.setItems(creditProvider.getAllCredit());
+        setCreditGridWithAllCredit();
     }
 
     public void update() {
-        grid.setItems(creditProvider.getAllCredit());
+        setCreditGridWithAllCredit();
+    }
+
+    private void setCreditGridWithAllCredit() {
+        creditGrid.setItems((List<Credit>) creditProvider.getAllCredit().fold(
+                credits -> credits,
+                exception -> {
+                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                    return Collections.emptyList();
+                }
+        ));
     }
 
     @Override
     public ComponentEventBus getEventBusFromLayout() {
         return getEventBus();
+    }
+
+    @Override
+    public Logger log() {
+        return log;
     }
 
     public static class CloseEvent extends ComponentEvent<CreditGridLayout> {

@@ -105,7 +105,6 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     @Override
     public void show() {
         clientField.setValue(client.toField());
-        credit.setItems(creditProvider.getAllCredit());
         clear();
     }
 
@@ -138,17 +137,17 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
         creditOfferCreator.save(builtCreditOffer)
                 .fold(
-                aBoolean -> {
-                    hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, builtCreditOffer);
-                    clear();
-                    close();
-                    return aBoolean;
-                },
-                exception -> {
-                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
-                    return false;
-                }
-        );
+                        aBoolean -> {
+                            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, builtCreditOffer);
+                            clear();
+                            close();
+                            return aBoolean;
+                        },
+                        exception -> {
+                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                            return false;
+                        }
+                );
     }
 
     @Override
@@ -181,7 +180,13 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
     @Override
     public void clear() {
-        credit.setItems(creditProvider.getAllCredit());
+        credit.setItems((List<Credit>) creditProvider.getAllCredit().fold(
+                credits -> credits,
+                exception -> {
+                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                    return Collections.emptyList();
+                }
+        ));
         amountField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
         creditOffer = CreditOffer.builder().client(client).build();
         save.setVisible(false);
