@@ -1,5 +1,7 @@
 package com.haulmont.testtask.backend;
 
+import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.repositories.ClientRepository;
@@ -23,15 +25,13 @@ public class CreditOfferProviderByClient {
      * return {@link Collections#emptyList()} on fail
      */
     public List<CreditOffer> getByClient(Client client) {
-        List<CreditOffer> clientCreditOffers = Collections.emptyList();
         try {
             if (client.getClientId() == null || clientRepository.findById(client.getClientId()).isEmpty())
-                return clientCreditOffers;
-            clientCreditOffers = creditOfferRepository.findByIsCanceledAndClient(false, client);
+                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.WRONG_INCOME_DATA);
+            return creditOfferRepository.findByIsCanceledAndClient(false, client);
         } catch (Exception ex) {
-            return clientCreditOffers;
+            return Collections.emptyList();
         }
-        return clientCreditOffers;
     }
 
 }
