@@ -68,14 +68,18 @@ public class DeleteForm extends VerticalLayout implements CanBeShown, CanBeClose
     }
 
     private void accept() {
-        try {
-            remover.remove(removable);
-            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_DELETED_USER_MESSAGE, removable);
-            close();
-            fireEvent(new UpdateEvent(this));
-        } catch (DeleteException ex) {
-            hornIntoNotificationAndLoggerInfo(ex.getMessage());
-        }
+        remover.remove(removable).fold(
+                aBoolean -> {
+                    hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_DELETED_USER_MESSAGE, removable);
+                    close();
+                    fireEvent(new UpdateEvent(this));
+                    return aBoolean;
+                },
+                exception -> {
+                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                    return false;
+                }
+        );
     }
 
     public void setClient(Client client) {

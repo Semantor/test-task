@@ -1,14 +1,17 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.ClientDeleteException;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.excs.Result;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.entity.Payment;
 import com.haulmont.testtask.model.entity.Removable;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -17,34 +20,36 @@ import static com.haulmont.testtask.Setting.NO_VALID_CLIENT;
 
 @AllArgsConstructor
 @Component
+@Transactional
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ClientRemover implements Remover {
     private final ClientRepository clientRepository;
 
     /**
      * trying to make client {@link Client#isRemoved()}
-     *
-     * @param client that is being removed
-     * @return true if successful removed
-     * @throws com.haulmont.testtask.backend.excs.ClientDeleteException due to failed, fe client has active credit offer
      */
-    public boolean remove(Client client) {
-        if (client == null || client.getClientId() == null || clientRepository.findById(client.getClientId()).isEmpty())
-            throw new ClientDeleteException(NO_VALID_CLIENT);
-        LocalDate now = LocalDate.now();
-        for (CreditOffer creditOffer : client.getCreditOffers()) {
-            for (Payment payment : creditOffer.getPayments()) {
-                if (payment.getDate().compareTo(now) > -1)
-                    throw new ClientDeleteException(HAVE_ACTIVE_CREDIT_OFFER);
+    public Result<Boolean> remove(Client client) {
+        try {
+            if (client.getClientId() == null || clientRepository.findById(client.getClientId()).isEmpty())
+                throw new IllegalArgumentExceptionWithoutStackTrace(NO_VALID_CLIENT);
+            LocalDate now = LocalDate.now();
+            for (CreditOffer creditOffer : client.getCreditOffers()) {
+                for (Payment payment : creditOffer.getPayments()) {
+                    if (payment.getDate().compareTo(now) > -1) {
+                        throw new IllegalArgumentExceptionWithoutStackTrace(HAVE_ACTIVE_CREDIT_OFFER);
+                    }
+                }
             }
+            client.remove();
+            clientRepository.save(client);
+        } catch (Exception ex) {
+            return Result.failure(ex);
         }
-
-        client.remove();
-        clientRepository.save(client);
-        return true;
+        return Result.success(true);
     }
 
     @Override
-    public boolean remove(Removable removable) {
+    public Result<Boolean> remove(Removable removable) {
         return remove((Client) removable);
     }
 }
