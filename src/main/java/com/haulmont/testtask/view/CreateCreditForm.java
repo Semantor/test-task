@@ -4,7 +4,6 @@ import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.backend.Validator;
-import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
@@ -38,7 +37,6 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     protected final Validator validator;
     protected final CreditConstraintProvider creditConstraintProvider;
 
-    private Credit credit;
 
     @Getter(AccessLevel.PROTECTED)
     private final ComboBox<Bank> bankComboBox = new ComboBox<>();
@@ -124,21 +122,25 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     public void clear() {
         creditLimitField.setValue(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE);
         creditRateField.setValue(BigDecimal.TEN);
-        credit = Credit.builder().build();
         bankComboBox.setItems(bankProvider.getAllBanks());
     }
 
     public void validateAndSave() {
+        Credit credit = Credit.builder().build();
         if (binder.writeBeanIfValid(credit)) {
             hornIntoNotificationAndLoggerInfo(TRYING_TO_SAVE_NEW_CREDIT, credit);
-            try {
-                creditSaver.save(credit);
-                hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, credit);
-                close();
-                clear();
-            } catch (IllegalArgumentExceptionWithoutStackTrace ex) {
-                hornIntoNotificationAndLoggerInfo(ex.getMessage(), credit);
-            }
+            creditSaver.save(credit).fold(
+                    aBoolean -> {
+                        hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, credit);
+                        close();
+                        clear();
+                        return aBoolean;
+                    },
+                    exception -> {
+                        hornIntoNotificationAndLoggerInfo(exception.getMessage(), credit);
+                        return false;
+                    }
+            );
         }
     }
 
