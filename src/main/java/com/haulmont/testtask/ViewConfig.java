@@ -44,7 +44,7 @@ public class ViewConfig {
     @Scope("prototype")
     CreateCreditForm createCreditForm(BankProvider bankProvider,
                                       CreditSaver creditSaver,
-                                      Validator validator,
+                                      javax.validation.Validator validator,
                                       CreditConstraintProvider creditConstraintProvider) {
         return new CreateCreditForm(bankProvider, creditSaver, validator, creditConstraintProvider);
     }
@@ -103,7 +103,7 @@ public class ViewConfig {
     @Scope("prototype")
     CreditEditorForm creditEditorForm(BankProvider bankProvider,
                                       CreditSaver creditSaver,
-                                      Validator validator,
+                                      javax.validation.Validator validator,
                                       CreditEditService creditEditService,
                                       CreditConstraintProvider creditConstraintProvider) {
         return new CreditEditorForm(bankProvider, creditSaver, validator, creditEditService, creditConstraintProvider);

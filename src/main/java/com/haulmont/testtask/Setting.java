@@ -249,4 +249,7 @@ public class Setting {
     public static final String PATRONYMIC_ERROR = "This field is not required, cannot be length one or two. Must be use letter only";
     public static final String NO_ERRORS = "No errors";
     public static final String PATTERN_FOR_PATRONYMIC = "^$|[a-zA-z]{3,}";
+    public static final String BANK_WITH_TARGET_ID_ALREADY_IN_USE = "bank id is already taken";
+    public static final String CREDIT_LIMIT_FIELD_NAME = "creditLimit";
+    public static final String CREDIT_RATE_FIELD_NAME = "creditRate";
 }

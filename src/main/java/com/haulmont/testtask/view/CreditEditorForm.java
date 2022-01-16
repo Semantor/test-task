@@ -1,7 +1,10 @@
 package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Setting;
-import com.haulmont.testtask.backend.*;
+import com.haulmont.testtask.backend.BankProvider;
+import com.haulmont.testtask.backend.CreditConstraintProvider;
+import com.haulmont.testtask.backend.CreditEditService;
+import com.haulmont.testtask.backend.CreditSaver;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.notification.Notification;
@@ -18,7 +21,7 @@ public class CreditEditorForm extends CreateCreditForm {
 
     private final CreditEditService creditEditService;
 
-    public CreditEditorForm(BankProvider bankProvider, CreditSaver creditSaver, Validator validator, CreditEditService creditEditService, CreditConstraintProvider creditConstraintProvider) {
+    public CreditEditorForm(BankProvider bankProvider, CreditSaver creditSaver, javax.validation.Validator validator, CreditEditService creditEditService, CreditConstraintProvider creditConstraintProvider) {
         super(bankProvider, creditSaver, validator, creditConstraintProvider);
         this.creditEditService = creditEditService;
         tuneImmutableFields();

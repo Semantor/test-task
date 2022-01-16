@@ -1,9 +1,10 @@
 package com.haulmont.testtask.view;
 
+import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditSaver;
-import com.haulmont.testtask.backend.Validator;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
@@ -23,8 +24,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
+import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.haulmont.testtask.Setting.*;
 
@@ -34,7 +37,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
     protected final BankProvider bankProvider;
     protected final CreditSaver creditSaver;
-    protected final Validator validator;
+    protected final javax.validation.Validator validator;
     protected final CreditConstraintProvider creditConstraintProvider;
 
 
@@ -52,10 +55,10 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
     private final Button clear = new Button();
     private final Button close = new Button();
 
-    public CreateCreditForm(BankProvider bankProvider, CreditSaver creditSaver, Validator validator, CreditConstraintProvider creditConstraintProvider) {
-        this.validator = validator;
+    public CreateCreditForm(BankProvider bankProvider, CreditSaver creditSaver, javax.validation.Validator validator1, CreditConstraintProvider creditConstraintProvider) {
         this.creditSaver = creditSaver;
         this.bankProvider = bankProvider;
+        this.validator = validator1;
         this.creditConstraintProvider = creditConstraintProvider;
         tuneFields();
         tuneBinder();
@@ -82,28 +85,23 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
 
 
     private void tuneBinder() {
-        SerializablePredicate<BigDecimal> predicateForCreditLimitField =
-                creditAmount ->
-                        !creditLimitField.isEmpty() &&
-                                creditAmount.scale() < 3 &&
-                                validator.validateCreditAmount(creditAmount);
-
-        SerializablePredicate<BigDecimal> predicateForCreditRateField =
-                creditRate ->
-                        !creditRateField.isEmpty() &&
-                                creditRate.scale() < 3 &&
-                                validator.validateCreditRate(creditRate);
-
-
         binder.forField(bankComboBox)
                 .withValidator(Objects::nonNull, MUST_CHOOSE_BANK_ERROR_MSG)
                 .bind(Credit::getBank, Credit::setBank);
         binder.forField(creditLimitField)
-                .withValidator(predicateForCreditLimitField, WRONG_CREDIT_LIMIT_MESSAGE)
+                .withValidator(predict(CREDIT_LIMIT_FIELD_NAME), WRONG_CREDIT_LIMIT_MESSAGE)
                 .bind(Credit::getCreditLimit, Credit::setCreditLimit);
         binder.forField(creditRateField)
-                .withValidator(predicateForCreditRateField, WRONG_CREDIT_RATE_MESSAGE)
+                .withValidator(predict(Setting.CREDIT_RATE_FIELD_NAME), WRONG_CREDIT_RATE_MESSAGE)
                 .bind(Credit::getCreditRate, Credit::setCreditRate);
+    }
+
+    private <T> SerializablePredicate<T> predict(String fieldName) {
+        return s -> {
+            Set<ConstraintViolation<Credit>> constraintViolations = validator.validateValue(Credit.class, fieldName, s);
+            log.info(ConstraintViolationHandler.handleToString(constraintViolations));
+            return constraintViolations.isEmpty();
+        };
     }
 
     private HorizontalLayout createButtons() {
