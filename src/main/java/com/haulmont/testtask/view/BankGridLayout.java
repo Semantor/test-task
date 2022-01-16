@@ -11,10 +11,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import static com.haulmont.testtask.Setting.BANK_NAME_LABEL;
 
-public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeUpdated, HasEvent, CanBeClosed {
+@Slf4j
+public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeUpdated, HasEvent, CanBeClosed, Hornable {
 
     private final BankProvider bankProvider;
     private final Grid<Bank> grid = new Grid<>();
@@ -55,7 +58,7 @@ public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeU
         grid.setItemDetailsRenderer(
                 new ComponentRenderer<>(
                         item -> {
-                            bankProvider.updateClients(item);
+                            bankProvider.updateClients(item).onFailure(exception -> hornIntoNotificationAndLoggerInfo(exception.getMessage()));
                             bankClientsGridLayout.setClients(item.getClients());
                             bankClientsGridLayout.show();
                             return bankClientsGridLayout;
@@ -79,6 +82,11 @@ public class BankGridLayout extends VerticalLayout implements CanBeShown, CanBeU
     @Override
     public ComponentEventBus getEventBusFromLayout() {
         return getEventBus();
+    }
+
+    @Override
+    public Logger log() {
+        return log;
     }
 
     public static class CloseEvent extends ComponentEvent<BankGridLayout> {
