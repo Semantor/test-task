@@ -12,14 +12,26 @@ public class ClientFieldAvailabilityChecker {
     private final ClientSpecifications clientSpecifications;
 
     public boolean isAvailablePhone(String phone) {
-        return clientRepository.findAll(clientSpecifications.getByPhoneExactMatch(phone)).isEmpty();
+        try {
+            return clientRepository.findAll(clientSpecifications.getByPhoneExactMatch(phone)).isEmpty();
+        } catch (Exception exception) {
+            return true;
+        }
     }
 
     public boolean isAvailableEmail(String email) {
-        return clientRepository.findAll(clientSpecifications.getByEmailExactMatch(email)).isEmpty();
+        try {
+            return clientRepository.findAll(clientSpecifications.getByEmailExactMatch(email)).isEmpty();
+        } catch (Exception exception) {
+            return true;
+        }
     }
 
     public boolean isAvailablePassport(String passport) {
-        return clientRepository.findAll(clientSpecifications.getByPassportExactMatch(passport)).isEmpty();
+        try {
+            return clientRepository.findAll(clientSpecifications.getByPassportExactMatch(passport)).isEmpty();
+        } catch (Exception exception) {
+            return true;
+        }
     }
 }
