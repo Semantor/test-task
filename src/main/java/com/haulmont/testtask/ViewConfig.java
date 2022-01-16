@@ -53,7 +53,7 @@ public class ViewConfig {
     @Scope("prototype")
     CreateCreditOfferForm createCreditOfferForm(CreditOfferCreator creditOfferCreator, CreditProvider creditProvider,
                                                 PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, PaymentGridLayout paymentGridLayout,
-                                                Validator validator, CreditConstraintProvider creditConstraintProvider) {
+                                                javax.validation.Validator validator, CreditConstraintProvider creditConstraintProvider) {
         return new CreateCreditOfferForm(creditOfferCreator, creditProvider, paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, paymentGridLayout, validator, creditConstraintProvider);
     }
 

@@ -1,6 +1,8 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.backend.excs.CreateCreditOfferException;
+import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.excs.Result;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -16,12 +18,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.haulmont.testtask.Setting.*;
-import static com.haulmont.testtask.Setting.PERCENT_PART_LABEL;
 
 @AllArgsConstructor
 @Slf4j
@@ -31,49 +34,68 @@ public class CreditOfferCreator {
     private final CreditRepository creditRepository;
     private final ClientRepository clientRepository;
     private final PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
-    private final Validator validator;
+    private final javax.validation.Validator validator;
     private final PaymentRepository paymentRepository;
+
     /**
+     * this method validate:
      * UUID must be not null and not present in db.
      * credit must be not null and present in db.
      * same for client.
      * credit amount must be less than {@link Credit#getCreditLimit()}
      * and more than {@link com.haulmont.testtask.backend.CreditConstraintProvider#CREDIT_LIMIT_MIN_VALUE}
-     *
+     * <p>
      * {@link CreditOffer#getPayments()} must be:
      * present
      * connect to credit offer
      * first payment with date >= today
-     *
+     * <p>
      * all the payment will calculate into this method and compare with {@link CreditOffer#getPayments()}
      * if any fields differ, failed
-     *
+     * <p>
      * this method also save this payment list.
-     *
-     * @throws com.haulmont.testtask.backend.excs.CreateCreditOfferException on fail
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void save(@NotNull CreditOffer creditOffer) throws CreateCreditOfferException{
-        checkCreditOfferForCorrectnessClient(creditOffer);
-        checkCreditOfferForCorrectnessCredit(creditOffer);
+    public Result<Boolean> save(@NotNull CreditOffer creditOffer) {
 
-        if (creditOffer.getMonthCount() < 1)
-            throw new CreateCreditOfferException(NOT_VALID_MONTH_COUNT);
-        if (creditOffer.getPayments() == null || creditOffer.getPayments().isEmpty())
-            throw new CreateCreditOfferException(EMPTY_PAYMENT_LIST);
+        Set<ConstraintViolation<CreditOffer>> creditOfferConstraintViolation = validator.validate(creditOffer);
+        if (!creditOfferConstraintViolation.isEmpty())
+            return Result.failure(
+                    new IllegalArgumentExceptionWithoutStackTrace(
+                            ConstraintViolationHandler.handleToString(creditOfferConstraintViolation)));
+        Optional<Credit> optionalCreditFromDatabase = creditRepository.findById(creditOffer.getCredit().getCreditId());
+        if (optionalCreditFromDatabase.isEmpty() || optionalCreditFromDatabase.get().isUnused())
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
+                    NO_VALID_CREDIT));
+        Optional<Client> optionalClientFromDatabase = clientRepository.findById(creditOffer.getClient().getClientId());
+        if (optionalClientFromDatabase.isEmpty() || optionalClientFromDatabase.get().isRemoved())
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
+                    NO_VALID_CLIENT));
 
-        checkCreditOfferThatPaymentsHasCorrectCreditOffer(creditOffer);
+        Result<Boolean> correctCreditOfferInPayment = checkCreditOfferThatPaymentsHasCorrectCreditOffer(creditOffer);
+        if (correctCreditOfferInPayment.isFailure())
+            return correctCreditOfferInPayment;
 
-        checkCreditOfferForCorrectnessPayments(creditOffer);
+        Result<Boolean> correctnessPayments = checkCreditOfferForCorrectnessPayments(creditOffer);
+        if (correctnessPayments.isFailure())
+            return correctnessPayments;
 
-        List<Payment> payment = creditOffer.getPayments();
-        creditOffer.setPayments(Collections.emptyList());
-        creditOfferRepository.save(creditOffer);
-        creditOffer.setPayments(payment);
-        paymentRepository.saveAll(creditOffer.getPayments());
+        List<Payment> payments = creditOffer.getPayments();
+
+        try {
+            creditOffer.setPayments(Collections.emptyList());
+            creditOfferRepository.save(creditOffer);
+            creditOffer.setPayments(payments);
+            paymentRepository.saveAll(payments);
+        } catch (Exception ex) {
+            return Result.failure(ex);
+        } finally {
+            creditOffer.setPayments(payments);
+        }
+        return Result.success(true);
     }
 
-    private void checkCreditOfferThatPaymentsHasCorrectCreditOffer(@NotNull CreditOffer creditOffer) {
+    private Result<Boolean> checkCreditOfferThatPaymentsHasCorrectCreditOffer(@NotNull CreditOffer creditOffer) {
         boolean isSomePaymentsHasIncorrectCreditOffer = false;
         for (Payment payment : creditOffer.getPayments()) {
             if (!payment.getCreditOffer().equals(creditOffer)) {
@@ -83,63 +105,50 @@ public class CreditOfferCreator {
         }
 
         if (isSomePaymentsHasIncorrectCreditOffer) {
-            throw new CreateCreditOfferException(PAYMENTS_IS_NOT_CONNECTED_TO_CREDIT_OFFER);
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(PAYMENTS_IS_NOT_CONNECTED_TO_CREDIT_OFFER));
         }
+        return Result.success(true);
     }
 
-    private void checkCreditOfferForCorrectnessClient(@NotNull CreditOffer creditOffer) {
-        if (creditOffer.getCreditOfferId() == null)
-            throw new CreateCreditOfferException(NULLABLE_ID);
-        if (creditOffer.getClient() == null || creditOffer.getClient().getClientId() == null)
-            throw new CreateCreditOfferException(UNIDENTIFIED_CLIENT);
-        Optional<Client> clientOpt = clientRepository.findById(creditOffer.getClient().getClientId());
-        if (clientOpt.isEmpty()) throw new CreateCreditOfferException(CLIENT_DOES_NOT_PRESENT_IN_DB);
-    }
-
-    private void checkCreditOfferForCorrectnessCredit(@NotNull CreditOffer creditOffer) {
-        if (creditOffer.getCredit() == null || creditOffer.getCredit().getCreditId() == null)
-            throw new CreateCreditOfferException(UNIDENTIFIED_CREDIT);
-        Optional<Credit> creditOpt = creditRepository.findById(creditOffer.getCredit().getCreditId());
-        if (creditOpt.isEmpty()) throw new CreateCreditOfferException(CREDIT_DOES_NOT_PRESENT_IN_DB);
-        if (creditOffer.getCreditAmount() == null ||
-                !validator.validateCreditAmount(creditOffer.getCreditAmount(), creditOpt.get().getCreditLimit()))
-            throw new CreateCreditOfferException(NOT_VALID_CREDIT_AMOUNT);
-    }
-
-    private void checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
+    private Result<Boolean> checkCreditOfferForCorrectnessPayments(@NotNull CreditOffer creditOffer) {
         List<Payment> calculatePayments = paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod
                 .calculate(creditOffer.getCredit(), creditOffer, creditOffer.getMonthCount(),
                         creditOffer.getCreditAmount(), creditOffer.getPayments().get(0).getDate().minusMonths(1));
 
         if (calculatePayments.size() != creditOffer.getPayments().size())
-            throw new CreateCreditOfferException(WRONG_PAYMENTS_COUNT);
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(WRONG_PAYMENTS_COUNT));
+
 
         for (int i = 0; i < creditOffer.getPayments().size(); i++) {
             if (!calculatePayments.get(i).getDate().equals(creditOffer.getPayments().get(i).getDate()))
-                throw new CreateCreditOfferException(
+                return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                         errorMessageInPaymentList(DATE_LABEL,
                                 calculatePayments.get(i).getDate(),
-                                creditOffer.getPayments().get(i).getDate()));
+                                creditOffer.getPayments().get(i).getDate())));
+
 
             if (!calculatePayments.get(i).getAmount().equals(creditOffer.getPayments().get(i).getAmount()))
-                throw new CreateCreditOfferException(
+                return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                         errorMessageInPaymentList(AMOUNT_LABEL,
                                 calculatePayments.get(i).getAmount(),
-                                creditOffer.getPayments().get(i).getAmount()));
+                                creditOffer.getPayments().get(i).getAmount())));
+
 
             if (!calculatePayments.get(i).getMainPart().equals(creditOffer.getPayments().get(i).getMainPart()))
-                throw new CreateCreditOfferException(
+                return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                         errorMessageInPaymentList(MAIN_PART_LABEL,
                                 calculatePayments.get(i).getMainPart(),
-                                creditOffer.getPayments().get(i).getMainPart()));
+                                creditOffer.getPayments().get(i).getMainPart())));
+
 
             if (!calculatePayments.get(i).getPercentPart().equals(creditOffer.getPayments().get(i).getPercentPart()))
-                throw new CreateCreditOfferException(
+                return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(
                         errorMessageInPaymentList(PERCENT_PART_LABEL,
                                 calculatePayments.get(i).getPercentPart(),
-                                creditOffer.getPayments().get(i).getPercentPart())
-                );
+                                creditOffer.getPayments().get(i).getPercentPart())));
+
         }
+        return Result.success(true);
     }
 
     @NotNull

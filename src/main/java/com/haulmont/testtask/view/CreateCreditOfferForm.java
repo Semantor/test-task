@@ -1,9 +1,11 @@
 package com.haulmont.testtask.view;
 
 import com.haulmont.testtask.Setting;
-import com.haulmont.testtask.backend.*;
-import com.haulmont.testtask.backend.excs.CreateCreditOfferException;
-import com.haulmont.testtask.backend.excs.IllegalArgumentExceptionWithoutStackTrace;
+import com.haulmont.testtask.backend.CreditConstraintProvider;
+import com.haulmont.testtask.backend.CreditOfferCreator;
+import com.haulmont.testtask.backend.CreditProvider;
+import com.haulmont.testtask.backend.PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -29,12 +31,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 
+import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.haulmont.testtask.Setting.*;
 
@@ -48,7 +51,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     private final PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
     @Getter
     private final PaymentGridLayout paymentGridLayout;
-    private final Validator validator;
+    private final javax.validation.Validator validator;
     private final CreditConstraintProvider creditConstraintProvider;
 
     @Getter
@@ -73,7 +76,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
 
     @Autowired
-    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, PaymentGridLayout paymentGridLayout, Validator validator, CreditConstraintProvider creditConstraintProvider) {
+    public CreateCreditOfferForm(CreditOfferCreator coc, CreditProvider cp, PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod, PaymentGridLayout paymentGridLayout, javax.validation.Validator validator, CreditConstraintProvider creditConstraintProvider) {
         this.validator = validator;
         this.creditOfferCreator = coc;
         this.creditProvider = cp;
@@ -132,14 +135,20 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
         }
 
         builtCreditOffer.setPayments(calculatingPayment);
-        try {
-            creditOfferCreator.save(builtCreditOffer);
-            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, builtCreditOffer);
-            clear();
-            close();
-        } catch (CreateCreditOfferException ex) {
-            hornIntoNotificationAndLoggerInfo(ex.getMessage());
-        }
+
+        creditOfferCreator.save(builtCreditOffer)
+                .fold(
+                aBoolean -> {
+                    hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_SAVED_USER_MESSAGE, builtCreditOffer);
+                    clear();
+                    close();
+                    return aBoolean;
+                },
+                exception -> {
+                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                    return false;
+                }
+        );
     }
 
     @Override
@@ -215,20 +224,22 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                 .bind(CreditOffer::getCredit, CreditOffer::setCredit);
         binder.forField(amountField)
                 .withValidator(
+                        bigDecimal -> {
+                            Set<ConstraintViolation<CreditOffer>> constraintViolations =
+                                    validator.validateValue(CreditOffer.class, CREDIT_OFFER_AMOUNT_FIELD_NAME, bigDecimal);
+                            log.info(ConstraintViolationHandler.handleToString(constraintViolations));
+                            return constraintViolations.isEmpty();
+                        }, NOT_VALID_CREDIT_AMOUNT)
+                .withValidator(
                         bigDecimal -> credit.getValue() != null &&
-                                validator.validateCreditAmount(
-                                        bigDecimal,
-                                        credit.getValue().getCreditLimit()),
-                        IllegalArgumentExceptionWithoutStackTrace.
-                                amountErrorMsg(creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE,
-                                        creditConstraintProvider.CREDIT_LIMIT_MAX_VALUE)
+                                credit.getValue().getCreditLimit().compareTo(bigDecimal) > -1,
+                        NOT_VALID_CREDIT_AMOUNT
                 ).bind(CreditOffer::getCreditAmount, CreditOffer::setCreditAmount);
 
         binder.forField(month)
                 .withValidator(integer -> integer != null && integer > 0, Setting.MUST_BE_MORE_THAN_ZERO)
                 .bind(CreditOffer::getMonthCount, CreditOffer::setMonthCount);
     }
-
 
     public static class CloseEvent extends ComponentEvent<CreateCreditOfferForm> {
         public CloseEvent(CreateCreditOfferForm source) {
