@@ -31,6 +31,9 @@ public class BankSaver {
                     new IllegalArgumentExceptionWithoutStackTrace(
                             ConstraintViolationHandler.handleToString(constraintViolations)));
         try {
+            if (bankRepository.findById(bank.getBankId()).isPresent())
+                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.BANK_WITH_TARGET_ID_ALREADY_IN_USE);
+
             bankRepository.save(bank);
         } catch (Exception exception) {
             return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(Setting.SOME_DB_PROBLEM));
