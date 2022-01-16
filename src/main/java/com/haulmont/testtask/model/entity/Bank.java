@@ -24,7 +24,7 @@ public class Bank implements Removable {
 
     @Column(name = "bank_name")
     @NotNull(message = Setting.EMPTY_NAME)
-    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS)
+    @Size(min = 3, message = Setting.MUST_BE_MINIMUM_THREE_SYMBOLS_IN_BANK_NAME)
     @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String name;
 
