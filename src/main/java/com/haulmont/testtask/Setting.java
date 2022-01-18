@@ -252,4 +252,5 @@ public class Setting {
     public static final String BANK_WITH_TARGET_ID_ALREADY_IN_USE = "bank id is already taken";
     public static final String CREDIT_LIMIT_FIELD_NAME = "creditLimit";
     public static final String CREDIT_RATE_FIELD_NAME = "creditRate";
+    public static final String TOO_MANY_MONTH_COUNT = "too long period in months, choose a smaller one";
 }

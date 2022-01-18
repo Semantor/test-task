@@ -1,5 +1,7 @@
 package com.haulmont.testtask.backend;
 
+import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
 import com.haulmont.testtask.model.entity.Payment;
@@ -62,6 +64,8 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
         LocalDate paymentDate;
         BigDecimal percentPart;
         for (int i = 1; i < month + 1; i++) {
+            if (remain.compareTo(BigDecimal.ZERO)<1)
+                    throw new IllegalArgumentExceptionWithoutStackTrace(Setting.TOO_MANY_MONTH_COUNT);
             paymentDate = dateOfReceiving.plus(i, ChronoUnit.MONTHS);
             percentPart = percentCalculator.percentPart(passedPayment, paymentDate, credit.getCreditRate(), remain);
             BigDecimal mainPart = monthlyPayment.subtract(percentPart);

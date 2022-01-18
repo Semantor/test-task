@@ -6,6 +6,7 @@ import com.haulmont.testtask.backend.CreditOfferCreator;
 import com.haulmont.testtask.backend.CreditProvider;
 import com.haulmont.testtask.backend.PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod;
 import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -17,7 +18,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -64,8 +64,6 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     private final BigDecimalField amountField = new BigDecimalField();
     private final ComboBox<Integer> month = new ComboBox<>();
     private final DatePicker datePicker = new DatePicker();
-
-    private final Label infoLabel = new Label();
 
     private final Binder<CreditOffer> binder = new BeanValidationBinder<>(CreditOffer.class);
 
@@ -157,25 +155,23 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
 
     private void calculate() {
         LocalDate dateOfReceiving = datePicker.getValue();
-        if (dateOfReceiving.isBefore(LocalDate.now())) {
-            infoLabel.setText(Setting.WRONG_DATE_IS_PICKED);
+        if (dateOfReceiving == null || dateOfReceiving.isBefore(LocalDate.now())) {
             hornIntoNotificationAndLoggerInfo(WRONG_DATE_IS_PICKED);
             return;
         }
         try {
             binder.writeBean(creditOffer);
-            paymentGridLayout.setVisible(true);
-            save.setVisible(true);
-            clear.setVisible(true);
             paymentGridLayout.setPayments(paymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPeriod.calculate(creditOffer.getCredit(),
                     creditOffer.getMonthCount(), creditOffer.getCreditAmount(), dateOfReceiving));
-
+            save.setVisible(true);
+            clear.setVisible(true);
             paymentGridLayout.show();
-        } catch (ValidationException ex) {
-            infoLabel.setText(ex.getMessage());
+            paymentGridLayout.setVisible(true);
+        } catch (ValidationException | IllegalArgumentExceptionWithoutStackTrace ex) {
             hornIntoNotificationAndLoggerInfo(ex.getMessage());
-
+            paymentGridLayout.setVisible(false);
         }
+
     }
 
     @Override

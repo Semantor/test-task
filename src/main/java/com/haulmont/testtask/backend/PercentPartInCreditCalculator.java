@@ -1,5 +1,6 @@
 package com.haulmont.testtask.backend;
 
+import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,11 +27,11 @@ public class PercentPartInCreditCalculator {
      */
     public BigDecimal percentPart(LocalDate startPeriodDate, LocalDate endPeriodDate, BigDecimal rate, BigDecimal remain) {
         if (!startPeriodDate.isBefore(endPeriodDate))
-            throw new IllegalArgumentException(START_DATE_MUST_BE_EARLY_THAN_END_DATE);
+            throw new IllegalArgumentExceptionWithoutStackTrace(START_DATE_MUST_BE_EARLY_THAN_END_DATE);
         if (rate.compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalArgumentException(CREDIT_RATE_MUST_BE_MORE_OR_EQUAL_ZERO);
+            throw new IllegalArgumentExceptionWithoutStackTrace(CREDIT_RATE_MUST_BE_MORE_OR_EQUAL_ZERO);
         if (remain.compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalArgumentException(CREDIT_REMAIN_BALANCE_MUST_BE_MORE_OR_EQUAL_ZERO);
+            throw new IllegalArgumentExceptionWithoutStackTrace(CREDIT_REMAIN_BALANCE_MUST_BE_MORE_OR_EQUAL_ZERO);
 
         double baseOfCoefficient = Double.parseDouble(rate.toString()) / PERCENT_TO_FRACTION_RATE + 1;
         double exponentOfCoefficient = partOfYearCalculator.whatPartOfYearIsPeriod(startPeriodDate, endPeriodDate);
