@@ -1,15 +1,33 @@
-Test Task
-=========
+# Super Cool Bank System Test Task
 
-Prerequisites
--------------
+## What is Super Cool Bank System
+
+**Super Cool Bank System** is standard one page dynamic bank app with not trivial delete system.
+
+## Table of Contents
+
+- [What is Super Cool Bank System](#what-is-super-cool-bank-system)
+- [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Build and Run](#build-and-run)
+    - [Stack of technology](#stack-of-technology)
+- [Opportunities](#opportunities)
+- [Schema](#schema)
+- [Structure of site](#structure-of-site)
+- [Formulas](#formulas)
+    - [Monthly Payment](#monthly-payment)
+    - [Loan interest](#loan-interest)
+- [Core Possibilities](#core-possibilities)
+
+## Getting Started
+
+### Prerequisites
 
 * [Java Development Kit (JDK) 11](https://libericajdk.ru/pages/downloads/#/java-11-lts)
 * [Maven 3](https://maven.apache.org/download.cgi)
 * [NPM](https://www.npmjs.com/)
 
-Build and Run
--------------
+### Build and Run
 
 1. Run in the command line in source folder:
     ```
@@ -18,8 +36,7 @@ Build and Run
 
 2. Open `http://localhost:8080` in a web browser.
 
-Stack
------
+### Stack of Technology
 
 1. Spring Boot
 2. SpringData
@@ -29,11 +46,12 @@ Stack
 6. Lombok
 7. jakarta.validation/hibernate validation
 
-### Функционал
+## Opportunities
 
-1. Авторизация
-2. Добавление, редактирование и удаление сущностей.
-3. Процесс оформления кредита на клиента с созданием графика платежей и расчетом необходимых сумм:
+### Functionality
+
+1. Добавление, редактирование и удаление сущностей. [For more information](#core-possibilities) 
+1. Процесс оформления кредита на клиента с созданием графика платежей и расчетом необходимых сумм:
    Автоматический расчет итоговой суммы процентов по кредиту; Автоматический расчет суммы ежемесячного платежа с учетом
    процентной ставки.
 
@@ -44,7 +62,11 @@ Stack
 2. Экран для формирования кредитного предложения и просмотра графика платежей, итоговой суммы по кредиту. Интерфейс
    пользователя должен быть простым, логичным и удобным.
 
-## Entity
+Код доступа к данным должен быть изолирован в классах DAO;
+
+Каждая таблица должна иметь первичный ключ типа UUID;
+
+## Schema
 
 ### Client
 
@@ -85,16 +107,27 @@ Stack
     * main part
     * percent part
 
-Код доступа к данным должен быть изолирован в классах DAO;
+## Structure of site
 
-Каждая таблица должна иметь первичный ключ типа UUID;
+- Main Screen
+    - ClientGrid
+    - DeleteForm for client
+    - CreditOfferGrid
+        - PaymentGrid
+    - CreateCreditOfferForm
+        - PaymentGrid
+    - CreateClientForm
+    - CreateBankForm
+    - CreateCreditForm
+    - BankGrid
+        - DeleteForm for bank
+    - CreditGrid
+        - DeleteForm for credit
+        - CreditEditorForm
 
-````markdown
-MainScreen ClientGrid CreditOfferGrid PaymentGrid CreateCreditOfferForm PaymentGrid CreateClientForm CreateBankForm
-CreateCreditForm BankGrid CreditGrid
-````
+## Formulas
 
-## Расчет месячного платежа
+### Monthly Payment
 
 ```MP = P * k^(LD) * (k - 1) / (k^(LD) - 1)```
 
@@ -108,7 +141,7 @@ yearRate - годовая процентная ставка;
 
 P - сумма кредита;
 
-## Расчет процентов по кредиту
+### Loan interest
 
 ```
 {(1 - yearRate/100)^(period/365[6]) - 1} * R
