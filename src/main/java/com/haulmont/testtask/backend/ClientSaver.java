@@ -1,8 +1,8 @@
 package com.haulmont.testtask.backend;
 
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.util.Result;
-import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.repositories.ClientRepository;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,13 @@ import static com.haulmont.testtask.view.Hornable.LOG_TEMPLATE_3;
 
 /**
  * Validating incoming client and trying to save.
- * {@link #save(String, Client)} is update method.
+ * {@link #save(UUID, Client)} is update method.
  */
 @AllArgsConstructor
 @Slf4j
 @Component
 public class ClientSaver {
     private final ClientRepository clientRepository;
-    private final StringUUIDHandler stringUUIDHandler;
     private final javax.validation.Validator validator;
 
     /**
@@ -61,37 +60,29 @@ public class ClientSaver {
     }
 
     /**
-     * update only not null fields exclude UUID
+     * update only not null fields :
+     * firs name
+     * last name
+     * patronymic
      * This method can not to change fields to null value.
      */
-    public Result<Boolean> save(String uuidString, Client client) {
-        UUID uuid = stringUUIDHandler.validateStringUUIDAndReturnNullOrUUID(uuidString);
-        if (uuid == null)
-            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(NULLABLE_ID));
-
-        Optional<Client> byId = clientRepository.findById(uuid);
-        if (byId.isEmpty())
-            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(CLIENT_DOES_NOT_PRESENT_IN_DB));
-        Client persistClient = byId.get();
-        if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FOR_SORTING, client.getFirstName()).isEmpty())
-            persistClient.setFirstName(client.getFirstName());
-
-        if (validator.validateValue(Client.class, CLIENT_LAST_NAME_FOR_SORTING, client.getLastName()).isEmpty())
-            persistClient.setLastName(client.getLastName());
-
-        if (validator.validateValue(Client.class, CLIENT_PATRONYMIC_FOR_SORTING, client.getPatronymic()).isEmpty())
-            persistClient.setPatronymic(client.getPatronymic());
-
-        if (validator.validateValue(Client.class, CLIENT_EMAIL_FOR_SORTING, client.getEmail()).isEmpty())
-            persistClient.setEmail(client.getEmail());
-
-        if (validator.validateValue(Client.class, CLIENT_PHONE_NUMBER_FOR_SORTING, client.getPhoneNumber()).isEmpty())
-            persistClient.setPhoneNumber(client.getPhoneNumber());
-
-        if (validator.validateValue(Client.class, CLIENT_PASSPORT_FOR_SORTING, client.getPassport()).isEmpty())
-            persistClient.setPassport(client.getPassport());
-
+    public Result<Boolean> save(UUID updatingUserUUID, Client client) {
         try {
+            Optional<Client> optionalPersistClient = clientRepository.findById(updatingUserUUID);
+
+            if (optionalPersistClient.isEmpty())
+                throw new IllegalArgumentExceptionWithoutStackTrace(CLIENT_DOES_NOT_PRESENT_IN_DB);
+            Client persistClient = optionalPersistClient.get();
+            if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FOR_SORTING, client.getFirstName()).isEmpty())
+                persistClient.setFirstName(client.getFirstName());
+
+            if (validator.validateValue(Client.class, CLIENT_LAST_NAME_FOR_SORTING, client.getLastName()).isEmpty())
+                persistClient.setLastName(client.getLastName());
+
+            if (validator.validateValue(Client.class, CLIENT_PATRONYMIC_FOR_SORTING, client.getPatronymic()).isEmpty()) {
+                persistClient.setPatronymic(client.getPatronymic());
+            }
+
             clientRepository.save(persistClient);
         } catch (Exception ex) {
             return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(ex.getMessage()));
