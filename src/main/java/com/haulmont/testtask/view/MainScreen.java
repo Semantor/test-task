@@ -244,6 +244,7 @@ public class MainScreen extends VerticalLayout {
 
     private void closeClientEditorFormDialog(ClientEditorForm.CloseEvent event) {
         clientEditorFormDialog.close();
+        clientGridLayout.update();
     }
 
     private void openClientEditorFormDialog(ClientGridLayout.EditEvent event) {

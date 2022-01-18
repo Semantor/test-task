@@ -60,7 +60,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
     @Getter(AccessLevel.PROTECTED)
     private final TextField passportField = new TextField();
 
-    private final Label infoLabel = new Label();
+    protected final Label infoLabel = new Label();
 
 
     final Binder<Client> binder = new BeanValidationBinder<>(Client.class);
@@ -73,7 +73,8 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         this.validator = validator;
         this.clientSaver = clientSaver;
         this.clientFieldAvailabilityChecker = clientFieldAvailabilityChecker;
-        tuneBinder();
+        tuneBinderForMutableFields();
+        tuneBinderForImmutableFields();
         HorizontalLayout buttons = createButtons();
         tuneFields();
 
@@ -144,7 +145,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         passportField.setVisible(false);
     }
 
-    private void tuneBinder() {
+    private void tuneBinderForMutableFields() {
 
         binder.forField(nameField)
                 .withNullRepresentation(NAME_FIELD_DEFAULT_VALUE)
@@ -160,7 +161,9 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                 .withNullRepresentation(NAME_FIELD_DEFAULT_VALUE)
                 .withValidator(predict(CLIENT_PATRONYMIC_FOR_SORTING), Setting.PATRONYMIC_ERROR)
                 .bind(Client::getPatronymic, Client::setPatronymic);
+    }
 
+    protected void tuneBinderForImmutableFields() {
         binder.forField(phoneNumberField)
                 .withNullRepresentation(PHONE_FIELD_DEFAULT_VALUE)
                 .withValidator(predict(CLIENT_PHONE_NUMBER_FOR_SORTING), NO_VALID_PHONE_ERROR_MSG)
@@ -181,8 +184,9 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                 .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailablePassport,
                         PASSPORT_ALREADY_IN_USE_ERROR_MSG)
                 .bind(Client::getPassport, Client::setPassport);
-
     }
+
+
 
     @NotNull
     private SerializablePredicate<String> predict(String fieldName) {

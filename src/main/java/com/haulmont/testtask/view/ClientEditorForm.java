@@ -6,10 +6,14 @@ import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.BindingValidationStatus;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Validator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.haulmont.testtask.Setting.*;
 
@@ -26,7 +30,6 @@ public class ClientEditorForm extends CreateClientForm {
         super(validator, clientSaver, clientFieldAvailabilityChecker);
         this.clientSaver = clientSaver;
         getClearButton().setVisible(false);
-        tuneImmutableFields();
     }
 
     private void fillField() {
@@ -39,16 +42,23 @@ public class ClientEditorForm extends CreateClientForm {
         String number = updatingClient.getPassport().substring(PASSPORT_NUMBER_START_INDEX);
         getPassportSeriesField().setValue(Integer.parseInt(series));
         getPassportNumberField().setValue(Integer.parseInt(number));
-    }
-
-    private void tuneImmutableFields() {
         getPhoneNumberField().setReadOnly(true);
-        // the reason is to drop validating on immutable fields
-        binder.forField(getPhoneNumberField()).bind(Client::getPhoneNumber, Client::setPhoneNumber);
         getEmailField().setReadOnly(true);
-        binder.forField(getEmailField()).bind(Client::getEmail, Client::setEmail);
         getPassportSeriesField().setReadOnly(true);
         getPassportNumberField().setReadOnly(true);
+    }
+
+
+    @Override
+    protected void tuneBinderForImmutableFields() {
+        /*
+          this method override {@link CreateClientForm#tuneBinderForImmutableFields()}
+          cause validator will be block fields
+          passport
+          phone
+          email
+          for being already in use.
+         */
     }
 
     /**
@@ -62,9 +72,17 @@ public class ClientEditorForm extends CreateClientForm {
     @Override
     public void validateAndSave() {
         Client build = Client.builder().build();
-        super.binder.writeBeanIfValid(build);
-
-        clientSaver.save(updatingClient.getClientId().toString(), build)
+        if (!binder.writeBeanIfValid(build)) {
+            BinderValidationStatus<Client> validate = binder.validate();
+            String errorText = validate.getFieldValidationStatuses()
+                    .stream().filter(BindingValidationStatus::isError)
+                    .map(BindingValidationStatus::getMessage)
+                    .map(Optional::get).distinct()
+                    .collect(Collectors.joining(ERROR_TEXT_DELIMITER));
+            infoLabel.setText(ENUMERATION_ERRORS + errorText);
+            return;
+        }
+        clientSaver.save(updatingClient.getClientId(), build)
                 .fold(aBoolean -> {
                             Notification.show(UPDATING_MESSAGE, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
                             log.info(Hornable.LOG_TEMPLATE_5,
@@ -73,6 +91,7 @@ public class ClientEditorForm extends CreateClientForm {
                                     updatingClient.getClientId(),
                                     LOG_DELIMITER,
                                     build.toField());
+                            close();
                             return aBoolean;
                         },
                         exception -> {
