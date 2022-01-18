@@ -39,6 +39,7 @@ public class Client implements Removable {
     private String lastName;
 
     @Pattern(regexp = Setting.PATTERN_FOR_PATRONYMIC, message =Setting.PATRONYMIC_ERROR)
+    @NotNull
     private String patronymic;
 
     @NotNull(message = Setting.EMPTY_PHONE_NUMBER)
