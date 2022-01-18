@@ -16,6 +16,10 @@ public class BankFieldAvailabilityChecker {
     private final BankRepository bankRepository;
 
     public boolean isAvailableName(@NotNull String bankName) {
-        return bankRepository.findByName(bankName).isEmpty();
+        try {
+            return bankRepository.findByName(bankName).isEmpty();
+        } catch (Exception exception) {
+            return true;
+        }
     }
 }
