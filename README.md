@@ -186,9 +186,9 @@ period - длительность периода в днях от предыду
   client grid by clicking delete.
 * Bank with cascade delete credit and credit offers. Bank went bankrupt. Client are indebtedness free. Can be deleted
   from bank grid.
-* Credit offer by mark UNUSED. No options to create new credit offer with this credit. Can be deleted from credit grid.
+* Credit by mark UNUSED. No options to create new credit offer with this credit. Can be deleted from credit grid.
 * Credit offers by mark CANCELED. Connecting payments are deleting from rdb. Can be deleted from credit offer grid
-  connecting to client.
+  connecting to client. Couldn't cancel credit offer which already start and don't end.
 * Payment can be deleted by canceled connecting credit offer.
 
 REMOVED, UNUSED and CANCELED are hidden from general lists. Some unique fields like email or phone cant be used ever.
