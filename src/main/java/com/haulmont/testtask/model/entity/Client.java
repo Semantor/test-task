@@ -56,6 +56,7 @@ public class Client implements Removable {
     @NotNull(message = Setting.EMPTY_PASSPORT)
     @Pattern(regexp = "\\d{10}$", message = Setting.PASSPORT_LENGTH_ERROR_MSG)
     @Column(unique = true, nullable = false)
+    @PassportYearConstraint
     private String passport;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
