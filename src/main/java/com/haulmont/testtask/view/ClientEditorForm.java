@@ -73,13 +73,7 @@ public class ClientEditorForm extends CreateClientForm {
     public void validateAndSave() {
         Client build = Client.builder().build();
         if (!binder.writeBeanIfValid(build)) {
-            BinderValidationStatus<Client> validate = binder.validate();
-            String errorText = validate.getFieldValidationStatuses()
-                    .stream().filter(BindingValidationStatus::isError)
-                    .map(BindingValidationStatus::getMessage)
-                    .map(Optional::get).distinct()
-                    .collect(Collectors.joining(ERROR_TEXT_DELIMITER));
-            infoLabel.setText(ENUMERATION_ERRORS + errorText);
+            showErrorsWithInfoLabels();
             return;
         }
         clientSaver.save(updatingClient.getClientId(), build)

@@ -197,17 +197,21 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         };
     }
 
+    protected void showErrorsWithInfoLabels() {
+        BinderValidationStatus<Client> validate = binder.validate();
+        String errorText = validate.getFieldValidationStatuses()
+                .stream().filter(BindingValidationStatus::isError)
+                .map(BindingValidationStatus::getMessage)
+                .map(Optional::get).distinct()
+                .collect(Collectors.joining(ERROR_TEXT_DELIMITER));
+        infoLabel.setText(ENUMERATION_ERRORS + errorText);
+    }
+
     @Override
     public void validateAndSave() {
         Client newBorn = Client.builder().build();
         if (!binder.writeBeanIfValid(newBorn)) {
-            BinderValidationStatus<Client> validate = binder.validate();
-            String errorText = validate.getFieldValidationStatuses()
-                    .stream().filter(BindingValidationStatus::isError)
-                    .map(BindingValidationStatus::getMessage)
-                    .map(Optional::get).distinct()
-                    .collect(Collectors.joining(ERROR_TEXT_DELIMITER));
-            infoLabel.setText(ENUMERATION_ERRORS + errorText);
+            showErrorsWithInfoLabels();
             return;
         }
 
