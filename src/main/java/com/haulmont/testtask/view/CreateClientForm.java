@@ -158,7 +158,6 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                 .bind(Client::getLastName, Client::setLastName);
 
         binder.forField(patronymicField)
-                .withNullRepresentation(NAME_FIELD_DEFAULT_VALUE)
                 .withValidator(predict(CLIENT_PATRONYMIC_FOR_SORTING), Setting.PATRONYMIC_ERROR)
                 .bind(Client::getPatronymic, Client::setPatronymic);
     }
