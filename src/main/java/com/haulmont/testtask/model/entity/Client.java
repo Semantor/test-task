@@ -1,6 +1,7 @@
 package com.haulmont.testtask.model.entity;
 
 import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.util.PassportYearConstraint;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class Client implements Removable {
     @Pattern(regexp = Setting.ONLY_LETTER_REG_EX, message = Setting.MUST_BE_LETTER_ERROR)
     private String lastName;
 
-    @Pattern(regexp = Setting.PATTERN_FOR_PATRONYMIC, message =Setting.PATRONYMIC_ERROR)
+    @Pattern(regexp = Setting.PATTERN_FOR_PATRONYMIC, message = Setting.PATRONYMIC_ERROR)
     @NotNull
     private String patronymic;
 
