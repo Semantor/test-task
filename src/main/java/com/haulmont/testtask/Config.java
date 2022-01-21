@@ -21,9 +21,13 @@ public class Config {
     private BigDecimal maxCreditRate;
     @Value("${min.credit.rate}")
     private BigDecimal minCreditRate;
+    @Value("${credit.month.min}")
+    private int monthMinValue;
+    @Value("${credit.month.max}")
+    private int monthMaxValue;
 
     @Bean
     CreditConstraintProvider creditConstraintProvider() {
-        return new CreditConstraintProvider(maxCreditLimit, minCreditLimit, maxCreditRate, minCreditRate);
+        return new CreditConstraintProvider(maxCreditLimit, minCreditLimit, maxCreditRate, minCreditRate,monthMaxValue,monthMinValue);
     }
 }
