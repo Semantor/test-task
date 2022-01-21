@@ -11,9 +11,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.haulmont.testtask.Setting.*;
-import static com.haulmont.testtask.Setting.DOLLAR;
-import static com.haulmont.testtask.Setting.LOG_DELIMITER;
+import static com.haulmont.testtask.settings.Labels.*;
+import static com.haulmont.testtask.settings.Responses.LOG_DELIMITER;
 
 
 public class PaymentGridLayout extends VerticalLayout implements CanBeShown {

@@ -1,7 +1,6 @@
 package com.haulmont.testtask.model.entity;
 
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.CreditLimitConstraint;
 import com.haulmont.testtask.backend.util.CreditRateConstraint;
 import lombok.*;
@@ -13,6 +12,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import static com.haulmont.testtask.settings.ErrorMessages.NULLABLE_BANK;
+import static com.haulmont.testtask.settings.ErrorMessages.NULLABLE_ID;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -21,7 +23,7 @@ import java.util.UUID;
 public class Credit implements Removable {
     @Id
     @Setter(AccessLevel.PROTECTED)
-    @NotNull(message = Setting.NULLABLE_ID)
+    @NotNull(message = NULLABLE_ID)
     @Column(name = "credit_id")
     private UUID creditId = UUID.randomUUID();
 
@@ -30,7 +32,7 @@ public class Credit implements Removable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_id", nullable = false)
-    @NotNull(message = Setting.NULLABLE_BANK)
+    @NotNull(message = NULLABLE_BANK)
     @Valid
     private Bank bank;
 

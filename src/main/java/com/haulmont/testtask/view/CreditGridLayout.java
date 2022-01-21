@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditProvider;
 import com.haulmont.testtask.model.entity.Credit;
 import com.vaadin.flow.component.ComponentEvent;
@@ -21,7 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ButtonSettings.*;
+import static com.haulmont.testtask.settings.Labels.CREDIT_LIMIT_LABEL;
+import static com.haulmont.testtask.settings.Labels.CREDIT_RATE_LABEL;
+import static com.haulmont.testtask.settings.Patterns.CREDIT_LIMIT_FORMAT;
+import static com.haulmont.testtask.settings.Patterns.CREDIT_RATE_FORMAT;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.CREDIT_LIMIT_DEFAULT_VALUE;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.CREDIT_RATE_DEFAULT_VALUE;
 
 @Slf4j
 public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanBeClosed, HasEvent, Hornable {
@@ -59,15 +64,15 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
 
         Grid.Column<Credit> creditLimit = creditGrid.addColumn(
                 new NumberRenderer<>(Credit::getCreditLimit, CREDIT_LIMIT_FORMAT,
-                        Locale.US, Setting.CREDIT_LIMIT_DEFAULT_VALUE)).setHeader(Setting.CREDIT_LIMIT_LABEL);
+                        Locale.US, CREDIT_LIMIT_DEFAULT_VALUE)).setHeader(CREDIT_LIMIT_LABEL);
 
         Grid.Column<Credit> creditRate = creditGrid.addColumn(
                 new NumberRenderer<>(Credit::getCreditRate, CREDIT_RATE_FORMAT,
-                        Locale.US, Setting.CREDIT_RATE_DEFAULT_VALUE)).setHeader(CREDIT_RATE_LABEL);
+                        Locale.US, CREDIT_RATE_DEFAULT_VALUE)).setHeader(CREDIT_RATE_LABEL);
         creditGrid.addComponentColumn(credit -> {
             Button delete = new Button();
-            delete.setText(Setting.DELETE_BUTTON_TEXT);
-            delete.addThemeVariants(Setting.DELETE_STYLE);
+            delete.setText(DELETE_BUTTON_TEXT);
+            delete.addThemeVariants(DELETE_STYLE);
             delete.addClickListener(event -> {
                 fireEvent(new CreditGridLayout.CloseEvent(this));
                 fireEvent(new CreditGridLayout.DeleteEvent(this, credit));
@@ -76,8 +81,8 @@ public class CreditGridLayout extends VerticalLayout implements CanBeShown, CanB
         });
         creditGrid.addComponentColumn(credit -> {
             Button edit = new Button();
-            edit.setText(Setting.EDIT_BUTTON_TEXT);
-            edit.addThemeVariants(Setting.DELETE_STYLE);
+            edit.setText(EDIT_BUTTON_TEXT);
+            edit.addThemeVariants(DELETE_STYLE);
             edit.addClickListener(event -> {
                 fireEvent(new CreditGridLayout.CloseEvent(this));
                 fireEvent(new CreditGridLayout.EditEvent(this, credit));

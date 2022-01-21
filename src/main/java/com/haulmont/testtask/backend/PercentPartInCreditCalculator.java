@@ -8,12 +8,15 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.MONEY_SCALE;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.PERCENT_TO_FRACTION_RATE;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
 
 @RequiredArgsConstructor
 @Component
 public class PercentPartInCreditCalculator {
     private final PartOfYearCalculator partOfYearCalculator;
+
     /**
      * return percent for period between two payments depend on balance on start period date
      *
@@ -22,8 +25,6 @@ public class PercentPartInCreditCalculator {
      * @param rate            credit year rate in percent
      * @param remain          balance on start date
      * @return amount of credit percent tax by using credit in this period.
-     *
-     * @throws IllegalArgumentException on wrong incoming date, fe startDate > endDate, negative balance, negative rate.
      */
     public BigDecimal percentPart(LocalDate startPeriodDate, LocalDate endPeriodDate, BigDecimal rate, BigDecimal remain) {
         if (!startPeriodDate.isBefore(endPeriodDate))

@@ -1,9 +1,8 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
+import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.util.Result;
-import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
 import com.haulmont.testtask.model.entity.Bank;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.repositories.BankRepository;
@@ -16,7 +15,8 @@ import javax.validation.ConstraintViolation;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.haulmont.testtask.Setting.BANK_DOES_NOT_EXIST;
+import static com.haulmont.testtask.settings.ErrorMessages.BANK_DOES_NOT_EXIST;
+import static com.haulmont.testtask.settings.ErrorMessages.UUID_IS_ALREADY_USED;
 
 @Component
 @AllArgsConstructor
@@ -25,7 +25,6 @@ public class CreditSaver {
     private final CreditRepository creditRepository;
     private final BankRepository bankRepository;
     private final javax.validation.Validator validator;
-    private final CreditConstraintProvider creditConstraintProvider;
 
     /**
      * validate credit and its own uuid.
@@ -46,7 +45,7 @@ public class CreditSaver {
             if (!creditConstraintViolations.isEmpty())
                 throw new IllegalArgumentExceptionWithoutStackTrace(ConstraintViolationHandler.handleToString(creditConstraintViolations));
             if (creditRepository.findById(credit.getCreditId()).isPresent())
-                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.UUID_IS_ALREADY_USED);
+                throw new IllegalArgumentExceptionWithoutStackTrace(UUID_IS_ALREADY_USED);
             Optional<Bank> optionalSelectedBank = bankRepository.findById(credit.getBank().getBankId());
             if (optionalSelectedBank.isEmpty())
                 throw new IllegalArgumentExceptionWithoutStackTrace(BANK_DOES_NOT_EXIST);

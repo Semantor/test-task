@@ -1,7 +1,6 @@
 package com.haulmont.testtask.model.entity;
 
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.CreditLimitConstraint;
 import com.haulmont.testtask.backend.util.CreditOfferLimitConstraint;
 import lombok.*;
@@ -17,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+
 @Entity
 @Setter
 @Getter
@@ -27,12 +28,12 @@ public class CreditOffer implements Removable {
     @Id
     @Column(name = "credit_offer_id")
     @Setter(AccessLevel.PROTECTED)
-    @NotNull(message = Setting.NULLABLE_ID)
+    @NotNull(message = NULLABLE_ID)
     private UUID creditOfferId = UUID.randomUUID();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
-    @NotNull(message = Setting.NULLABLE_CLIENT)
+    @NotNull(message = NULLABLE_CLIENT)
     @Valid
     private Client client;
 
@@ -41,7 +42,7 @@ public class CreditOffer implements Removable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "credit_id", nullable = false)
-    @NotNull(message = Setting.NULLABLE_CREDIT)
+    @NotNull(message = NULLABLE_CREDIT)
     @Valid
     private Credit credit;
 
@@ -50,8 +51,8 @@ public class CreditOffer implements Removable {
     private BigDecimal creditAmount;
 
     @Column(name = "month_count", nullable = false)
-    @Min(value = 1, message = Setting.NOT_VALID_MONTH_COUNT)
-    @Max(value = 360, message = Setting.NOT_VALID_MONTH_COUNT)
+    @Min(value = 1, message = NOT_VALID_MONTH_COUNT)
+    @Max(value = 360, message = NOT_VALID_MONTH_COUNT)
     private int monthCount;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "creditOffer", cascade = CascadeType.REMOVE, orphanRemoval = true)

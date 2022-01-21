@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditSaver;
@@ -29,7 +28,13 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+import static com.haulmont.testtask.settings.FieldNameSettings.CREDIT_LIMIT_FIELD_NAME;
+import static com.haulmont.testtask.settings.FieldNameSettings.CREDIT_RATE_FIELD_NAME;
+import static com.haulmont.testtask.settings.Labels.*;
+import static com.haulmont.testtask.settings.Responses.SUCCESSFULLY_SAVED_USER_MESSAGE;
+import static com.haulmont.testtask.settings.Responses.TRYING_TO_SAVE_NEW_CREDIT;
+
 
 @Slf4j
 public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown, CanBeSaved, CanBeCleared, CanBeClosed, Hornable {
@@ -92,7 +97,7 @@ public class CreateCreditForm extends FormLayout implements HasEvent, CanBeShown
                 .withValidator(predict(CREDIT_LIMIT_FIELD_NAME), WRONG_CREDIT_LIMIT_MESSAGE)
                 .bind(Credit::getCreditLimit, Credit::setCreditLimit);
         binder.forField(creditRateField)
-                .withValidator(predict(Setting.CREDIT_RATE_FIELD_NAME), WRONG_CREDIT_RATE_MESSAGE)
+                .withValidator(predict(CREDIT_RATE_FIELD_NAME), WRONG_CREDIT_RATE_MESSAGE)
                 .bind(Credit::getCreditRate, Credit::setCreditRate);
     }
 

@@ -18,7 +18,9 @@ import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ButtonSettings.*;
+import static com.haulmont.testtask.settings.ComponentSettings.ADD_NEW_CREDIT_OFFER_BUTTON_WIDTH;
+import static com.haulmont.testtask.settings.ComponentSettings.CREDIT_OFFER_GRID_LAYOUT_HEIGHT;
 
 
 @Slf4j
@@ -96,16 +98,12 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
             return delete;
         });
 
-        clientGrid.setItemDetailsRenderer(
-                new ComponentRenderer<>(
-                        item -> {
-                            creditOfferGridLayout.setClient(item);
-                            creditOfferGridLayout.show();
-                            creditOfferGridLayout.setHeight(CREDIT_OFFER_GRID_LAYOUT_HEIGHT);
-                            return creditOfferGridLayout;
-                        }
-                )
-        );
+        clientGrid.setItemDetailsRenderer(new ComponentRenderer<>(item -> {
+            creditOfferGridLayout.setClient(item);
+            creditOfferGridLayout.show();
+            creditOfferGridLayout.setHeight(CREDIT_OFFER_GRID_LAYOUT_HEIGHT);
+            return creditOfferGridLayout;
+        }));
         clientGrid.setDetailsVisibleOnClick(true);
     }
 
@@ -125,15 +123,12 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
     public void nextPage() {
         if (isFinal) return;
         List<Client> clients;
-        if (!isSearch)
-            clients = clientProvider.getClients(currentPageSize, currentPage + 1, currentSort);
+        if (!isSearch) clients = clientProvider
+                .getClients(currentPageSize, currentPage + 1, currentSort);
         else
-            clients = searchByKeyWordService.search(searchKeyword,
-                    currentPageSize,
-                    currentPage + 1,
-                    currentSort).fold(
-                    clients1 -> clients1,
-                    exception -> {
+            clients = searchByKeyWordService
+                    .search(searchKeyword, currentPageSize, currentPage + 1, currentSort)
+                    .fold(clients1 -> clients1, exception -> {
                         hornIntoNotificationAndLoggerInfo(exception.getMessage());
                         return Collections.emptyList();
                     });
@@ -153,13 +148,13 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
         if (currentPage == 0) return;
         List<Client> clients;
         if (isSearch)
-            clients = searchByKeyWordService.search(searchKeyword, currentPageSize, --currentPage, currentSort)
+            clients = searchByKeyWordService
+                    .search(searchKeyword, currentPageSize, --currentPage, currentSort)
                     .fold(clients1 -> clients1, exception -> {
                         hornIntoNotificationAndLoggerInfo(exception.getMessage());
                         return Collections.emptyList();
                     });
-        else
-            clients = clientProvider.getClients(currentPageSize, --currentPage, currentSort);
+        else clients = clientProvider.getClients(currentPageSize, --currentPage, currentSort);
 
         clientGrid.setItems(clients);
         isFinal = false;
@@ -170,13 +165,11 @@ public class ClientGridLayout extends VerticalLayout implements HasEvent, Client
         searchKeyword = keyword;
         isSearch = true;
         clientGrid.setItems((List<Client>) searchByKeyWordService
-                .search(searchKeyword, currentPageSize, currentPage, currentSort).fold(
-                        clients -> clients,
-                        exception -> {
-                            hornIntoNotificationAndLoggerInfo(exception.getMessage());
-                            return Collections.emptyList();
-                        }
-                ));
+                .search(searchKeyword, currentPageSize, currentPage, currentSort)
+                .fold(clients -> clients, exception -> {
+                    hornIntoNotificationAndLoggerInfo(exception.getMessage());
+                    return Collections.emptyList();
+                }));
     }
 
     public void sort(String sortColumn) {

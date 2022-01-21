@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditOfferCreator;
 import com.haulmont.testtask.backend.CreditProvider;
@@ -39,7 +38,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ButtonSettings.CALCULATE_BUTTON_TEXT;
+import static com.haulmont.testtask.settings.ButtonSettings.CALCULATE_STYLE;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+import static com.haulmont.testtask.settings.FieldNameSettings.CREDIT_OFFER_AMOUNT_FIELD_NAME;
+import static com.haulmont.testtask.settings.Labels.*;
+import static com.haulmont.testtask.settings.Responses.SUCCESSFULLY_SAVED_USER_MESSAGE;
+
 
 @Slf4j
 public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeCleared, CanBeSaved, Hornable {
@@ -107,8 +112,8 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
     }
 
     private HorizontalLayout createButtonsLayout() {
-        calculate.setText(Setting.CALCULATE_BUTTON_TEXT);
-        calculate.addThemeVariants(Setting.CALCULATE_STYLE);
+        calculate.setText(CALCULATE_BUTTON_TEXT);
+        calculate.addThemeVariants(CALCULATE_STYLE);
         calculate.addClickListener(event -> calculate());
         tuneSaveButton();
         tuneCloseButton();
@@ -239,7 +244,7 @@ public class CreateCreditOfferForm extends FormLayout implements HasEvent, CanBe
                 ).bind(CreditOffer::getCreditAmount, CreditOffer::setCreditAmount);
 
         binder.forField(month)
-                .withValidator(integer -> integer != null && integer > 0, Setting.MUST_BE_MORE_THAN_ZERO)
+                .withValidator(integer -> integer != null && integer > 0, MUST_BE_MORE_THAN_ZERO)
                 .bind(CreditOffer::getMonthCount, CreditOffer::setMonthCount);
     }
 

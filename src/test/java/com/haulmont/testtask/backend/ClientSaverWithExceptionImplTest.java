@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Credit;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -14,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
 
 /**
  * on default credit offer are null and first payment date are the day of creature
@@ -25,6 +24,7 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
     private final AnnuityCreditCalculatorWithRootFormula annuityCreditCalculatorWithRootFormula;
     private final Validator validator;
     private final PercentPartInCreditCalculator percentCalculator;
+    private final CreditConstraintProvider creditConstraintProvider;
 
     /**
      * on default credit offer are null and date of receiving is the day of creature
@@ -52,8 +52,10 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
                                    int month,
                                    BigDecimal amount,
                                    LocalDate dateOfReceiving) throws IllegalArgumentException {
-        if (month < MONTH_MIN_VALUE || !validator.validateCreditAmount(amount))
-            throw new IllegalArgumentException(WRONG_INCOME_AMOUNT);
+        if (month < creditConstraintProvider.MONTH_MIN_VALUE)
+            throw new IllegalArgumentException(WRONG_INCOME_MONTH);
+        if (!validator.validateCreditAmount(amount))
+            throw new IllegalArgumentException(WRONG_INCOME_DATA);
         if (dateOfReceiving.isBefore(LocalDate.now()))
             throw new IllegalArgumentException(WRONG_INCOME_RECEIVING_DATE);
 
@@ -64,8 +66,8 @@ public class PaymentCalculatorWithPercentPartDependOnRemainingAndDayCountInPerio
         LocalDate paymentDate;
         BigDecimal percentPart;
         for (int i = 1; i < month + 1; i++) {
-            if (remain.compareTo(BigDecimal.ZERO)<1)
-                    throw new IllegalArgumentExceptionWithoutStackTrace(Setting.TOO_MANY_MONTH_COUNT);
+            if (remain.compareTo(BigDecimal.ZERO) < 1)
+                throw new IllegalArgumentExceptionWithoutStackTrace(TOO_MANY_MONTH_COUNT);
             paymentDate = dateOfReceiving.plus(i, ChronoUnit.MONTHS);
             percentPart = percentCalculator.percentPart(passedPayment, paymentDate, credit.getCreditRate(), remain);
             BigDecimal mainPart = monthlyPayment.subtract(percentPart);

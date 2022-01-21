@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+import static com.haulmont.testtask.settings.Labels.*;
+
 
 @AllArgsConstructor
 @Slf4j

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.haulmont.testtask.Setting.NO_VALID_CREDIT;
+import static com.haulmont.testtask.settings.ErrorMessages.NO_VALID_CREDIT;
 
 @Component
 @AllArgsConstructor

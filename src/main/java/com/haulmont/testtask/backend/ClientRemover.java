@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static com.haulmont.testtask.Setting.HAVE_ACTIVE_CREDIT_OFFER;
-import static com.haulmont.testtask.Setting.NO_VALID_CLIENT;
+import static com.haulmont.testtask.settings.ErrorMessages.HAVE_ACTIVE_CREDIT_OFFER;
+import static com.haulmont.testtask.settings.ErrorMessages.NO_VALID_CLIENT;
 
 @AllArgsConstructor
 @Component

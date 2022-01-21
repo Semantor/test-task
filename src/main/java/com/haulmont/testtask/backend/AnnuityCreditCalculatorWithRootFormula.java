@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static com.haulmont.testtask.Setting.MONEY_SCALE;
-import static com.haulmont.testtask.Setting.MONTH_IN_YEAR;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.MONEY_SCALE;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.MONTH_IN_YEAR;
 
 @Component
 public class AnnuityCreditCalculatorWithRootFormula {

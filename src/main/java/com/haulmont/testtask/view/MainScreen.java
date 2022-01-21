@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -18,6 +17,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import static com.haulmont.testtask.settings.ButtonSettings.*;
+import static com.haulmont.testtask.settings.ComponentSettings.*;
+import static com.haulmont.testtask.settings.FieldNameSettings.*;
+import static com.haulmont.testtask.settings.Labels.WEB_SERVER_NAME;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.SEARCH_FIELD_PLACEHOLDER;
 
 @PageTitle("Client list")
 @Route(value = "")
@@ -51,20 +56,20 @@ public class MainScreen extends VerticalLayout {
     private final Dialog clientEditorFormDialog = new Dialog();
     private final Dialog creditEditorFormDialog = new Dialog();
 
-    private final Button createNewClient = new Button(Setting.CREATE_NEW_BUTTON_TEXT);
-    private final Button createNewBank = new Button(Setting.CREATE_NEW_BANK_BUTTON_TEXT);
-    private final Button createNewCredit = new Button(Setting.CREATE_NEW_CREDIT_BUTTON_TEXT);
-    private final Button showCreditList = new Button(Setting.SHOW_CREDIT_LIST_BUTTON_TEXT);
-    private final Button showBankList = new Button(Setting.SHOW_BANK_LIST_BUTTON_TEXT);
+    private final Button createNewClient = new Button(CREATE_NEW_BUTTON_TEXT);
+    private final Button createNewBank = new Button(CREATE_NEW_BANK_BUTTON_TEXT);
+    private final Button createNewCredit = new Button(CREATE_NEW_CREDIT_BUTTON_TEXT);
+    private final Button showCreditList = new Button(SHOW_CREDIT_LIST_BUTTON_TEXT);
+    private final Button showBankList = new Button(SHOW_BANK_LIST_BUTTON_TEXT);
 
     private final RadioButtonGroup<String> radioButtonGroup = new RadioButtonGroup<>();
     private final TextField searchField = new TextField();
     private final Button searchButton = new Button();
 
 
-    private final Button next = new Button(Setting.NEXT_BUTTON_TEXT);
-    private final Button update = new Button(Setting.UPDATE_BUTTON_TEXT);
-    private final Button previous = new Button(Setting.PREVIOUS_BUTTON_TEXT);
+    private final Button next = new Button(NEXT_BUTTON_TEXT);
+    private final Button update = new Button(UPDATE_BUTTON_TEXT);
+    private final Button previous = new Button(PREVIOUS_BUTTON_TEXT);
 
     public MainScreen(CreateBankForm createBankForm,
                       CreateClientForm createClientForm,
@@ -93,9 +98,9 @@ public class MainScreen extends VerticalLayout {
         HorizontalLayout horizontalLayout = new HorizontalLayout(tuneTopLeftButtons(), tuneTopRightButtons());
         tuneDialog();
         setupEventListener();
-        clientGridLayout.setHeight(Setting.CLIENT_GRID_LAYOUT_SIZE);
+        clientGridLayout.setHeight(CLIENT_GRID_LAYOUT_SIZE);
 
-        add(new H3(Setting.WEB_SERVER_NAME), horizontalLayout, tuneClientBar(), this.clientGridLayout, tuneBotButtons());
+        add(new H3(WEB_SERVER_NAME), horizontalLayout, tuneClientBar(), this.clientGridLayout, tuneBotButtons());
     }
 
 
@@ -134,20 +139,20 @@ public class MainScreen extends VerticalLayout {
     }
 
     private HorizontalLayout tuneClientBar() {
-        radioButtonGroup.setItems(Setting.CLIENT_LAST_NAME_FOR_SORTING,
-                Setting.CLIENT_FIRST_NAME_FOR_SORTING,
-                Setting.CLIENT_PATRONYMIC_FOR_SORTING,
-                Setting.CLIENT_PHONE_NUMBER_FOR_SORTING,
-                Setting.CLIENT_EMAIL_FOR_SORTING,
-                Setting.CLIENT_PASSPORT_FOR_SORTING);
+        radioButtonGroup.setItems(CLIENT_LAST_NAME_FIELD_NAME,
+                CLIENT_FIRST_NAME_FIELD_NAME,
+                CLIENT_PATRONYMIC_FIELD_NAME,
+                CLIENT_PHONE_NUMBER_FIELD_NAME,
+                CLIENT_EMAIL_FIELD_NAME,
+                CLIENT_PASSPORT_FIELD_NAME);
 
         radioButtonGroup.addValueChangeListener(event -> clientGridLayout.sort(event.getValue()));
 
-        searchField.setPlaceholder(Setting.SEARCH_FIELD_PLACEHOLDER);
+        searchField.setPlaceholder(SEARCH_FIELD_PLACEHOLDER);
         searchButton.setIcon(new Icon(VaadinIcon.SEARCH));
 
-        searchField.setAutoselect(Setting.IS_SEARCH_FIELD_AUTOSELECTED);
-        searchField.setAutofocus(Setting.IS_SEARCH_FIELD_AUTOFOCUSED);
+        searchField.setAutoselect(IS_SEARCH_FIELD_AUTOSELECTED);
+        searchField.setAutofocus(IS_SEARCH_FIELD_AUTOFOCUSED);
         searchField.addKeyDownListener(Key.ENTER, event -> searchButton.click());
         searchButton.addClickShortcut(Key.ENTER);
         searchButton.addClickListener(event -> clientGridLayout.search(searchField.getValue()));
@@ -156,49 +161,49 @@ public class MainScreen extends VerticalLayout {
 
     private void tuneDialog() {
         createClientFormDialog.add(createClientForm);
-        createClientFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        createClientFormDialog.setCloseOnOutsideClick(Setting.IS_CREATE_CLIENT_FORM_DIALOG_CLOSE_ON_OUTSIDE_CLICK);
+        createClientFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        createClientFormDialog.setCloseOnOutsideClick(IS_CREATE_CLIENT_FORM_DIALOG_CLOSE_ON_OUTSIDE_CLICK);
 
         createBankFormDialog.add(createBankForm);
-        createBankFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        createBankFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        createBankFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        createBankFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
         createCreditFormDialog.add(createCreditForm);
-        createCreditFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        createCreditFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        createCreditFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        createCreditFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
         bankGridLayoutDialog.add(bankGridLayout);
-        bankGridLayoutDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        bankGridLayoutDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        bankGridLayoutDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        bankGridLayoutDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
         bankGridLayoutDialog.setWidthFull();
 
         creditGridLayoutDialog.add(creditGridLayout);
-        creditGridLayoutDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        creditGridLayoutDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        creditGridLayoutDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        creditGridLayoutDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
         creditGridLayoutDialog.setWidthFull();
 
         createCreditOfferFormDialog.add(createCreditOfferForm);
-        createCreditOfferFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        createCreditOfferFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        createCreditOfferFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        createCreditOfferFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
 
         paymentGridDialog.add(paymentGridLayout);
         paymentGridDialog.setWidthFull();
-        paymentGridDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        paymentGridDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        paymentGridDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        paymentGridDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
         deleteFormDialog.add(deleteForm);
-        deleteFormDialog.setWidth(Setting.DELETE_FORM_DIALOG_WIDTH);
-        deleteFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        deleteFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        deleteFormDialog.setWidth(DELETE_FORM_DIALOG_WIDTH);
+        deleteFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        deleteFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
         clientEditorFormDialog.add(clientEditorForm);
-        clientEditorFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        clientEditorFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        clientEditorFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        clientEditorFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
 
         creditEditorFormDialog.add(creditEditorForm);
-        creditEditorFormDialog.setCloseOnEsc(Setting.IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
-        creditEditorFormDialog.setCloseOnOutsideClick(Setting.IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
+        creditEditorFormDialog.setCloseOnEsc(IS_DIALOG_CLOSE_ON_ESC_BY_DEFAULT);
+        creditEditorFormDialog.setCloseOnOutsideClick(IS_DIALOG_CLOSE_ON_OUTSIDE_CLICK_BY_DEFAULT);
     }
 
     private void setupEventListener() {

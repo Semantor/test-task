@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankProvider;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import com.haulmont.testtask.backend.CreditEditService;
@@ -11,7 +10,12 @@ import com.vaadin.flow.component.notification.Notification;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.haulmont.testtask.Setting.LOG_DELIMITER;
+import static com.haulmont.testtask.settings.ComponentSettings.DEFAULT_POSITION;
+import static com.haulmont.testtask.settings.ComponentSettings.NOTIFICATION_DURATION;
+import static com.haulmont.testtask.settings.Labels.NEW_CREDIT;
+import static com.haulmont.testtask.settings.Labels.OLD_CREDIT;
+import static com.haulmont.testtask.settings.Responses.*;
+
 
 @Slf4j
 public class CreditEditorForm extends CreateCreditForm {
@@ -42,21 +46,21 @@ public class CreditEditorForm extends CreateCreditForm {
     public void validateAndSave() {
         Credit newCredit = Credit.builder().build();
         getBinder().writeBeanIfValid(newCredit);
-        Notification.show(Setting.TRYING_TO_EDIT_CREDIT, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+        Notification.show(TRYING_TO_EDIT_CREDIT, NOTIFICATION_DURATION, DEFAULT_POSITION);
         log.info(LOG_TEMPLATE_8,
-                Setting.TRYING_TO_EDIT_CREDIT,
+                TRYING_TO_EDIT_CREDIT,
                 LOG_DELIMITER,
-                Setting.OLD_CREDIT,
+                OLD_CREDIT,
                 LOG_DELIMITER,
                 updatedCredit.toDeleteString(),
-                Setting.NEW_CREDIT,
+                NEW_CREDIT,
                 LOG_DELIMITER,
                 newCredit.toDeleteString());
 
         creditEditService.edit(updatedCredit, newCredit)
                 .fold(
                         aBoolean -> {
-                            hornIntoNotificationAndLoggerInfo(Setting.SUCCESSFULLY_EDITED_USER_MESSAGE);
+                            hornIntoNotificationAndLoggerInfo(SUCCESSFULLY_EDITED_USER_MESSAGE);
                             return aBoolean;
                         },
                         exception -> {

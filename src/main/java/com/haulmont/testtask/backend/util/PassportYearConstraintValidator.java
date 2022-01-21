@@ -3,10 +3,11 @@ package com.haulmont.testtask.backend.util;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import static com.haulmont.testtask.Setting.MAX_YEAR_IN_PASSPORT;
-import static com.haulmont.testtask.Setting.MIN_YEAR_IN_PASSPORT;
-import static com.haulmont.testtask.Setting.PASSPORT_NUMBER_START_INDEX;
-import static com.haulmont.testtask.Setting.PASSPORT_SERIES_YEAR_START_POSITION;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.MAX_YEAR_IN_PASSPORT;
+import static com.haulmont.testtask.settings.BusinessLogicSettings.MIN_YEAR_IN_PASSPORT;
+import static com.haulmont.testtask.settings.ComponentSettings.PASSPORT_NUMBER_START_INDEX;
+import static com.haulmont.testtask.settings.ComponentSettings.PASSPORT_SERIES_YEAR_START_POSITION;
+
 
 public class PassportYearConstraintValidator implements ConstraintValidator<PassportYearConstraint, String> {
     @Override

@@ -1,10 +1,11 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.vaadin.flow.component.notification.Notification;
 import org.slf4j.Logger;
 
-import static com.haulmont.testtask.Setting.LOG_DELIMITER;
+import static com.haulmont.testtask.settings.ComponentSettings.DEFAULT_POSITION;
+import static com.haulmont.testtask.settings.ComponentSettings.NOTIFICATION_DURATION;
+import static com.haulmont.testtask.settings.Responses.LOG_DELIMITER;
 
 public interface Hornable {
     String LOG_TEMPLATE_3 = "{}{}{}";
@@ -14,12 +15,12 @@ public interface Hornable {
     Logger log();
 
     default void hornIntoNotificationAndLoggerInfo(String message, Object object) {
-        Notification.show(message, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+        Notification.show(message, NOTIFICATION_DURATION, DEFAULT_POSITION);
         log().info(LOG_TEMPLATE_3, message, LOG_DELIMITER, object);
     }
 
     default void hornIntoNotificationAndLoggerInfo(String message) {
-        Notification.show(message, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+        Notification.show(message, NOTIFICATION_DURATION, DEFAULT_POSITION);
         log().info(message);
     }
 }

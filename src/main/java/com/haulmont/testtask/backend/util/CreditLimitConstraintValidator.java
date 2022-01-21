@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend.util;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditConstraintProvider;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
@@ -8,6 +7,9 @@ import org.hibernate.validator.constraintvalidation.HibernateConstraintValidator
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
+
+import static com.haulmont.testtask.settings.ErrorMessages.AND_LESS_THEN;
+import static com.haulmont.testtask.settings.ErrorMessages.WRONG_AMOUNT_MUST_BE_MORE_OR_EQUAL;
 
 @RequiredArgsConstructor
 public class CreditLimitConstraintValidator implements ConstraintValidator<CreditLimitConstraint, BigDecimal> {
@@ -28,9 +30,9 @@ public class CreditLimitConstraintValidator implements ConstraintValidator<Credi
             hibernateContext.disableDefaultConstraintViolation();
             hibernateContext
                     .buildConstraintViolationWithTemplate(
-                            Setting.WRONG_AMOUNT_MUST_BE_MORE_OR_EQUAL +
+                            WRONG_AMOUNT_MUST_BE_MORE_OR_EQUAL +
                                     creditConstraintProvider.CREDIT_LIMIT_MIN_VALUE +
-                                    Setting.AND_LESS_THEN +
+                                    AND_LESS_THEN +
                                     creditConstraintProvider.CREDIT_LIMIT_MAX_VALUE)
                     .addConstraintViolation();
         }

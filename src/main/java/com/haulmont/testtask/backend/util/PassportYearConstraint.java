@@ -4,7 +4,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-import static com.haulmont.testtask.Setting.PASSPORT_LENGTH_ERROR_MSG;
+import static com.haulmont.testtask.settings.ErrorMessages.PASSPORT_LENGTH_ERROR_MSG;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

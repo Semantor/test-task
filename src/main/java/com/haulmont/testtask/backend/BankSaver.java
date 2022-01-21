@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
@@ -12,6 +11,9 @@ import org.springframework.stereotype.Component;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.Set;
+
+import static com.haulmont.testtask.settings.ErrorMessages.BANK_WITH_TARGET_ID_ALREADY_IN_USE;
+import static com.haulmont.testtask.settings.ErrorMessages.SOME_DB_PROBLEM;
 
 @AllArgsConstructor
 @Component
@@ -32,11 +34,11 @@ public class BankSaver {
                             ConstraintViolationHandler.handleToString(constraintViolations)));
         try {
             if (bankRepository.findById(bank.getBankId()).isPresent())
-                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.BANK_WITH_TARGET_ID_ALREADY_IN_USE);
+                throw new IllegalArgumentExceptionWithoutStackTrace(BANK_WITH_TARGET_ID_ALREADY_IN_USE);
 
             bankRepository.save(bank);
         } catch (Exception exception) {
-            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(Setting.SOME_DB_PROBLEM));
+            return Result.failure(new IllegalArgumentExceptionWithoutStackTrace(SOME_DB_PROBLEM));
         }
         return Result.success(true);
     }

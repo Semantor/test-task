@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.haulmont.testtask.Setting.BANK_DOES_NOT_EXIST;
+import static com.haulmont.testtask.settings.ErrorMessages.BANK_DOES_NOT_EXIST;
 
 @AllArgsConstructor
 @Component

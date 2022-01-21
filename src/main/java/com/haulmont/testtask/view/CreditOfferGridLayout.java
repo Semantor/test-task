@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.CreditOfferProviderByClient;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -20,7 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ButtonSettings.*;
+import static com.haulmont.testtask.settings.Labels.*;
+import static com.haulmont.testtask.settings.Patterns.CREDIT_LIMIT_FORMAT;
+import static com.haulmont.testtask.settings.Patterns.CREDIT_RATE_FORMAT;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.CREDIT_LIMIT_DEFAULT_VALUE;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.CREDIT_RATE_DEFAULT_VALUE;
+
 
 @Slf4j
 public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, CanBeShown {
@@ -67,8 +72,8 @@ public class CreditOfferGridLayout extends VerticalLayout implements HasEvent, C
         });
         grid.addComponentColumn(creditOffer -> {
             Button delete = new Button();
-            delete.setText(Setting.DELETE_BUTTON_TEXT);
-            delete.addThemeVariants(Setting.DELETE_STYLE);
+            delete.setText(DELETE_BUTTON_TEXT);
+            delete.addThemeVariants(DELETE_STYLE);
             delete.addClickListener(event -> fireEvent(new CreditOfferGridLayout.DeleteEvent(this, creditOffer)));
             return delete;
         });

@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.model.entity.Client;
 import com.haulmont.testtask.model.entity.CreditOffer;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.haulmont.testtask.settings.ErrorMessages.WRONG_INCOME_DATA;
 
 @AllArgsConstructor
 @Slf4j
@@ -27,7 +28,7 @@ public class CreditOfferProviderByClient {
     public List<CreditOffer> getByClient(Client client) {
         try {
             if (client.getClientId() == null || clientRepository.findById(client.getClientId()).isEmpty())
-                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.WRONG_INCOME_DATA);
+                throw new IllegalArgumentExceptionWithoutStackTrace(WRONG_INCOME_DATA);
             return creditOfferRepository.findByIsCanceledAndClient(false, client);
         } catch (Exception ex) {
             return Collections.emptyList();

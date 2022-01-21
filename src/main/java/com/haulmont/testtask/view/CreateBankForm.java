@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.BankFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.BankSaver;
 import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
@@ -18,10 +17,16 @@ import org.slf4j.Logger;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-
 import java.util.Set;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ComponentSettings.*;
+import static com.haulmont.testtask.settings.ErrorMessages.NAME_IS_ALREADY_EXISTS;
+import static com.haulmont.testtask.settings.FieldNameSettings.BANK_NAME_FIELD_NAME;
+import static com.haulmont.testtask.settings.Labels.CREATE_BANK_FORM_H_3_LABEL;
+import static com.haulmont.testtask.settings.Labels.CREATE_BANK_FORM_NAME_FIELD_LABEL;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.NAME_FIELD_DEFAULT_VALUE;
+import static com.haulmont.testtask.settings.Responses.SUCCESSFULLY_SAVED_USER_MESSAGE;
+import static com.haulmont.testtask.settings.Responses.TRYING_TO_SAVE_NEW_BANK;
 
 @Slf4j
 public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, CanBeClosed, CanBeSaved, Hornable {
@@ -29,7 +34,7 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
     private final BankFieldAvailabilityChecker bankFieldAvailabilityChecker;
     private final Validator validator;
 
-    private final TextField nameField = new TextField(Setting.CREATE_BANK_FORM_NAME_FIELD_LABEL);
+    private final TextField nameField = new TextField(CREATE_BANK_FORM_NAME_FIELD_LABEL);
 
 
     private final Button save = new Button();
@@ -41,7 +46,7 @@ public class CreateBankForm extends FormLayout implements HasEvent, CanBeShown, 
         this.bankFieldAvailabilityChecker = bankFieldAvailabilityChecker;
         this.validator = validator;
         setupFields();
-        add(new H3(Setting.CREATE_BANK_FORM_H_3_LABEL), nameField, createButtons());
+        add(new H3(CREATE_BANK_FORM_H_3_LABEL), nameField, createButtons());
     }
 
     private void setupFields() {

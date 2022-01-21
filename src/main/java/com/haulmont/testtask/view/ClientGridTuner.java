@@ -4,7 +4,8 @@ import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.function.ValueProvider;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ComponentSettings.*;
+import static com.haulmont.testtask.settings.Labels.*;
 
 public interface ClientGridTuner {
 

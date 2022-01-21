@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.model.entity.Bank;
@@ -11,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.haulmont.testtask.settings.ErrorMessages.WRONG_INCOME_DATA;
 
 
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class BankProvider {
     public Result<Boolean> updateClients(Bank bank) {
         try {
             if (bank.getBankId() == null || bankRepository.findById(bank.getBankId()).isEmpty())
-                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.WRONG_INCOME_DATA);
+                throw new IllegalArgumentExceptionWithoutStackTrace(WRONG_INCOME_DATA);
             bank.setClients(bankRepository.getBankClients(bank));
         } catch (Exception ex) {
             return Result.failure(ex);

@@ -14,7 +14,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ErrorMessages.CLIENT_DOES_NOT_PRESENT_IN_DB;
+import static com.haulmont.testtask.settings.ErrorMessages.UUID_IS_ALREADY_USED;
+import static com.haulmont.testtask.settings.FieldNameSettings.*;
+import static com.haulmont.testtask.settings.Responses.LOG_DELIMITER;
+import static com.haulmont.testtask.settings.Responses.TRYING_TO_SAVE_NEW_CLIENT;
 import static com.haulmont.testtask.view.Hornable.LOG_TEMPLATE_3;
 
 /**
@@ -73,13 +77,13 @@ public class ClientSaver {
             if (optionalPersistClient.isEmpty())
                 throw new IllegalArgumentExceptionWithoutStackTrace(CLIENT_DOES_NOT_PRESENT_IN_DB);
             Client persistClient = optionalPersistClient.get();
-            if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FOR_SORTING, client.getFirstName()).isEmpty())
+            if (validator.validateValue(Client.class, CLIENT_FIRST_NAME_FIELD_NAME, client.getFirstName()).isEmpty())
                 persistClient.setFirstName(client.getFirstName());
 
-            if (validator.validateValue(Client.class, CLIENT_LAST_NAME_FOR_SORTING, client.getLastName()).isEmpty())
+            if (validator.validateValue(Client.class, CLIENT_LAST_NAME_FIELD_NAME, client.getLastName()).isEmpty())
                 persistClient.setLastName(client.getLastName());
 
-            if (validator.validateValue(Client.class, CLIENT_PATRONYMIC_FOR_SORTING, client.getPatronymic()).isEmpty()) {
+            if (validator.validateValue(Client.class, CLIENT_PATRONYMIC_FIELD_NAME, client.getPatronymic()).isEmpty()) {
                 persistClient.setPatronymic(client.getPatronymic());
             }
 

@@ -1,6 +1,5 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.backend.util.ConstraintViolationHandler;
@@ -33,7 +32,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ComponentSettings.*;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+import static com.haulmont.testtask.settings.FieldNameSettings.*;
+import static com.haulmont.testtask.settings.Labels.*;
+import static com.haulmont.testtask.settings.PlaceholdersAndDefaultValues.*;
+import static com.haulmont.testtask.settings.Responses.SUCCESSFULLY_SAVED_USER_MESSAGE;
 
 @Slf4j
 public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown, CanBeSaved, CanBeClosed, CanBeCleared, Hornable {
@@ -122,7 +126,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
         emailField.setPlaceholder(EMAIL_PLACEHOLDER);
         emailField.setRequiredIndicatorVisible(true);
 
-        passportSeriesField.setLabel(Setting.PASSPORT_SERIES_LABEL);
+        passportSeriesField.setLabel(PASSPORT_SERIES_LABEL);
         passportSeriesField.setPlaceholder(PASSPORT_SERIES_PLACEHOLDER);
         passportSeriesField.setMin(PASSPORT_SERIES_MIN_VALUE);
         passportSeriesField.setMax(PASSPORT_SERIES_MAX_VALUE);
@@ -132,7 +136,7 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
                         + passportNumberField.getValue()
         ));
 
-        passportNumberField.setLabel(Setting.PASSPORT_NUMBER_LABEL);
+        passportNumberField.setLabel(PASSPORT_NUMBER_LABEL);
         passportNumberField.setPlaceholder(PASSPORT_NUMBER_PLACEHOLDER);
         passportNumberField.setMax(PASSPORT_NUMBER_MAX_VALUE);
         passportNumberField.setMin(PASSPORT_NUMBER_MIN_VALUE);
@@ -149,42 +153,41 @@ public class CreateClientForm extends FormLayout implements HasEvent, CanBeShown
 
         binder.forField(nameField)
                 .withNullRepresentation(NAME_FIELD_DEFAULT_VALUE)
-                .withValidator(predict(CLIENT_FIRST_NAME_FOR_SORTING), Setting.UNIVERSAL_NAME_ERROR)
+                .withValidator(predict(CLIENT_FIRST_NAME_FIELD_NAME), UNIVERSAL_NAME_ERROR)
                 .bind(Client::getFirstName, Client::setFirstName);
 
         binder.forField(lastNameField)
                 .withNullRepresentation(NAME_FIELD_DEFAULT_VALUE)
-                .withValidator(predict(CLIENT_LAST_NAME_FOR_SORTING), Setting.UNIVERSAL_NAME_ERROR)
+                .withValidator(predict(CLIENT_LAST_NAME_FIELD_NAME), UNIVERSAL_NAME_ERROR)
                 .bind(Client::getLastName, Client::setLastName);
 
         binder.forField(patronymicField)
-                .withValidator(predict(CLIENT_PATRONYMIC_FOR_SORTING), Setting.PATRONYMIC_ERROR)
+                .withValidator(predict(CLIENT_PATRONYMIC_FIELD_NAME), PATRONYMIC_ERROR)
                 .bind(Client::getPatronymic, Client::setPatronymic);
     }
 
     protected void tuneBinderForImmutableFields() {
         binder.forField(phoneNumberField)
                 .withNullRepresentation(PHONE_FIELD_DEFAULT_VALUE)
-                .withValidator(predict(CLIENT_PHONE_NUMBER_FOR_SORTING), NO_VALID_PHONE_ERROR_MSG)
+                .withValidator(predict(CLIENT_PHONE_NUMBER_FIELD_NAME), NO_VALID_PHONE_ERROR_MSG)
                 .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailablePhone,
                         PHONE_ALREADY_IN_USE_ERROR_MSG)
                 .bind(Client::getPhoneNumber, Client::setPhoneNumber);
 
         binder.forField(emailField)
                 .withNullRepresentation(EMAIL_FIELD_DEFAULT_VALUE)
-                .withValidator(predict(CLIENT_EMAIL_FOR_SORTING), INCORRECT_EMAIL_ADDRESS_ERROR_MSG)
+                .withValidator(predict(CLIENT_EMAIL_FIELD_NAME), INCORRECT_EMAIL_ADDRESS_ERROR_MSG)
                 .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailableEmail,
                         EMAIL_ALREADY_IN_USE_ERROR_MSG)
                 .bind(Client::getEmail, Client::setEmail);
 
         binder.forField(passportField)
                 .withNullRepresentation(PASSPORT_FIELD_DEFAULT_VALUE)
-                .withValidator(predict(CLIENT_PASSPORT_FOR_SORTING), NO_VALID_PASSPORT)
+                .withValidator(predict(CLIENT_PASSPORT_FIELD_NAME), NO_VALID_PASSPORT)
                 .withValidator((SerializablePredicate<String>) clientFieldAvailabilityChecker::isAvailablePassport,
                         PASSPORT_ALREADY_IN_USE_ERROR_MSG)
                 .bind(Client::getPassport, Client::setPassport);
     }
-
 
 
     @NotNull

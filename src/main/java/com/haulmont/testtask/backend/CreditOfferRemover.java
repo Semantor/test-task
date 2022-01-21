@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static com.haulmont.testtask.Setting.CREDIT_OFFER_DOES_NOT_EXIST;
-import static com.haulmont.testtask.Setting.PAYMENT_PERIOD_IS_ALREADY_START_AND_DOES_NOT_END;
+import static com.haulmont.testtask.settings.ErrorMessages.CREDIT_OFFER_DOES_NOT_EXIST;
+import static com.haulmont.testtask.settings.ErrorMessages.PAYMENT_PERIOD_IS_ALREADY_START_AND_DOES_NOT_END;
 
 @AllArgsConstructor
 @Transactional

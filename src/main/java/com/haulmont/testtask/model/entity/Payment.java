@@ -1,6 +1,5 @@
 package com.haulmont.testtask.model.entity;
 
-import com.haulmont.testtask.Setting;
 import lombok.*;
 import org.hibernate.annotations.Immutable;
 
@@ -11,6 +10,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static com.haulmont.testtask.settings.ErrorMessages.*;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -20,15 +21,16 @@ import java.util.UUID;
 public class Payment {
     @Id
     @Column(name = "payment_id")
-    @NotNull(message = Setting.NULLABLE_ID)
+    @NotNull(message = NULLABLE_ID)
     private UUID paymentId = UUID.randomUUID();
 
     @Column(name = "date")
-    @NotNull(message = Setting.WRONG_DATE_IS_PICKED)
+    @NotNull(message = WRONG_DATE_IS_PICKED)
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "credit_offer_id",nullable = false)
+    @JoinColumn(name = "credit_offer_id", nullable = false)
+    @NotNull(message = NULLABLE_CREDIT_OFFER)
     @Valid
     private CreditOffer creditOffer;
 
@@ -70,7 +72,7 @@ public class Payment {
     }
 
     public String toSql() {
-        return "('" + getPaymentId()+"','" + getDate()+"','" + getCreditOffer().getCreditOfferId()+"',"
-                + getAmount() + "," + getMainPart()+","+getPercentPart()+")";
+        return "('" + getPaymentId() + "','" + getDate() + "','" + getCreditOffer().getCreditOfferId() + "',"
+                + getAmount() + "," + getMainPart() + "," + getPercentPart() + ")";
     }
 }

@@ -1,21 +1,18 @@
 package com.haulmont.testtask.view;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.ClientFieldAvailabilityChecker;
 import com.haulmont.testtask.backend.ClientSaver;
 import com.haulmont.testtask.model.entity.Client;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
-import com.vaadin.flow.data.binder.BindingValidationStatus;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Validator;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.haulmont.testtask.Setting.*;
+import static com.haulmont.testtask.settings.ComponentSettings.*;
+import static com.haulmont.testtask.settings.Responses.LOG_DELIMITER;
+import static com.haulmont.testtask.settings.Responses.UPDATING_MESSAGE;
 
 @Slf4j
 public class ClientEditorForm extends CreateClientForm {
@@ -38,7 +35,7 @@ public class ClientEditorForm extends CreateClientForm {
         getPatronymicField().setValue(updatingClient.getPatronymic());
         getPhoneNumberField().setValue(updatingClient.getPhoneNumber());
         getEmailField().setValue(updatingClient.getEmail());
-        String series = updatingClient.getPassport().substring(Setting.PASSPORT_SERIES_START_INDEX, PASSPORT_NUMBER_START_INDEX);
+        String series = updatingClient.getPassport().substring(PASSPORT_SERIES_START_INDEX, PASSPORT_NUMBER_START_INDEX);
         String number = updatingClient.getPassport().substring(PASSPORT_NUMBER_START_INDEX);
         getPassportSeriesField().setValue(Integer.parseInt(series));
         getPassportNumberField().setValue(Integer.parseInt(number));
@@ -78,7 +75,7 @@ public class ClientEditorForm extends CreateClientForm {
         }
         clientSaver.save(updatingClient.getClientId(), build)
                 .fold(aBoolean -> {
-                            Notification.show(UPDATING_MESSAGE, Setting.NOTIFICATION_DURATION, Setting.DEFAULT_POSITION);
+                            Notification.show(UPDATING_MESSAGE, NOTIFICATION_DURATION, DEFAULT_POSITION);
                             log.info(Hornable.LOG_TEMPLATE_5,
                                     UPDATING_MESSAGE,
                                     LOG_DELIMITER,

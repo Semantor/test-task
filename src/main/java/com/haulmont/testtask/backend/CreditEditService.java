@@ -1,6 +1,5 @@
 package com.haulmont.testtask.backend;
 
-import com.haulmont.testtask.Setting;
 import com.haulmont.testtask.backend.util.IllegalArgumentExceptionWithoutStackTrace;
 import com.haulmont.testtask.backend.util.Result;
 import com.haulmont.testtask.model.entity.Credit;
@@ -12,8 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.haulmont.testtask.Setting.ALREADY_UNUSED;
-import static com.haulmont.testtask.Setting.OLD_CREDIT_IS_NON_PERSIST;
+import static com.haulmont.testtask.settings.ErrorMessages.*;
 
 @RequiredArgsConstructor
 @Component
@@ -27,7 +25,7 @@ public class CreditEditService {
     public Result<Boolean> edit(@NotNull Credit oldPersistCredit, @NotNull Credit newNonPersist) {
         try {
             if (creditRepository.findById(newNonPersist.getCreditId()).isPresent())
-                throw new IllegalArgumentExceptionWithoutStackTrace(Setting.UUID_IS_ALREADY_USED);
+                throw new IllegalArgumentExceptionWithoutStackTrace(UUID_IS_ALREADY_USED);
             Optional<Credit> optionalOldCredit = creditRepository.findById(oldPersistCredit.getCreditId());
             if (optionalOldCredit.isEmpty())
                 throw new IllegalArgumentExceptionWithoutStackTrace(OLD_CREDIT_IS_NON_PERSIST);
