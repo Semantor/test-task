@@ -31,6 +31,7 @@
 
 1. Run in the command line in source folder:
     ```
+    mvn -pl specification install
     mvn -pl app spring-boot:run
     ```
 
