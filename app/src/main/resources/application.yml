@@ -3,6 +3,9 @@ spring:
     default: "prod"
   aop:
     proxy-target-class: false
+#it is to rewrite swagger controller make it with proxyMode CGlib
+  main:
+    allow-bean-definition-overriding: true
 ---
 # use it cause hibernate own validator implementation cannot get access to spring bean.
 spring.jpa.properties.javax.persistence.validation.mode: none
