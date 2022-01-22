@@ -1,0 +1,35 @@
+openapi: '3.0.0'
+info:
+  title: Super Cool Bank System ™
+  version: 1.0.0
+tags:
+  - name: client
+    description: Clients
+paths:
+  /clients:
+    get:
+      responses:
+        '200':
+          description: get an array of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientDTO'
+components:
+  schemas:
+    ClientDTO:
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        patronymic:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        passport:
+          type: string
