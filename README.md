@@ -31,7 +31,7 @@
 
 1. Run in the command line in source folder:
     ```
-    mvn spring-boot:run
+    mvn -pl app spring-boot:run
     ```
 
 2. Open `http://localhost:8080` in a web browser.

@@ -4,8 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.haulmont</groupId>
     <artifactId>test-task</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <version>1.0</version>
+    <modules>
+        <module>app</module>
+    </modules>
     <name>Haulmont Test Task</name>
 
     <properties>
