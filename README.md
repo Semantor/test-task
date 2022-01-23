@@ -35,6 +35,7 @@
     ```
 
 2. Open `http://localhost:8080` in a web browser.
+3. Send `GET` request on `localhost:8080/clients` to get non removed client
 
 ### Stack of Technology
 
