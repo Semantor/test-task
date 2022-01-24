@@ -14,7 +14,7 @@ spring:
         - logback
         - hinfo
       test:
-        - hsqldb
+        - hsqldb2
         - flyway
         - credop
         - logback
