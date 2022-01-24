@@ -1,6 +1,25 @@
 spring:
   profiles:
-    default: "prod"
+    group:
+      prod:
+        - hsqldb
+        - flyway
+        - credop
+        - logback
+        - hiboff
+      dev:
+        - hsqlddb
+        - flyway
+        - credop
+        - logback
+        - hinfo
+      test:
+        - hsqldb
+        - flyway
+        - credop
+        - logback
+        - hinfo
+    default: prod
   aop:
     proxy-target-class: false
 #it is to rewrite swagger controller make it with proxyMode CGlib
@@ -10,17 +29,9 @@ spring:
 # use it cause hibernate own validator implementation cannot get access to spring bean.
 spring.jpa.properties.javax.persistence.validation.mode: none
 ---
-spring.config.activate.on-profile: "prod"
+spring.config.activate.on-profile: hsqldb
 spring:
-  datasource:
-    driver-class-name: org.hsqldb.jdbc.JDBCDriver
-    url: jdbc:hsqldb:file:testdb
-    username: SA
-    password:
-spring.jpa.hibernate.ddl-auto: validate
----
-spring.config.activate.on-profile: "dev"
-spring:
+  profiles:
   datasource:
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
     url: jdbc:hsqldb:file:testdb
@@ -36,13 +47,13 @@ spring.jpa.hibernate.ddl-auto: validate
 #  ssl:
 #    enabled: true
 ---
-spring.config.activate.on-profile: "dev,prod,test"
+spring.config.activate.on-profile: flyway
 flyway.enabled: true
 ---
-spring.config.activate.on-profile: "dev,prod,test"
+spring.config.activate.on-profile: logback
 logback.file: ""
 ---
-spring.config.activate.on-profile: "test"
+spring.config.activate.on-profile: hsqldb2
 spring:
   datasource:
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
@@ -51,7 +62,7 @@ spring:
     password:
 spring.jpa.hibernate.ddl-auto: validate
 ---
-spring.config.activate.on-profile: "dev,test"
+spring.config.activate.on-profile: hinfo
 spring.jpa.show-sql: true
 logging:
   level:
@@ -67,7 +78,10 @@ logging:
 logging.level.org.springframework.jdbc.core.JdbcTemplate: INFO
 logging.level.org.springframework.jdbc.core.StatementCreatorUtils: INFO
 ---
-spring.config.activate.on-profile: "dev,test,prod"
+spring.config.activate.on-profile: hiboff
+spring.jpa.show-sql: false
+---
+spring.config.activate.on-profile: credop
 client.list.default.page.size: 5
 client.list.default.sort.column: lastName
 credit.offer.creating.form.min.amount: 1000
