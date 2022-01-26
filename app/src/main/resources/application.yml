@@ -7,12 +7,14 @@ spring:
         - credop
         - logback
         - hiboff
+        - actuator
       dev:
         - hsqlddb
         - flyway
         - credop
         - logback
         - hinfo
+        - actuatorExtended
       test:
         - hsqldb2
         - flyway
@@ -25,6 +27,12 @@ spring:
 #it is to rewrite swagger controller make it with proxyMode CGlib
   main:
     allow-bean-definition-overriding: true
+---
+spring.config.activate.on-profile: actuator
+management.endpoints.web.exposure.include: health,info
+---
+spring.config.activate.on-profile: actuatorExtended
+management.endpoints.web.exposure.include: beans,health,info,metrics,mappings
 ---
 # use it cause hibernate own validator implementation cannot get access to spring bean.
 spring.jpa.properties.javax.persistence.validation.mode: none
