@@ -4,10 +4,17 @@ info:
   version: 1.0.0
 tags:
   - name: client
-    description: Clients
+    description: all about clients
+  - name: info
+    description: get some metainfo
 paths:
   /clients:
     get:
+      tags:
+        - client
+      summary: get all active (non removed) client
+      description: return ClientDTO of all non removed client and 200 / 503 of any server problem
+      operationId: getAllClient
       responses:
         '200':
           description: get an array of clients
@@ -17,6 +24,73 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClientDTO'
+        '503':
+          description: using on any problem, return empty array of ClientDTO
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      tags:
+        - client
+      summary: addd new client
+      description: 201 create new client / 400 on non valid data / 503 on server problem
+      operationId: createNewClient
+      requestBody:
+        description: get client to save
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDTO'
+      responses:
+        '400':
+          description: invalid client
+          content:
+            text/plain:
+              schema:
+                type: string
+        '201':
+          description: successfully created client
+          content:
+            text/plain:
+              schema:
+                type: string
+        '503':
+          description: server problem
+          content:
+            text/plain:
+              schema:
+                type: string
+  /clients/{clientId}:
+    get:
+      tags:
+        - client
+      summary: get client by UUID
+      description: 200 return client / 400 on wrong UUID / 404 / 503 on any server problem
+      operationId: getClientById
+      parameters:
+        - name: clientId
+          in: path
+          description: Client UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful find and return ClientDTO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDTO'
+        '400':
+          description: wrong UUID
+        '404':
+          description: not found with target UUID
+        '503':
+          description: some server problem
+
 components:
   schemas:
     ClientDTO:
