@@ -35,7 +35,8 @@
     ```
 
 2. Open `http://localhost:8080` in a web browser.
-3. Send `GET` request on `localhost:8080/clients` to get non removed client
+3. Open `http://localhost:8080/swagger-ui/index.html?url=/v3/api` to introduce actual REST endpoint
+
 
 ### Stack of Technology
 
